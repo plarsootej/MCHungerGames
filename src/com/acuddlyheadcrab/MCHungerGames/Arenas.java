@@ -206,27 +206,24 @@ public class Arenas {
         return null;
     }
 
-    public static void tpAllOnlineTribs(String arenakey) {
+    public static void tpAllOnlineTribs(String arenakey, boolean startinggame) {
         for(Player trib : getOnlineTribs(arenakey)){
-//                TODO: add backup inventories with DAT file handling
+//                TODO: add backup inventories IF startinggame
             Location 
                 center  = getCenter(arenakey), 
                 rand = Utility.getRandomChunkLocation(center, 5)
             ;
-            
-            
-//            System.out.println("Trying to teleport "+trib.getName()+" to "+rand.getBlockX()+", "+rand.getBlockY()+", "+rand.getBlockZ());
-            System.out.println("Rand: "+rand);
-            System.out.println("Trib: "+trib);
             trib.teleport(rand);
-            trib.getInventory().clear();
-            trib.setGameMode(GameMode.SURVIVAL);
+            if(startinggame){
+                trib.getInventory().clear();
+                trib.setGameMode(GameMode.SURVIVAL);
+            }
             trib.sendMessage(ChatColor.LIGHT_PURPLE+"You have been teleported to "+arenakey);
         }
     }
     
     public static void startGame(final String arenakey, int countdown){
-        Arenas.tpAllOnlineTribs(arenakey);
+        Arenas.tpAllOnlineTribs(arenakey, true);
         configSet(ConfigKeys.GAME_COUNT.key(), getGameCount()+1);
         startCountdown(arenakey, countdown);
     }

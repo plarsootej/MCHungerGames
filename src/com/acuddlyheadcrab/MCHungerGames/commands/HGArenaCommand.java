@@ -213,7 +213,7 @@ public class HGArenaCommand implements CommandExecutor{
                             String arenakey = Utility.getArenaByKey(args[1]);
                             
                             if(arenakey!=null){
-                                Arenas.tpAllOnlineTribs(arenakey);
+                                Arenas.tpAllOnlineTribs(arenakey, false);
                                 sender.sendMessage("Teleported all online tributes for "+arenakey);
                                 return true;
                             } else PluginInfo.wrongFormatMsg(sender, "Could not find the arena \""+args[1]+"\""); return true;

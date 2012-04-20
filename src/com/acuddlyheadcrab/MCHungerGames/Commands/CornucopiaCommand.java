@@ -1,5 +1,7 @@
 package com.acuddlyheadcrab.MCHungerGames.commands;
 
+import java.util.HashSet;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,8 +35,16 @@ public class CornucopiaCommand implements CommandExecutor{
             if(isplayer){
                 if(sender.hasPermission(Perms.SPC.perm())){
                     
-                    Utility.spawnCCPChest(player.getTargetBlock(null, 10));
-                    player.sendMessage(ChatColor.GREEN+"Spawned a chest");
+                    HashSet<Byte> bset = new HashSet<Byte>();
+//                    adds water to transparent blocks
+                    bset.add((byte) 9);
+                    bset.add((byte) 8);
+//                    and dont forget air
+                    bset.add((byte) 0);
+                    
+                    String msg = Utility.spawnCCPChest(player.getTargetBlock(bset, 10)) ?
+                            ChatColor.GREEN+"Spawned a chest" : ChatColor.LIGHT_PURPLE+"Cannot spawn chests next to double chests!";
+                    player.sendMessage(msg);
                     
                 } else PluginInfo.sendNoPermMsg(sender);
             } else PluginInfo.sendOnlyPlayerMsg(sender);

@@ -11,35 +11,49 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
-<<<<<<< HEAD
 import org.bukkit.ChatColor;
-=======
->>>>>>> 3a1fcf241cf70fef8f4771a629fb08d57e1b5b37
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-<<<<<<< HEAD
 import com.acuddlyheadcrab.MCHungerGames.Arenas;
-=======
->>>>>>> 3a1fcf241cf70fef8f4771a629fb08d57e1b5b37
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
 
 
 
 public class Utility {
+    
+    public static Map<Material, Integer> matwhitelist;
+    
     public static HungerGames HungerGamesPlugin;
-    public Utility(HungerGames instance) {HungerGamesPlugin = instance;}
-    
-    
+    public Utility(HungerGames instance) {
+        HungerGamesPlugin = instance;
+        matwhitelist = new HashMap<Material, Integer>();
+        for(Material mat : Material.values()) matwhitelist.put(mat, mat.getMaxStackSize());
+        matwhitelist.remove(Material.AIR);
+        matwhitelist.remove(Material.BED_BLOCK);
+        matwhitelist.remove(Material.BEDROCK);
+        matwhitelist.remove(Material.BREWING_STAND);
+        matwhitelist.remove(Material.BURNING_FURNACE);
+        matwhitelist.remove(Material.CAKE_BLOCK);
+        matwhitelist.remove(Material.CAULDRON);
+        matwhitelist.remove(Material.DRAGON_EGG);
+        matwhitelist.remove(Material.ENDER_PORTAL);
+        matwhitelist.remove(Material.ENDER_PORTAL_FRAME);
+        matwhitelist.remove(Material.ENDER_STONE);
+//        add more later... im tired
+    }
     public final static Logger log = Logger.getLogger("Minecraft");
-    
     public static FileConfiguration config;
     
     // done
@@ -93,7 +107,6 @@ public class Utility {
         return Arrays.asList(keyarr);
     }
     
-    
     public static String toLocKey(Location loc) {
         double x = loc.getX(), y = loc.getY(), z = loc.getZ();
         String world = loc.getWorld().getName();
@@ -116,27 +129,64 @@ public class Utility {
         return null;
     }
     
-    public static void spawnCCPChest(Block block){
-        
+    public static boolean spawnCCPChest(Block block){
         Block above = block.getRelative(BlockFace.UP);
-        
+        if(checkChestBlock(above)){
+            above.setType(Material.CHEST);
+            Chest chest = (Chest) above.getState();
+            Inventory inv = chest.getInventory();
+            
+            Random rand = new Random();
+            
+            for(int c=0;c<rand.nextInt(inv.getSize());c++){
+                inv.setItem(rand.nextInt(inv.getSize()), getRandomItem());
+            }
+            
+            return true;
+        } return false;
+    }
+    
+    public static ItemStack getRandomItem(){
+        Random rand = new Random();
+        Material mat = Material.values()[rand.nextInt(Material.values().length)];
+        return new ItemStack(
+            mat,
+            rand.nextInt(mat.getMaxStackSize())
+        );
+    }
+    
+    
+    public static boolean checkChestBlock(Block block){
+        Block
+            nblock = block.getRelative(BlockFace.NORTH),
+            eblock = block.getRelative(BlockFace.EAST),
+            sblock = block.getRelative(BlockFace.SOUTH),
+            wblock = block.getRelative(BlockFace.WEST)
+        ;
         boolean
-            empty = above.isEmpty(),
-            liquid = above.isLiquid(),
-            grass = above.getType()==Material.GRASS,
-            brownshroom = above.getType()==Material.BROWN_MUSHROOM,
-            redshroom = above.getType()==Material.RED_MUSHROOM,
-            rose = above.getType()==Material.RED_ROSE,
-            flower= above.getType()==Material.YELLOW_FLOWER,
-            vine = above.getType()==Material.VINE,
-            transparent =empty||liquid||grass||brownshroom||redshroom||rose||flower||vine 
+            empty = block.isEmpty(),
+            liquid = block.isLiquid(),
+            grass = block.getType()==Material.GRASS,
+            brownshroom = block.getType()==Material.BROWN_MUSHROOM,
+            redshroom = block.getType()==Material.RED_MUSHROOM,
+            rose = block.getType()==Material.RED_ROSE,
+            flower= block.getType()==Material.YELLOW_FLOWER,
+            vine = block.getType()==Material.VINE,
+            fire = block.getType()==Material.FIRE,
+            transparent =empty||liquid||grass||brownshroom||redshroom||rose||flower||vine||fire,   
+            doublechest = isDoubleChest(nblock)||isDoubleChest(eblock)||isDoubleChest(sblock)||isDoubleChest(wblock)
         ;
         
-        if(transparent){
-            above.setType(Material.CHEST);
-        }
+        return transparent&&!doublechest;
     }
-
+    
+    public static boolean isDoubleChest(Block block){
+        if(block.getType()==Material.CHEST){
+            Chest chest = (Chest) block.getState();
+            return chest.getInventory().getHolder().getClass().equals(DoubleChest.class);
+        } else return false;
+    }
+    
     public static String getArenaByKey(String arg1) {
         for(String arenas : getArenasKeys()){
             if(arg1.equalsIgnoreCase(arenas)) return arenas;
@@ -200,7 +250,6 @@ public class Utility {
         return loclist;
     }
     
-<<<<<<< HEAD
     public enum ChatProximity{
         SELF,
         GLOBAL,
@@ -226,6 +275,7 @@ public class Utility {
 
     public static void sendChatProxMessage(Player recip, Player talkingplayer, String msg) {
         switch (Utility.getChatProximity(talkingplayer, recip)) {
+            case SELF: recip.sendMessage(msg); break;
             case CLEAR: recip.sendMessage(msg); break;
             case GLOBAL: recip.sendMessage(msg); break;
             case GARBLED: recip.sendMessage(ChatColor.DARK_GRAY+""+ChatColor.MAGIC+msg); break;
@@ -234,26 +284,3 @@ public class Utility {
     }
     
 }
-=======
-    public static int canHearMessage(Player talkingplayer, Player recip){
-        /**
-         * Yeah I know this is weird... Later, I will use an enum like 
-         * CLEAR, //0
-         * GARBLED, //1
-         * NOMSG; //2
-         **/
-        String arenakey = Arenas.getArenaByTrib(recip);
-        if(arenakey!=null){
-            if(Arenas.isInGame(arenakey)){
-                double distance = recip.getLocation().distance(talkingplayer.getLocation());
-                if(distance<=36){
-                    return 0;
-                } else if(distance<=42){
-                    return 1;
-                }
-            }
-        } else return 2;
-    }
-    
-}
->>>>>>> 3a1fcf241cf70fef8f4771a629fb08d57e1b5b37

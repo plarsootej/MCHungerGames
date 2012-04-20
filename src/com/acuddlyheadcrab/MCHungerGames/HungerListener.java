@@ -90,7 +90,7 @@ public class HungerListener implements Listener {
                         }
                         String gmcount = gc+""+ChatColor.ITALIC+suffix+ChatColor.RESET+ChatColor.LIGHT_PURPLE;
                         Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+""+Arenas.getOnlineTribs(arena).get(winner-1).getName()+" has won the "+gmcount+" Hunger Games in "+ChatColor.GOLD+player.getWorld().getName()+ChatColor.LIGHT_PURPLE+"!");
-                        Arenas.tpAllOnlineTribs(arena); //im too lazy to use player.teleport(), okay?
+                        Arenas.tpAllOnlineTribs(arena, false); //im too lazy to use player.teleport(), okay?
                         Arenas.setInGame(arena, false);
                     }
                 }
