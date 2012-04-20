@@ -172,8 +172,8 @@ public class Arenas {
     }
     
     public static boolean isWithinArena(String arenakey, Location loc){
-        if(loc.distance(getCenter(arenakey))<=getMaxDist(arenakey)) return true; 
-        else return false;
+        if(getCenter(arenakey).getWorld()!=loc.getWorld()) return false;
+        if(loc.distance(getCenter(arenakey))<=getMaxDist(arenakey)) return true; else return false; 
     }
     
     public static String getNearbyArena(Location loc){
