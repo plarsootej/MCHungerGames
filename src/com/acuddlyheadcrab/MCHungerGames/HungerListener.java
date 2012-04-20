@@ -1,5 +1,8 @@
 package com.acuddlyheadcrab.MCHungerGames;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -13,6 +16,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import com.acuddlyheadcrab.util.*;
@@ -28,6 +32,14 @@ public class HungerListener implements Listener {
     public static void initConfig(){config = plugin.getConfig();}
     
     @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerDisconnect(PlayerQuitEvent e){
+        String arenakey = Arenas.getArenaByTrib(e.getPlayer());
+        if(arenakey!=null) 
+            if(Arenas.isInGame(arenakey)) 
+                Arenas.removeTrib(arenakey, e.getPlayer().getName());
+    }
+    
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onCreatureSpawn(CreatureSpawnEvent event){
         if(config.getBoolean(ConfigKeys.OPTS_DURGM_NOMOBS.key())){
             String arenakey = Arenas.getNearbyArena(event.getLocation());
@@ -35,38 +47,20 @@ public class HungerListener implements Listener {
         }
     }
     
-<<<<<<< HEAD
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerChat(PlayerChatEvent event){
-//        event.setCancelled(true);
-//        
-//        Player talkingplayer = event.getPlayer();
-//        String format = event.getFormat();
-//        
-//        System.out.println("Talking player: "+talkingplayer.getName());
-//        Set<Player> recips = event.getRecipients();
-//        for (Iterator<Player> i=recips.iterator();i.hasNext();) {
-//            Player recip = i.next();
-//            System.out.println("     "+recip.getName()+": "+Utility.getChatProximity(talkingplayer, recip));
-//            Utility.sendChatProxMessage(talkingplayer, recip, format);
-//        }
-=======
-    @SuppressWarnings("unused")
-    @EventHandler(priority = EventPriority.HIGHEST)
+//    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerChat(PlayerChatEvent event){
         event.setCancelled(true);
-        // I'm calling this talkingplayer to make this listener easier to understand
+        
         Player talkingplayer = event.getPlayer();
         String format = event.getFormat();
+        
+        System.out.println("Talking player: "+talkingplayer.getName());
         Set<Player> recips = event.getRecipients();
-        for(Player recip : recips.iterator()){
-            switch(Utility.canHearMessage(recip, talkingplayer)){
-                case 1: trib.sendMessage(ChatColor.GRAY+""+ChatColor.MAGIC+format); break;
-                case 2: break;
-                default: trib.sendMessage(format); break;
-            }
+        for (Iterator<Player> i=recips.iterator();i.hasNext();) {
+            Player recip = i.next();
+            System.out.println("     "+recip.getName()+": "+Utility.getChatProximity(talkingplayer, recip));
+            Utility.sendChatProxMessage(talkingplayer, recip, format);
         }
->>>>>>> 3a1fcf241cf70fef8f4771a629fb08d57e1b5b37
     }
     
     @EventHandler(priority = EventPriority.HIGHEST)

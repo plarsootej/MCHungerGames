@@ -1,5 +1,6 @@
 package com.acuddlyheadcrab.MCHungerGames.commands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -90,6 +91,13 @@ public class HGArenaEditCommand implements CommandExecutor{
                                             if(Arenas.getTribs(arenakey).contains(arg3)){
                                                 sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"Warning: "+arg3+" is already a tribute for "+arenakey+"!");
                                             }
+                                            Player gm = Bukkit.getPlayer(arg3);
+                                            if(gm!=null){
+                                                arg3 = gm.getName();
+                                                gm.sendMessage(ChatColor.LIGHT_PURPLE+"You have been added as a gamemaker to the arena: "+arenakey);
+                                            } else{
+                                                sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"(Warning): Could not find player online \""+arg3+"\"");
+                                            }
                                             Arenas.addGM(arenakey, arg3);
                                             sender.sendMessage(ChatColor.GREEN+"Added "+arg3+" to "+arenakey+"'s gamemakers");
                                             return true;
@@ -113,6 +121,13 @@ public class HGArenaEditCommand implements CommandExecutor{
                                         if(!Arenas.getTribs(arenakey).contains(arg3)){
                                             if(Arenas.getGMs(arenakey).contains(arg3)){
                                                 sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"Warning: "+arg3+" is already a gamemaker for "+arenakey+"!");
+                                            }
+                                            Player trib = Bukkit.getPlayer(arg3);
+                                            if(trib!=null){
+                                                arg3 = trib.getName();
+                                                trib.sendMessage(ChatColor.LIGHT_PURPLE+"You have been added as a tribute to the arena: "+arenakey);
+                                            } else{
+                                                sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"(Warning): Could not find player online \""+arg3+"\"");
                                             }
                                             Arenas.addTrib(arenakey, arg3);
                                             sender.sendMessage(ChatColor.GREEN+"Added "+arg3+" to "+arenakey+"'s tributes");

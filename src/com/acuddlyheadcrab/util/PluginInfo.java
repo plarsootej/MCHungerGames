@@ -19,11 +19,8 @@ public class PluginInfo {
     
     public static final boolean debug = true;
     
-<<<<<<< HEAD
     private static ChatColor red = ChatColor.RED;
-=======
-    private static ChatColor red = ChatColor.DARK_PURPLE;
->>>>>>> 3a1fcf241cf70fef8f4771a629fb08d57e1b5b37
+    private static ChatColor purple = ChatColor.DARK_PURPLE;
     private static ChatColor aqua = ChatColor.AQUA;
     private static ChatColor gray = ChatColor.GRAY;
     
@@ -52,11 +49,7 @@ public class PluginInfo {
     }
     
     public static void sendCommandInfo(CommandSender sender, String cmd, String desc){
-<<<<<<< HEAD
-        sender.sendMessage(ChatColor.DARK_PURPLE+cmd+gray+": "+desc);
-=======
-        sender.sendMessage(red+cmd+gray+": "+desc);
->>>>>>> 3a1fcf241cf70fef8f4771a629fb08d57e1b5b37
+        sender.sendMessage(purple+cmd+gray+": "+desc);
     }
     
     public static void sendCommandsHelp(CommandSender sender) {
