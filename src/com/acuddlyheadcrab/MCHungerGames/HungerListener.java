@@ -18,6 +18,7 @@ import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.block.BlockBreakEvent;
 
 import com.acuddlyheadcrab.util.*;
 
@@ -28,15 +29,77 @@ public class HungerListener implements Listener {
     public HungerListener(HungerGames instance) {plugin = instance;}
     
     public static FileConfiguration config;
-    
+    // note to self: config is instantiated ONLY once initConfig() is called.
     public static void initConfig(){config = plugin.getConfig();}
+    
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockBreak(BlockBreakEvent e){
+        Location loc = e.getBlock().getLocation();
+		
+        if(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_BREAK.key())){
+            String arenakey = Arenas.getNearbyArena(loc);
+            if(arenakey!=null){
+                if(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_INARENA.key())){
+                    if(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_INGAME.key())){
+                        if(!Arenas.isInGame(arenakey)) return;
+                    }
+                    e.setCancelled(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_BREAK.key()));
+                }
+            } else {
+                if(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_OUTARENA.key())){
+                    e.setCancelled(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_BREAK));
+                }
+            }
+        }
+    }
+	
+	public void onBlockCanBuild(BlockCanBuildEvent e){
+		Location loc = e.getBlock().getLocation();
+		
+		if(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_BUILD.key())){
+            String arenakey = Arenas.getNearbyArena(loc);
+            if(arenakey!=null){
+                if(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_INARENA.key())){
+                    if(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_INGAME.key())){
+                        if(!Arenas.isInGame(arenakey)) return;
+                    }
+                    e.setBuildable(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_BUILD.key()));
+                }
+            } else {
+                if(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_OUTARENA.key())){
+                    e.setBuildable(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_BUILD.key()));
+                }
+            }
+        }
+	}
+	
+	public void onPlayerCraft(CraftItemEvent e){
+		Location loc = e.getWhoClicked().getLocation();
+		
+		if(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_CRAFT.key())){
+            String arenakey = Arenas.getNearbyArena(loc);
+            if(arenakey!=null){
+                if(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_INARENA.key())){
+                    if(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_INGAME.key())){
+                        if(!Arenas.isInGame(arenakey)) return;
+                    }
+                    e.setCancelled(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_CRAFT.key()));
+                }
+            } else {
+                if(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_OUTARENA.key())){
+                    e.setCancelled(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_CRAFT.key()));
+                }
+            }
+        }
+	}
     
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDisconnect(PlayerQuitEvent e){
         String arenakey = Arenas.getArenaByTrib(e.getPlayer());
         if(arenakey!=null) 
             if(Arenas.isInGame(arenakey)) 
-                Arenas.removeTrib(arenakey, e.getPlayer().getName());
+                if(config.getBoolean(ConfigKeys.OPTS_DURGM_KICKONDISC.key()), false)
+                    Arenas.removeTrib(arenakey, e.getPlayer().getName());
     }
     
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -47,7 +110,7 @@ public class HungerListener implements Listener {
         }
     }
     
-//    @EventHandler(priority = EventPriority.HIGHEST)
+//    @EventHandler(priority = EventPriority.HIGHEST) //Disabled for now... 
     public void onPlayerChat(PlayerChatEvent event){
         event.setCancelled(true);
         
