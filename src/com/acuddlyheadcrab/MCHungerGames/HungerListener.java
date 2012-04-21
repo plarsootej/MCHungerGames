@@ -1,8 +1,9 @@
 package com.acuddlyheadcrab.MCHungerGames;
 
+import com.acuddlyheadcrab.util.ConfigKeys;
+import com.acuddlyheadcrab.util.Utility;
 import java.util.Iterator;
 import java.util.Set;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -12,15 +13,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockCanBuildEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.block.BlockBreakEvent;
-
-import com.acuddlyheadcrab.util.*;
 
 
 public class HungerListener implements Listener {
@@ -47,7 +48,7 @@ public class HungerListener implements Listener {
                 }
             } else {
                 if(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_OUTARENA.key())){
-                    e.setCancelled(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_BREAK));
+                    e.setCancelled(config.getBoolean(ConfigKeys.OPTS_BLOCKPROT_BREAK.key()));
                 }
             }
         }
@@ -98,7 +99,7 @@ public class HungerListener implements Listener {
         String arenakey = Arenas.getArenaByTrib(e.getPlayer());
         if(arenakey!=null) 
             if(Arenas.isInGame(arenakey)) 
-                if(config.getBoolean(ConfigKeys.OPTS_DURGM_KICKONDISC.key()), false)
+                if(config.getBoolean(ConfigKeys.OPTS_DURGM_KICKONDISC.key()))
                     Arenas.removeTrib(arenakey, e.getPlayer().getName());
     }
     
