@@ -1,14 +1,15 @@
 Options:
     Debug:
         onCommand: true
+        onBlockChange: true
     BlockProtection:
-        Building: true
-        Breaking: true
-        Crafting: true
-# The rules above apply to the following conditions
+        Building_enabled: true
+        Breaking_enabled: true
+        Crafting_enabled: true
         InArenas: true
         Only_while_ingame: true
         OutsideArenas: true
+        Show_warning_to_players: true
     Gamemakers_can_edit: true
     During_games:
         kick_on_disconnect: false
