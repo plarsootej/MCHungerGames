@@ -16,8 +16,6 @@ public class HungerGames extends JavaPlugin {
     public static HungerGames plugin;
     public static FileConfiguration config;
     
-    public CraftListener craftlistener = new CraftListener(this);
-    public HungerListener hungerlistener = new HungerListener(this);
     public PluginInfo pluginIO = new PluginInfo(this);
     public Utility util = new Utility(this);
     public Arenas arenas = new Arenas(this);
@@ -28,9 +26,10 @@ public class HungerGames extends JavaPlugin {
         initCommands();
         Arenas.initConfig();
         Arenas.initGames();
+        getServer().getPluginManager().registerEvents(new HungerListener(this), this);
+        getServer().getPluginManager().registerEvents(new TributeListener(this), this);
+        getServer().getPluginManager().registerEvents(new BlockListener(this), this);
         HungerListener.initConfig();
-        getServer().getPluginManager().registerEvents(craftlistener, this);
-        getServer().getPluginManager().registerEvents(hungerlistener, this);
     }
     
     @Override

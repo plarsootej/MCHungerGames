@@ -58,28 +58,35 @@ If you want an example of an Arena in the config here's the one i'm testing with
 <<code yml>>Options:
   Debug:
     onCommand: true
+    onBlockChange: true
+  BlockProtection:
+    Building_enabled: true
+    Breaking_enabled: true
+    Crafting_enabled: true
+    InArenas: true
+    Only_while_ingame: true
+    OutsideArenas: true
+    Show_warning_to_players: true
   Gamemakers_can_edit: true
   During_games:
     kick_on_disconnect: false
     noTeleporting: true
     nearbyTributeChat: true
     noMobSpawnInArena: false
-Currentgames:
-- test
-Game_count: 27
+Currentgames: []
+Game_count: 0
 Arenas:
-  test:
+  minecrabs:
     cornucopia:
       World: world
-      x: -464.53727486761807
-      y: 4.0
-      z: 94.37394197480197
-    Maxdistance: 20.0
-    in_game: true
-    gamemakers:
-    - videocat
-    tributes:
-    - acuddlyheadcrab<</code>>
+      x: -1587.6966923813288
+      y: 75.0
+      z: 303.2501390700929
+    Maxdistance: 75.0
+    gamemakers: []
+    tributes: []
+    in_game: false
+<</code>>
 
 
 
