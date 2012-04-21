@@ -1,4 +1,4 @@
-package com.acuddlyheadcrab.testplugin;
+package com.acuddlyheadcrab.util;
 
 /** 
  * @author acuddlyheadcrab
