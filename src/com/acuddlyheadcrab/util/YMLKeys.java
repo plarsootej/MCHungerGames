@@ -8,7 +8,7 @@ package com.acuddlyheadcrab.util;
  * If you're modifying this plugin's config, make sure to add/remove/edit the corresponding enum here!
  */
 
-public enum ConfigKeys {
+public enum YMLKeys {
     
     OPTIONS("Options."),
         OPTS_DEBUG(OPTIONS.key().concat("Debug.")),
@@ -24,28 +24,28 @@ public enum ConfigKeys {
             OPTS_BLOCKPROT_CRAFT(OPTS_BLOCKPROT.key().concat("Crafting_enabled")),
             OPTS_BLOCKPROT_SHOWWARN(OPTS_BLOCKPROT.key().concat("Show_warning_to_players")),
         OPTS_DURING_GAME(OPTIONS.key().concat("During_games.")),
-            OPTS_DURGM_KICKONDISC(OPTS_DURING_GAME.key().concat("kick_on_disconnect")),
+            OPTS_DURGM_DISQUALONDISC(OPTS_DURING_GAME.key().concat("disqualify_on_disconnect")),
             OPTS_DURGM_NOTP(OPTS_DURING_GAME.key().concat("noTeleporting")),
             OPTS_DURGM_NEARCHAT(OPTS_DURING_GAME.key().concat("nearbyTributeChat")),
             OPTS_DURGM_NOMOBS(OPTS_DURING_GAME.key().concat("noMobSpawnInArena")),
     CURRENT_GAMES("Currentgames"),
     GAME_COUNT("Game_count"),
     ARENAS("Arenas."),
-    ARN_CENTER_WRLD(".cornucopia.World"),
-    ARN_CENTER_X(".cornucopia.x"),
-    ARN_CENTER_Y(".cornucopia.y"),
-    ARN_CENTER_Z(".cornucopia.z"),
-    ARN_MAXDIST(".Maxdistance"),
-    ARN_GMS(".gamemakers"),
-    ARN_TRIBS(".tributes"),
-    ARN_INGAME(".in_game"),
-    ARN_INCOUNTDOWN(".in_countdown(DO_NOT_TOUCH)")
+            ARN_CENTER_WRLD(".cornucopia.World"),
+            ARN_CENTER_X(".cornucopia.x"),
+            ARN_CENTER_Y(".cornucopia.y"),
+            ARN_CENTER_Z(".cornucopia.z"),
+            ARN_RADIUS(".Radius"),
+            ARN_GMS(".gamemakers"),
+            ARN_TRIBS(".tributes"),
+            ARN_INGAME(".in_game"),
+            ARN_INCOUNTDOWN(".in_countdown(DO_NOT_TOUCH)")
     ;
     
     private final String key;
     
     
-    private ConfigKeys(String configkey) {
+    private YMLKeys(String configkey) {
         key = configkey;
     }
     

@@ -1,6 +1,6 @@
 package com.acuddlyheadcrab.MCHungerGames;
 
-import com.acuddlyheadcrab.util.ConfigKeys;
+import com.acuddlyheadcrab.util.YMLKeys;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -24,7 +24,7 @@ public class HungerListener implements Listener {
     
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onCreatureSpawn(CreatureSpawnEvent event){
-        if(config.getBoolean(ConfigKeys.OPTS_DURGM_NOMOBS.key())){
+        if(config.getBoolean(YMLKeys.OPTS_DURGM_NOMOBS.key())){
             String arenakey = Arenas.getNearbyArena(event.getLocation());
             if(arenakey!=null&&Arenas.isInGame(arenakey)) event.setCancelled(true);
         }

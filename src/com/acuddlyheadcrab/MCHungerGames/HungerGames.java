@@ -10,6 +10,7 @@ import com.acuddlyheadcrab.MCHungerGames.commands.HGGameCommand;
 import com.acuddlyheadcrab.MCHungerGames.commands.HungerGamesCommand;
 import com.acuddlyheadcrab.util.PluginInfo;
 import com.acuddlyheadcrab.util.Utility;
+import com.acuddlyheadcrab.util.YMLKeys;
 
 public class HungerGames extends JavaPlugin {
     
@@ -30,6 +31,18 @@ public class HungerGames extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new TributeListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockListener(this), this);
         HungerListener.initConfig();
+        
+//       This is just to update configs
+        PluginInfo.sendPluginInfo("Updating config...");
+        for(String arena : Utility.getArenasKeys()){
+            String arenakey = YMLKeys.ARENAS.key()+arena, path = arenakey+".Maxdistance";
+            double radius = config.getDouble(path);
+            config.set(arenakey+YMLKeys.ARN_RADIUS.key(), radius);
+            config.set(path, null);
+            PluginInfo.sendPluginInfo("Updated arena "+arena+"...");
+            saveConfig();
+        }
+        PluginInfo.sendPluginInfo("Done!");
     }
     
     @Override

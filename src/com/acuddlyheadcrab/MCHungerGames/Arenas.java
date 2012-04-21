@@ -10,7 +10,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.acuddlyheadcrab.util.ConfigKeys;
+import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Utility;
 
 public class Arenas {
@@ -21,14 +21,14 @@ public class Arenas {
     	hungergames = instance;
 	}
     
-    public static void submitNewArena(String name, Location center, double maxdist, List<String> gms, List<String> tribs, boolean ingame){
-    	String arenapath = ConfigKeys.ARENAS+name;
+    public static void submitNewArena(String name, Location center, double radius, List<String> gms, List<String> tribs, boolean ingame){
+    	String arenapath = YMLKeys.ARENAS+name;
     	config.set(arenapath, null);
     	config.set(getPathType(name, "center.World"), center.getWorld().getName());
     	config.set(getPathType(name, "center.x"), center.getX());
     	config.set(getPathType(name, "center.y"), center.getY());
     	config.set(getPathType(name, "center.z"), center.getZ());
-    	config.set(getPathType(name, "maxdist"), maxdist);
+    	config.set(getPathType(name, "radius"), radius);
     	config.set(getPathType(name, "gms"), gms);
     	config.set(getPathType(name, "tribs"), tribs);
     	config.set(getPathType(name, "ingame"), ingame);
@@ -56,8 +56,8 @@ public class Arenas {
         return center;
     }
     
-    public static double getMaxDist(String arenakey){
-        return config.getDouble(getPathType(arenakey, "maxdist"));
+    public static double getRadius(String arenakey){
+        return config.getDouble(getPathType(arenakey, "radius"));
     }
     
     public static List<String> getGMs(String arenakey){
@@ -95,7 +95,7 @@ public class Arenas {
     }
     
     public static void renameArena(String arenakey, String renameto){
-        submitNewArena(renameto, getCenter(arenakey), getMaxDist(arenakey), getGMs(arenakey), getTribs(arenakey), isInGame(arenakey));
+        submitNewArena(renameto, getCenter(arenakey), getRadius(arenakey), getGMs(arenakey), getTribs(arenakey), isInGame(arenakey));
         deleteArena(arenakey);
         hungergames.saveConfig();
     }
@@ -107,8 +107,8 @@ public class Arenas {
         configSet(getPathType(arenakey, "center.z"), loc.getZ());
     }
     
-    public static void setMaxDist(String arenakey, double maxdist){
-        configSet(getPathType(arenakey, "maxdist"), maxdist);
+    public static void setRadius(String arenakey, double radius){
+        configSet(getPathType(arenakey, "radius"), radius);
     }
     
     public static void setGMs(String arenakey, List<String> gms){
@@ -145,9 +145,9 @@ public class Arenas {
     
     public static void setInGame(String arenakey, boolean ingame){
         configSet(getPathType(arenakey, "ingame"), ingame);
-        List<String> currentgames = config.getStringList(ConfigKeys.CURRENT_GAMES.key());
+        List<String> currentgames = config.getStringList(YMLKeys.CURRENT_GAMES.key());
         if(ingame) currentgames.add(arenakey); else currentgames.remove(arenakey);
-        configSet(ConfigKeys.CURRENT_GAMES.key(), currentgames);
+        configSet(YMLKeys.CURRENT_GAMES.key(), currentgames);
     }
     
     
@@ -157,23 +157,23 @@ public class Arenas {
     }
     
     public static String getPathType(String arenakey, String type){
-        String arenapath = ConfigKeys.ARENAS.key()+arenakey;
-        if(type.equalsIgnoreCase("center.world")) return arenapath+ConfigKeys.ARN_CENTER_WRLD.key();
-        if(type.equalsIgnoreCase("center.x")) return arenapath+ConfigKeys.ARN_CENTER_X.key();
-        if(type.equalsIgnoreCase("center.y")) return arenapath+ConfigKeys.ARN_CENTER_Y.key();
-        if(type.equalsIgnoreCase("center.z")) return arenapath+ConfigKeys.ARN_CENTER_Z.key();
-        if(type.equalsIgnoreCase("maxdist"))return arenapath+ConfigKeys.ARN_MAXDIST.key();
-        if(type.equalsIgnoreCase("gms"))return arenapath+ConfigKeys.ARN_GMS.key();
-        if(type.equalsIgnoreCase("tribs"))return arenapath+ConfigKeys.ARN_TRIBS.key();
-        if(type.equalsIgnoreCase("ingame"))return arenapath+ConfigKeys.ARN_INGAME.key();
-        if(type.equalsIgnoreCase("countdown"))return arenapath+ConfigKeys.ARN_INCOUNTDOWN.key();
+        String arenapath = YMLKeys.ARENAS.key()+arenakey;
+        if(type.equalsIgnoreCase("center.world")) return arenapath+YMLKeys.ARN_CENTER_WRLD.key();
+        if(type.equalsIgnoreCase("center.x")) return arenapath+YMLKeys.ARN_CENTER_X.key();
+        if(type.equalsIgnoreCase("center.y")) return arenapath+YMLKeys.ARN_CENTER_Y.key();
+        if(type.equalsIgnoreCase("center.z")) return arenapath+YMLKeys.ARN_CENTER_Z.key();
+        if(type.equalsIgnoreCase("radius"))return arenapath+YMLKeys.ARN_RADIUS.key();
+        if(type.equalsIgnoreCase("gms"))return arenapath+YMLKeys.ARN_GMS.key();
+        if(type.equalsIgnoreCase("tribs"))return arenapath+YMLKeys.ARN_TRIBS.key();
+        if(type.equalsIgnoreCase("ingame"))return arenapath+YMLKeys.ARN_INGAME.key();
+        if(type.equalsIgnoreCase("countdown"))return arenapath+YMLKeys.ARN_INCOUNTDOWN.key();
         if(type.equalsIgnoreCase("self")) return arenapath;
         return null;
     }
     
     public static boolean isWithinArena(String arenakey, Location loc){
         if(getCenter(arenakey).getWorld()!=loc.getWorld()) return false;
-        if(loc.distance(getCenter(arenakey))<=getMaxDist(arenakey)) return true; else return false; 
+        if(loc.distance(getCenter(arenakey))<=getRadius(arenakey)) return true; else return false; 
     }
     
     public static String getNearbyArena(Location loc){
@@ -224,16 +224,16 @@ public class Arenas {
     
     public static void startGame(final String arenakey, int countdown){
         Arenas.tpAllOnlineTribs(arenakey, true);
-        configSet(ConfigKeys.GAME_COUNT.key(), getGameCount()+1);
+        configSet(YMLKeys.GAME_COUNT.key(), getGameCount()+1);
         startCountdown(arenakey, countdown);
     }
 
     public static int getGameCount() {
-        return config.getInt(ConfigKeys.GAME_COUNT.key());
+        return config.getInt(YMLKeys.GAME_COUNT.key());
     }
 
     public static void initGames() {
-        List<String> currentgames = config.getStringList(ConfigKeys.CURRENT_GAMES.key());
+        List<String> currentgames = config.getStringList(YMLKeys.CURRENT_GAMES.key());
 //        checks for any extra games (aka removes unecessary)
         for(int c=0;c<currentgames.size();c++){
             String game = currentgames.get(c);
@@ -250,7 +250,7 @@ public class Arenas {
                 if(Arenas.isInGame(arena)) currentgames.add(arena);
             }
         }
-        configSet(ConfigKeys.CURRENT_GAMES.key(), currentgames);
+        configSet(YMLKeys.CURRENT_GAMES.key(), currentgames);
     }
     
     public static boolean isInCountdown(String arenakey){

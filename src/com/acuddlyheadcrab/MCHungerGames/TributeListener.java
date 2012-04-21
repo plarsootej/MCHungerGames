@@ -18,7 +18,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import com.acuddlyheadcrab.util.ConfigKeys;
+import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Utility;
 
 
@@ -37,7 +37,8 @@ public class TributeListener implements Listener {
         String arenakey = Arenas.getArenaByTrib(e.getPlayer());
         if(arenakey!=null) 
             if(Arenas.isInGame(arenakey)) 
-                if(config.getBoolean(ConfigKeys.OPTS_DURGM_KICKONDISC.key()))
+                if(config.getBoolean(YMLKeys.OPTS_DURGM_DISQUALONDISC.key()))
+                    Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+""+e.getPlayer().getName()+" has been disqualified from "+arenakey+"!");
                     Arenas.removeTrib(arenakey, e.getPlayer().getName());
     }
     

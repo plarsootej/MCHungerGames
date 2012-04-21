@@ -12,10 +12,10 @@ Options:
         Show_warning_to_players: true
     Gamemakers_can_edit: true
     During_games:
-        kick_on_disconnect: false
+        disqualify_on_disconnect: false
         noTeleporting: true # not yet implemented
         nearbyTributeChat: true # not yet implemented
         noMobSpawnInArena: false
 Currentgames: []
 Game_count: 0
-Arenas: {}
+Arenas: {} #THIS NEEDS TO BE HERE. Represents an empty Map type

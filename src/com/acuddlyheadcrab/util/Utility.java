@@ -198,7 +198,7 @@ public class Utility {
         if(sender instanceof Player){
             String arenakey = getArenaByKey(arena);
             if(arenakey!=null){
-                if(config.getStringList(ConfigKeys.ARENAS.key()+arenakey+ConfigKeys.ARN_GMS.key()).contains(sender.getName())) return true;
+                if(config.getStringList(YMLKeys.ARENAS.key()+arenakey+YMLKeys.ARN_GMS.key()).contains(sender.getName())) return true;
             }
         }
         return false;
