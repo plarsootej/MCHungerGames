@@ -7,7 +7,7 @@ Options:
         Crafting: true
 # The rules above apply to the following conditions
         InArenas: true
-            Only_while_ingame: true
+        Only_while_ingame: true
         OutsideArenas: true
     Gamemakers_can_edit: true
     During_games:
@@ -17,4 +17,4 @@ Options:
         noMobSpawnInArena: false
 Currentgames: []
 Game_count: 0
-Arenas:{}
+Arenas: {}
