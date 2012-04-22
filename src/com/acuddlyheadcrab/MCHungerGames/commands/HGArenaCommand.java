@@ -10,7 +10,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-
 import com.acuddlyheadcrab.MCHungerGames.Arenas;
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
 import com.acuddlyheadcrab.util.YMLKeys;
@@ -43,10 +42,31 @@ public class HGArenaCommand implements CommandExecutor{
                     hga_new = arg1.equalsIgnoreCase("new"),
                     hga_del = arg1.equalsIgnoreCase("del"),
                     hga_list = arg1.equalsIgnoreCase("list"),
+                    hga_lounge = arg1.equalsIgnoreCase("lounge"),
                     hga_tp = arg1.equalsIgnoreCase("tp"),
                     hga_tpall = arg1.equalsIgnoreCase("tpall")||arg1.equalsIgnoreCase("tpa"),
-                    hga_rename = arg1.equalsIgnoreCase("rename")
+                    hga_rename = arg1.equalsIgnoreCase("rename"),
+                    hga_join = arg1.equalsIgnoreCase("join")
                 ;
+                
+                if(hga_join){
+                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga join command");
+                    if(sender.hasPermission(Perms.HGA_JOIN.perm())){
+                        if(isplayer){
+                            try{
+                                String arenakey = Utility.getArenaByKey(args[1]);
+                                
+                                if(arenakey!=null){
+                                    if(Arenas.isInGame(arenakey)||Arenas.isInCountdown(arenakey)) PluginInfo.wrongFormatMsg(sender, arenakey+" is currently in game!");
+                                    Arenas.addTrib(arenakey, player.getName());
+                                    player.sendMessage(ChatColor.LIGHT_PURPLE+"You have added yourself as a tribute to "+arenakey); return true;
+                                } else PluginInfo.wrongFormatMsg(sender, "Could not find \""+args[1]+"\"!"); return true; 
+                            }catch(IndexOutOfBoundsException e){
+                                PluginInfo.wrongFormatMsg(sender, "/hga join <arena>"); return true;
+                            }
+                        } else PluginInfo.sendOnlyPlayerMsg(sender); return true;
+                    } else PluginInfo.sendNoPermMsg(sender); return true;
+                }
                 
                 if(hga_info){
                     if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga info command");
@@ -185,6 +205,31 @@ public class HGArenaCommand implements CommandExecutor{
                         sender.sendMessage(ChatColor.AQUA+"Arenas: "+arenas);
                         return true;
                     }
+                }
+                
+                if(hga_lounge){
+                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga tp command");
+                    if(isplayer){
+                        if(sender.hasPermission(Perms.HGA_LOUNGE.perm())){
+                            try{
+                                String arg2 = args[1];
+                                String arenakey = Utility.getArenaByKey(arg2);
+                                
+                                if(arenakey!=null){
+                                    Location loc = null;
+                                    try{
+                                        loc = Arenas.getLounge(arenakey);
+                                    }catch(NullPointerException e){
+                                        player.sendMessage(ChatColor.RED+"Arena "+ChatColor.GOLD+arenakey+ChatColor.RED+" does not have a lounge set!"); return true;
+                                    }
+                                    player.teleport(loc);
+                                    player.sendMessage(ChatColor.GREEN+"Teleported you to the lounge of "+arenakey);
+                                } else PluginInfo.wrongFormatMsg(sender, "Could not find the arena \""+arg2+"\""); return true;
+                            }catch(IndexOutOfBoundsException e){
+                                PluginInfo.wrongFormatMsg(sender, "/hga lounge <arena>"); return true;
+                            }
+                        } else PluginInfo.sendNoPermMsg(sender);
+                    } else PluginInfo.sendOnlyPlayerMsg(sender);
                 }
                 
                 if(hga_tp){

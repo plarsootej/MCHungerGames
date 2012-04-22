@@ -44,6 +44,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                         boolean
                             corncp = arg2.equalsIgnoreCase("cornucopia")||arg2.equalsIgnoreCase("corncp")||arg2.equalsIgnoreCase("ccp"),
                             setccp = arg2.equalsIgnoreCase("setcornucopia")||arg2.equalsIgnoreCase("setcorncp")||arg2.equalsIgnoreCase("setccp")||corncp,
+                            setlounge = arg2.equalsIgnoreCase("setlounge")||arg2.equalsIgnoreCase("lounge"),
                             radius = arg2.equalsIgnoreCase("radius")||arg2.equalsIgnoreCase("radius"),
                             addgm = arg2.equalsIgnoreCase("addgm"),
                             addtrib = arg2.equalsIgnoreCase("addtrib"),
@@ -59,6 +60,17 @@ public class HGArenaEditCommand implements CommandExecutor{
                                 if(isplayer){
                                 	Arenas.setCenter(arenakey, player.getLocation());
                                     player.sendMessage(ChatColor.GREEN+"Set your location as the center of "+arenakey);
+                                    return true;
+                                } else PluginInfo.sendOnlyPlayerMsg(sender); return true;
+                            } else PluginInfo.sendNoPermMsg(sender); return true;
+                        }
+                        
+                        if(setlounge){
+                            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> setlounge command");
+                            if(sender.hasPermission(Perms.HGAE_SETLOUNGE.perm())||Utility.isGameMakersArena(sender, arenakey)){
+                                if(isplayer){
+                                    Arenas.setLounge(arenakey, player.getLocation());
+                                    player.sendMessage(ChatColor.GREEN+"Set your location as the lounge of "+arenakey);
                                     return true;
                                 } else PluginInfo.sendOnlyPlayerMsg(sender); return true;
                             } else PluginInfo.sendNoPermMsg(sender); return true;
@@ -171,7 +183,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                                     
                                     try{
                                         if(Arenas.getTribs(arenakey).contains(arg3)){
-                                            Arenas.removeTrib(arenakey, arg3);
+                                            Arenas.removeTrib(arenakey, arg3, false);
                                             sender.sendMessage(ChatColor.GREEN+"Removed "+arg3+" from "+arenakey+"'s tributes");
                                              return true;
                                         } else PluginInfo.wrongFormatMsg(sender, arg3+" has already been removed from "+arenakey+"'s tributes!"); return true;

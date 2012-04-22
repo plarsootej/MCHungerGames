@@ -5,6 +5,7 @@ public enum Perms {
     
     HG_RELOAD("HG.reload"),
     
+    HGA_LOUNGE("HG.arena.lounge"),
     HGA_TP("HG.arena.tp"),
     HGA_TPALL("HG.arena.tpall"),
     HGA_INFO("HG.arena.info"),
@@ -12,9 +13,10 @@ public enum Perms {
     HGA_DEL("HG.arena.del"),
     HGA_LIST("HG.arena.list"),
     HGA_RENAME("HG.arena.rename"),
-//    HGA_LEAVE("HG.arena.leave"),
+    HGA_JOIN("HG.arena.join"),
     
     HGAE_SETCCP("HG.edit.setcornucopia"),
+    HGAE_SETLOUNGE("HG.edit.setlounge"),
     HGAE_LIMIT("HG.edit.limit"),
     HGAE_ADDGM("HG.edit.addgm"),
     HGAE_ADDTRIB("HG.edit.addtrib"),

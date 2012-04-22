@@ -56,6 +56,23 @@ public class Arenas {
         return center;
     }
     
+    public static Location getLounge(String arenakey){
+        String worldstring = arenas.getString(getPathType(arenakey, "lounge.world"));
+        World world = Bukkit.getWorld(worldstring);
+        if(world==null) throw new NullPointerException("Could not find world \""+worldstring+"\"");
+        double
+            x = arenas.getDouble(getPathType(arenakey, "lounge.x")),
+            y = arenas.getDouble(getPathType(arenakey, "lounge.y")),
+            z = arenas.getDouble(getPathType(arenakey, "lounge.z"))
+        ;
+        float
+            pitch = (float) arenas.getDouble(getPathType(arenakey, "lounge.pitch")),
+            yaw = (float) arenas.getDouble(getPathType(arenakey, "lounge.yaw"))
+        ;
+        Location lounge = new Location(world, x, y, z, yaw, pitch);
+        return lounge;
+    }
+    
     public static double getRadius(String arenakey){
         return arenas.getDouble(getPathType(arenakey, "radius"));
     }
@@ -107,6 +124,16 @@ public class Arenas {
         arenasSet(getPathType(arenakey, "center.z"), loc.getZ());
     }
     
+    
+    public static void setLounge(String arenakey, Location loc){
+        arenasSet(getPathType(arenakey, "lounge.world"), loc.getWorld().getName());
+        arenasSet(getPathType(arenakey, "lounge.x"), loc.getX());
+        arenasSet(getPathType(arenakey, "lounge.y"), loc.getY());
+        arenasSet(getPathType(arenakey, "lounge.z"), loc.getZ());
+        arenasSet(getPathType(arenakey, "lounge.pitch"), loc.getPitch());
+        arenasSet(getPathType(arenakey, "lounge.yaw"), loc.getYaw());
+    }
+    
     public static void setRadius(String arenakey, double radius){
         arenasSet(getPathType(arenakey, "radius"), radius);
     }
@@ -137,10 +164,14 @@ public class Arenas {
     	setTribs(arenakey, tribs);
     }
     
-    public static void removeTrib(String arenakey, String player){
+    public static void removeTrib(String arenakey, String player, boolean from_event){
     	List<String> tribs = getTribs(arenakey);
     	tribs.remove(player);
     	setTribs(arenakey, tribs);
+    	if(from_event){
+    	    Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+player+" is no longer in battle for "+arenakey+"!");
+    	    Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+"There are now "+getTribs(arenakey).size()+" tributes left for "+arenakey+"!");
+    	}
     }
     
     public static void setInGame(String arenakey, boolean ingame){
@@ -162,6 +193,12 @@ public class Arenas {
         if(type.equalsIgnoreCase("center.x")) return arenapath+YMLKeys.ARN_CENTER_X.key();
         if(type.equalsIgnoreCase("center.y")) return arenapath+YMLKeys.ARN_CENTER_Y.key();
         if(type.equalsIgnoreCase("center.z")) return arenapath+YMLKeys.ARN_CENTER_Z.key();
+        if(type.equalsIgnoreCase("lounge.world")) return arenapath+YMLKeys.ARN_LOUNGE_WRLD.key();
+        if(type.equalsIgnoreCase("lounge.x")) return arenapath+YMLKeys.ARN_LOUNGE_X.key();
+        if(type.equalsIgnoreCase("lounge.y")) return arenapath+YMLKeys.ARN_LOUNGE_Y.key();
+        if(type.equalsIgnoreCase("lounge.z")) return arenapath+YMLKeys.ARN_LOUNGE_Z.key();
+        if(type.equalsIgnoreCase("lounge.pitch")) return arenapath+YMLKeys.ARN_LOUNGE_PITCH.key();
+        if(type.equalsIgnoreCase("lounge.yaw")) return arenapath+YMLKeys.ARN_LOUNGE_YAW.key();
         if(type.equalsIgnoreCase("radius"))return arenapath+YMLKeys.ARN_RADIUS.key();
         if(type.equalsIgnoreCase("gms"))return arenapath+YMLKeys.ARN_GMS.key();
         if(type.equalsIgnoreCase("tribs"))return arenapath+YMLKeys.ARN_TRIBS.key();

@@ -18,9 +18,9 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
+import com.acuddlyheadcrab.util.PluginInfo;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Utility;
-import com.acuddlyheadcrab.util.Utility.ChatProximity;
 
 
 public class TributeListener implements Listener {
@@ -40,30 +40,22 @@ public class TributeListener implements Listener {
             if(Arenas.isInGame(arenakey)) 
                 if(config.getBoolean(YMLKeys.OPS_DURGM_DISQUALONDISC.key()))
                     Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+""+e.getPlayer().getName()+" has been disqualified from "+arenakey+"!");
-                    Arenas.removeTrib(arenakey, e.getPlayer().getName());
+                    Arenas.removeTrib(arenakey, e.getPlayer().getName(), true);
     }
     
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onPlayerChat(PlayerChatEvent event){
-      System.out.println(config.getBoolean(YMLKeys.OPS_NEARCHAT_ENABLED.key()));
       if(config.getBoolean(YMLKeys.OPS_NEARCHAT_ENABLED.key())){
           event.setCancelled(true);
           
           Player talkingplayer = event.getPlayer();
           String format = event.getFormat(), msg = event.getMessage();
           
-          System.out.println("Talking player: "+talkingplayer.getName());
-          
-          
           Set<Player> recips = event.getRecipients();
           for (Iterator<Player> i=recips.iterator();i.hasNext();) {
               Player recip = i.next();
-              
-              ChatProximity prox = Utility.getChatProximity(talkingplayer, recip);
-              System.out.println("\t"+recip.getName()+" hears: "+prox+" (Distance: "+Math.floor(prox.getDistance())+")");
-              
-              
+              PluginInfo.log.info(ChatColor.stripColor(format));
               Utility.sendChatProxMessage(recip, talkingplayer, msg, format);
           }
       }
@@ -76,7 +68,7 @@ public class TributeListener implements Listener {
       if(arena!=null){
           if(Arenas.isInGame(arena)){
               if(Arenas.isTribute(arena, player)){
-                  Arenas.removeTrib(arena, player.getName());
+                  Arenas.removeTrib(arena, player.getName(), false);
                   // replace with broadcast to non-tributes
                   for(Player remainingtrib : Arenas.getOnlineTribs(arena)){
                       Location loc = remainingtrib.getLocation();
@@ -84,6 +76,7 @@ public class TributeListener implements Listener {
                       remainingtrib.getWorld().createExplosion(loc, 0);
                   }
                   Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+"Tribute "+player.getName()+" has died!");
+                  Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+"There are now "+Arenas.getTribs(arena).size()+" tributes left for "+arena+"!");
                   int winner = 1; //this is here in case I might want to change the rules ;D (like in the story)
                   if(Arenas.getOnlineTribs(arena).size()==winner){
                       String suffix = "";

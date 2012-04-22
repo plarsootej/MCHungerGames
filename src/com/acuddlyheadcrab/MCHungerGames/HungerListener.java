@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 
 public class HungerListener implements Listener {
@@ -22,11 +23,21 @@ public class HungerListener implements Listener {
     }
     
     
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onCreatureSpawn(CreatureSpawnEvent event){
         if(config.getBoolean(YMLKeys.OPS_DURGM_NOMOBS.key())){
             String arenakey = Arenas.getNearbyArena(event.getLocation());
             if(arenakey!=null&&Arenas.isInGame(arenakey)) event.setCancelled(true);
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerJoin(PlayerJoinEvent e){
+        String arenakey = Arenas.getArenaByTrib(e.getPlayer());
+        if(arenakey!=null){
+            if(Arenas.isInGame(arenakey)||Arenas.isInCountdown(arenakey)){
+                e.getPlayer().teleport(Arenas.getCenter(arenakey));
+            }
         }
     }
     
