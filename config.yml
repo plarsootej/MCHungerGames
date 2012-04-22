@@ -1,21 +1,28 @@
+# This is the start of a comment. However, I just forgot everyhitng i was going to put here so, fuck it, i'll just keep this.
+
 Options:
     Debug:
-        onCommand: true
-        onBlockChange: true
+        onCommand: false
+        onBlockChange: false
     BlockProtection:
-        Building_enabled: true
-        Breaking_enabled: true
-        Crafting_enabled: true
-        InArenas: true
-        Only_while_ingame: true
-        OutsideArenas: true
+        Rules:
+            Building_enabled: true
+            Breaking_enabled: true
+            Crafting_enabled: true
+        Conditions:
+            InArenas: true
+            Only_while_ingame: true
+            OutsideArenas: true
         Show_warning_to_players: true
     Gamemakers_can_edit: true
-    During_games:
-        disqualify_on_disconnect: false
-        noTeleporting: true # not yet implemented
-        nearbyTributeChat: true # not yet implemented
-        noMobSpawnInArena: false
-Currentgames: []
-Game_count: 0
-Arenas: {} #THIS NEEDS TO BE HERE. Represents an empty Map type
+    Arena_Options:
+        During_games:
+            noMobSpawnInArena: false
+            disqualify_on_disconnect: false
+            noTeleporting: true
+    NearbyTributeChat:
+        Enabled: true
+        Distances:
+            Clear: 24
+            Disembodied: 36
+            Garbled: 50

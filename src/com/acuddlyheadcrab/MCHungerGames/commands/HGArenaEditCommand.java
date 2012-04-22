@@ -54,7 +54,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                         if(Arenas.isInGame(arenakey)||Arenas.isInCountdown(arenakey)){PluginInfo.sendAlreadyInGameMsg(sender, arenakey); return true;}
                         
                         if(setccp){
-                            if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> setccp command");
+                            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> setccp command");
                             if(sender.hasPermission(Perms.HGAE_SETCCP.perm())||Utility.isGameMakersArena(sender, arenakey)){
                                 if(isplayer){
                                 	Arenas.setCenter(arenakey, player.getLocation());
@@ -65,7 +65,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                         }
                         
                         if(radius){
-                            if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> radius command");
+                            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> radius command");
                             if(sender.hasPermission(Perms.HGAE_LIMIT.perm())||Utility.isGameMakersArena(sender, arenakey)){
                                 try{
                                     String arg3 = args[2];
@@ -81,7 +81,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                         }
                         
                         if(addgm){
-                            if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> addgm command");
+                            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> addgm command");
                             if(sender.hasPermission(Perms.HGAE_ADDGM.perm())){
                                 try{
                                     String arg3 = args[2];
@@ -112,7 +112,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                         }
                         
                         if(addtrib){
-                            if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> addtrib command");
+                            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> addtrib command");
                             if(sender.hasPermission(Perms.HGAE_ADDTRIB.perm())||Utility.isGameMakersArena(sender, arenakey)){
                                 try{
                                     String arg3 = args[2];
@@ -143,7 +143,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                         }
                         
                         if(removegm){
-                            if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> removegm command");
+                            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> removegm command");
                             if(sender.hasPermission(Perms.HGAE_REMOVEGM.perm())){
                                 try{
                                     String arg3 = args[2];
@@ -164,7 +164,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                         }
                         
                         if(removetrib){
-                            if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> removetrib command");
+                            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> removetrib command");
                             if(sender.hasPermission(Perms.HGAE_REMOVETRIB.perm())||Utility.isGameMakersArena(sender, arenakey)){
                                 try{
                                     String arg3 = args[2];
@@ -188,7 +188,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                     }catch(IndexOutOfBoundsException e){}
                 } else PluginInfo.wrongFormatMsg(sender, "Could not find the arena \""+arg1+"\""); return true;
             }catch(IndexOutOfBoundsException e){}
-            if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted to show /hgae branch help");
+            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted to show /hgae branch help");
             PluginInfo.sendCommandInfo(sender, "/hgae <arena>", "");
             PluginInfo.sendCommandInfo(sender, "     cornucopia (ccp)", "Set the center to your location");
             PluginInfo.sendCommandInfo(sender, "     radius", "Create a new arena at your location");

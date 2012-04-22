@@ -20,6 +20,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Utility;
+import com.acuddlyheadcrab.util.Utility.ChatProximity;
 
 
 public class TributeListener implements Listener {
@@ -37,25 +38,34 @@ public class TributeListener implements Listener {
         String arenakey = Arenas.getArenaByTrib(e.getPlayer());
         if(arenakey!=null) 
             if(Arenas.isInGame(arenakey)) 
-                if(config.getBoolean(YMLKeys.OPTS_DURGM_DISQUALONDISC.key()))
+                if(config.getBoolean(YMLKeys.OPS_DURGM_DISQUALONDISC.key()))
                     Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+""+e.getPlayer().getName()+" has been disqualified from "+arenakey+"!");
                     Arenas.removeTrib(arenakey, e.getPlayer().getName());
     }
     
 
-//  @EventHandler(priority = EventPriority.HIGHEST) //Disabled for now... 
+  @EventHandler(priority = EventPriority.HIGHEST)
   public void onPlayerChat(PlayerChatEvent event){
-      event.setCancelled(true);
-      
-      Player talkingplayer = event.getPlayer();
-      String format = event.getFormat();
-      
-      System.out.println("Talking player: "+talkingplayer.getName());
-      Set<Player> recips = event.getRecipients();
-      for (Iterator<Player> i=recips.iterator();i.hasNext();) {
-          Player recip = i.next();
-          System.out.println("     "+recip.getName()+": "+Utility.getChatProximity(talkingplayer, recip));
-          Utility.sendChatProxMessage(talkingplayer, recip, format);
+      System.out.println(config.getBoolean(YMLKeys.OPS_NEARCHAT_ENABLED.key()));
+      if(config.getBoolean(YMLKeys.OPS_NEARCHAT_ENABLED.key())){
+          event.setCancelled(true);
+          
+          Player talkingplayer = event.getPlayer();
+          String format = event.getFormat(), msg = event.getMessage();
+          
+          System.out.println("Talking player: "+talkingplayer.getName());
+          
+          
+          Set<Player> recips = event.getRecipients();
+          for (Iterator<Player> i=recips.iterator();i.hasNext();) {
+              Player recip = i.next();
+              
+              ChatProximity prox = Utility.getChatProximity(talkingplayer, recip);
+              System.out.println("\t"+recip.getName()+" hears: "+prox+" (Distance: "+Math.floor(prox.getDistance())+")");
+              
+              
+              Utility.sendChatProxMessage(recip, talkingplayer, msg, format);
+          }
       }
   }
   

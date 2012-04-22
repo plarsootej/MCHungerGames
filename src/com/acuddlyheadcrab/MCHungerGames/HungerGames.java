@@ -1,6 +1,11 @@
 package com.acuddlyheadcrab.MCHungerGames;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.acuddlyheadcrab.MCHungerGames.commands.CornucopiaCommand;
@@ -16,6 +21,10 @@ public class HungerGames extends JavaPlugin {
     
     public static HungerGames plugin;
     public static FileConfiguration config;
+    public static FileConfiguration ArenasFile;
+    public static FileConfiguration ChestItemsFile;
+    private File fileChestItems = null;
+    private File fileArenas = null;
     
     public PluginInfo pluginIO = new PluginInfo(this);
     public Utility util = new Utility(this);
@@ -24,25 +33,34 @@ public class HungerGames extends JavaPlugin {
     @Override
     public void onEnable() {
         loadConfig();
+        loadArenasFile();
+        loadChestItemsFile();
         initCommands();
-        Arenas.initConfig();
+        Arenas.initFiles();
         Arenas.initGames();
         getServer().getPluginManager().registerEvents(new HungerListener(this), this);
         getServer().getPluginManager().registerEvents(new TributeListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockListener(this), this);
         HungerListener.initConfig();
         
-//       This is just to update configs
-        PluginInfo.sendPluginInfo("Updating config...");
+//       This is just to update old configs
+        boolean containsoldkey = false;
         for(String arena : Utility.getArenasKeys()){
-            String arenakey = YMLKeys.ARENAS.key()+arena, path = arenakey+".Maxdistance";
-            double radius = config.getDouble(path);
-            config.set(arenakey+YMLKeys.ARN_RADIUS.key(), radius);
-            config.set(path, null);
-            PluginInfo.sendPluginInfo("Updated arena "+arena+"...");
-            saveConfig();
+            if(ArenasFile.getConfigurationSection(YMLKeys.ARENAS.key()+arena).contains(".Maxdistance"))
+                containsoldkey = true;
         }
-        PluginInfo.sendPluginInfo("Done!");
+        if(containsoldkey){
+            PluginInfo.sendPluginInfo("Updating config...");
+            for(String arena : Utility.getArenasKeys()){
+                String arenakey = YMLKeys.ARENAS.key()+arena, path = arenakey+".Maxdistance";
+                double radius = config.getDouble(path);
+                config.set(arenakey+YMLKeys.ARN_RADIUS.key(), radius);
+                config.set(path, null);
+                PluginInfo.sendPluginInfo("Updated arena "+arena+"...");
+                saveConfig();
+            }
+            PluginInfo.sendPluginInfo("Done!");
+        }
     }
     
     @Override
@@ -62,6 +80,72 @@ public class HungerGames extends JavaPlugin {
         config = getConfig();
         config.options().copyDefaults(true);
         saveConfig();
+    }
+    
+    public void reloadArenas() {
+        if (fileArenas == null) {
+        fileArenas = new File(getDataFolder(), "Arenas.yml");
+        }
+        ArenasFile = YamlConfiguration.loadConfiguration(fileArenas);
+        
+        InputStream defConfigStream = getResource("Arenas.yml");
+        if (defConfigStream != null) {
+            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+            ArenasFile.setDefaults(defConfig);
+        }
+    }
+    
+    public void loadArenasFile(){
+        ArenasFile = getArenasFile();
+        ArenasFile.options().copyDefaults(true);
+        saveArenas();
+    }
+    
+    public FileConfiguration getArenasFile() {
+        if (ArenasFile == null) reloadArenas();
+        return ArenasFile;
+    }
+    
+    public void saveArenas() {
+        if (ArenasFile == null || fileArenas == null) return;
+        try {
+            ArenasFile.save(fileArenas);
+        } catch (IOException ex) {
+            PluginInfo.sendPluginInfo("Could not save config to " + fileArenas.getName() + ex);
+        }
+    }
+    
+    public void reloadChestItems() {
+        if (fileChestItems == null) {
+        fileChestItems = new File(getDataFolder(), "ChestItems.yml");
+        }
+        ChestItemsFile = YamlConfiguration.loadConfiguration(fileChestItems);
+        
+        InputStream defConfigStream = getResource("ChestItems.yml");
+        if (defConfigStream != null) {
+            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+            ChestItemsFile.setDefaults(defConfig);
+        }
+    }
+    
+    public void loadChestItemsFile(){
+        ChestItemsFile = getChestItemsFile();
+        ChestItemsFile.options().copyDefaults(true);
+        saveChestItems();
+    }
+    
+    public FileConfiguration getChestItemsFile() {
+        if (ChestItemsFile == null) reloadChestItems();
+        return ChestItemsFile;
+    }
+    
+    public void saveChestItems() {
+        if (ChestItemsFile == null || fileChestItems == null) return;
+        try {
+            ChestItemsFile.save(fileChestItems);
+        } catch (IOException ex) {
+            PluginInfo.sendPluginInfo("Could not save config to " + fileChestItems.getName() + ex);
+        }
     }
     
     public static JavaPlugin getPlugin(){

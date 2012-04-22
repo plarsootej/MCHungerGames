@@ -32,7 +32,7 @@ public class HungerGamesCommand implements CommandExecutor{
             try{
                 String arg1 = args[0];
                 if(arg1.equalsIgnoreCase("reload")){
-                    if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hg reload command");
+                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hg reload command");
                     if(sender.hasPermission(Perms.HG_RELOAD.perm())){
                         hungergames.saveConfig();
                         PluginInfo.sendPluginInfo("reloaded by "+sender.getName());
@@ -40,7 +40,7 @@ public class HungerGamesCommand implements CommandExecutor{
                     } else PluginInfo.sendNoPermMsg(sender);
                 }
             }catch(IndexOutOfBoundsException e){
-                if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted to show main cmd tree help");
+                if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted to show main cmd tree help");
                 PluginInfo.sendCommandsHelp(sender);
             }
         }

@@ -98,9 +98,9 @@ public class Utility {
     }
 
     public static List<String> getArenasKeys() {
-        config = HungerGames.getInstConfig();
+        FileConfiguration arenas = HungerGamesPlugin.getArenasFile();
         
-        Set<String> str_set = config.getConfigurationSection("Arenas").getKeys(false);
+        Set<String> str_set = arenas.getConfigurationSection("Arenas").getKeys(false);
         String[] keyarr = new String[str_set.size()];
         keyarr = str_set.toArray(keyarr);
         
@@ -195,10 +195,12 @@ public class Utility {
     }
     
     public static boolean isGameMakersArena(CommandSender sender, String arena) {
+        FileConfiguration arenas = HungerGamesPlugin.getArenasFile();
+        
         if(sender instanceof Player){
             String arenakey = getArenaByKey(arena);
             if(arenakey!=null){
-                if(config.getStringList(YMLKeys.ARENAS.key()+arenakey+YMLKeys.ARN_GMS.key()).contains(sender.getName())) return true;
+                if(arenas.getStringList(YMLKeys.ARENAS.key()+arenakey+YMLKeys.ARN_GMS.key()).contains(sender.getName())) return true;
             }
         }
         return false;
@@ -251,11 +253,31 @@ public class Utility {
     }
     
     public enum ChatProximity{
-        SELF,
-        GLOBAL,
-        CLEAR,
-        GARBLED,
-        INAUDIBLE;
+        SELF(0),
+        GLOBAL(0),
+        CLEAR(0),
+        DISEMBODIED(0),
+        GARBLED(0),
+        INAUDIBLE(0);
+        
+        private double distance;
+        
+        private ChatProximity(double dist) {
+            distance = dist;
+        }
+
+        public double getDistance() {
+            return distance;
+        }
+        
+        public void setDistance(final double newdist){
+            this.distance = newdist;
+        }
+        
+        public static ChatProximity withDistance(ChatProximity prox, final double dist){
+            prox.setDistance(dist);
+            return prox;
+        }
     }
     
     public static ChatProximity getChatProximity(Player talkingplayer, Player recip){
@@ -263,24 +285,48 @@ public class Utility {
         if(talkingplayer==recip) return ChatProximity.SELF;
         if(arenakey!=null){
             if(Arenas.isInGame(arenakey)){
-                double distance = recip.getLocation().distance(talkingplayer.getLocation());
-                if(distance<=36) return ChatProximity.CLEAR;
-                else if(distance<=42) return ChatProximity.GARBLED;
-                else return ChatProximity.INAUDIBLE;
+                double 
+                    distance = recip.getLocation().distance(talkingplayer.getLocation()),
+                    clear = config.getDouble(YMLKeys.OPS_NEARCHAT_DISTS_CLEAR.key()),
+                    disemboided = config.getDouble(YMLKeys.OPS_NEARCHAT_DISTS_DISEMBOIDED.key()),
+                    garbled = config.getDouble(YMLKeys.OPS_NEARCHAT_DISTS_GARBLED.key())
+                ;
+                if(distance<=clear) return ChatProximity.withDistance(ChatProximity.CLEAR, distance);
+                else if(distance<=disemboided) return ChatProximity.withDistance(ChatProximity.DISEMBODIED, distance);
+                else if(distance<=garbled) return ChatProximity.withDistance(ChatProximity.GARBLED, distance);
+                else return ChatProximity.withDistance(ChatProximity.INAUDIBLE, distance);
             }
         }
         return ChatProximity.GLOBAL;
     }
 
 
-    public static void sendChatProxMessage(Player recip, Player talkingplayer, String msg) {
+    public static void sendChatProxMessage(Player recip, Player talkingplayer, String msg, String format) {
         switch (Utility.getChatProximity(talkingplayer, recip)) {
-            case SELF: recip.sendMessage(msg); break;
-            case CLEAR: recip.sendMessage(msg); break;
-            case GLOBAL: recip.sendMessage(msg); break;
-            case GARBLED: recip.sendMessage(ChatColor.DARK_GRAY+""+ChatColor.MAGIC+msg); break;
+            case SELF: recip.sendMessage(format); break; 
+            case CLEAR: recip.sendMessage(format); break;
+            case GLOBAL: recip.sendMessage(format); break;
+            case DISEMBODIED: recip.sendMessage(format.replaceAll(talkingplayer.getName(), garblifyString(talkingplayer.getName(), ChatColor.GRAY))); break;
+            case GARBLED: recip.sendMessage(format.replaceAll(talkingplayer.getName(), garblifyString(talkingplayer.getName(), ChatColor.DARK_GRAY)).replaceAll(msg, garblifyString(msg, ChatColor.GRAY))); break;
             default: break;
         }
+    }
+    
+    public static String garblifyString(String string, ChatColor color){
+        Random rand = new Random();
+//        I know its... ungainly... but hey, it works
+        List<String> letters = new ArrayList<String>();
+        for(char chr : string.toCharArray()){
+                String 
+                    char_s = String.valueOf(chr),
+                    newchar = rand.nextBoolean() ? color+""+ChatColor.MAGIC+char_s+ChatColor.RESET : color+char_s;
+                ;
+//                this gives a 1/10 chance that the letter will just not be added
+                if(rand.nextInt(10)!=1){
+                    letters.add(newchar);
+                }
+        }
+        return concatList(letters, "");
     }
     
 }

@@ -30,6 +30,7 @@ public class HGGameCommand implements CommandExecutor{
     public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args) {
         
         FileConfiguration config = hungergames.getConfig();
+        FileConfiguration arenasfile = hungergames.getArenasFile();
         
         if(sender instanceof Player) PluginInfo.sendPluginInfo(sender.getName()+": /"+label+Utility.concatArray(args, " "));
         
@@ -43,7 +44,7 @@ public class HGGameCommand implements CommandExecutor{
                 ;
                 
                 if(start){
-                    if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgg start command");
+                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgg start command");
                     try{
                         String arg2 = args[1];
                         
@@ -78,7 +79,7 @@ public class HGGameCommand implements CommandExecutor{
                 }
                 
                 if(stop){
-                    if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgg stop command");
+                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgg stop command");
                     try{
                         String arg2 = args[1];
                         
@@ -88,10 +89,10 @@ public class HGGameCommand implements CommandExecutor{
                             if(sender.hasPermission(Perms.HGG_STOP.perm())||Utility.isGameMakersArena(sender, arenakey)){
                                 
                             	Arenas.setInGame(arenakey, false);
-                                List<String> games = config.getStringList(YMLKeys.CURRENT_GAMES.key());
+                                List<String> games = arenasfile.getStringList(YMLKeys.CURRENT_GAMES.key());
                                 games.remove(arenakey);
-                                Arenas.configSet(YMLKeys.CURRENT_GAMES.key(), games);
-                                sender.sendMessage(ChatColor.LIGHT_PURPLE+"Force stopped game in "+arenakey);
+                                Arenas.arenasSet(YMLKeys.CURRENT_GAMES.key(), games);
+                                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+"Force stopped game in "+arenakey);
                             } else PluginInfo.sendNoPermMsg(sender);
                         } else PluginInfo.wrongFormatMsg(sender, "Could not find the arena \""+arg2+"\"");
                     }catch(IndexOutOfBoundsException e){PluginInfo.wrongFormatMsg(sender, "/hgg stop <arena>");}
@@ -103,7 +104,7 @@ public class HGGameCommand implements CommandExecutor{
                 PluginInfo.sendCommandInfo(sender, "    stop <arena>", "Stops an ongoing game");
                 
             }catch(IndexOutOfBoundsException e){
-                String cur_games = config.getString(YMLKeys.CURRENT_GAMES.key());
+                String cur_games = arenasfile.getString(YMLKeys.CURRENT_GAMES.key());
                 cur_games = cur_games.trim();
                 if(cur_games==""||cur_games=="[]"){
                     cur_games = ChatColor.DARK_GRAY+"(none)";

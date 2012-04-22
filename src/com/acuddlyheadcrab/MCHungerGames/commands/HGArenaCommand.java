@@ -27,6 +27,7 @@ public class HGArenaCommand implements CommandExecutor{
     public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args){
         
         FileConfiguration config = hungergames.getConfig();
+        FileConfiguration arenasfile = hungergames.getArenasFile();
         
         boolean isplayer = sender instanceof Player;
         Player player = isplayer ? (Player) sender : null;
@@ -48,7 +49,7 @@ public class HGArenaCommand implements CommandExecutor{
                 ;
                 
                 if(hga_info){
-                    if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga info command");
+                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga info command");
                     if(sender.hasPermission(Perms.HGA_INFO.perm())){
                         try{
                             String arg2 = args[1];
@@ -73,7 +74,7 @@ public class HGArenaCommand implements CommandExecutor{
                                 }
                                 
                                 double
-                                    size = config.getDouble(arenapath+YMLKeys.ARN_RADIUS.key()),
+                                    size = arenasfile.getDouble(arenapath+YMLKeys.ARN_RADIUS.key()),
                                     x = corn.getBlockX(),
                                     y = corn.getBlockY(),
                                     z = corn.getBlockZ()
@@ -132,7 +133,7 @@ public class HGArenaCommand implements CommandExecutor{
                 } 
                 
                 if(hga_new){
-                    if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga new command");
+                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga new command");
                     if(sender.hasPermission(Perms.HGA_NEW.perm())){
                         if(isplayer){
                             try{
@@ -156,14 +157,14 @@ public class HGArenaCommand implements CommandExecutor{
                 }
                 
                 if(hga_del){
-                    if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga del command");
+                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga del command");
                     if(sender.hasPermission(Perms.HGA_DEL.perm())){
                         try{
                             String name = args[1];
                             
                             if(Utility.getArenasKeys().contains(name)){
                                 Arenas.deleteArena(name);
-                                sender.sendMessage(ChatColor.GREEN+"Deleted \""+ChatColor.GOLD+name+ChatColor.GREEN+"\" from the config!");
+                                sender.sendMessage(ChatColor.GREEN+"Deleted \""+ChatColor.GOLD+name+ChatColor.GREEN+"\" from the arenas!");
                                 return true;
                             } else PluginInfo.wrongFormatMsg(sender, "Could not find \""+name+"\""); return true;
                         }catch(IndexOutOfBoundsException e){
@@ -173,7 +174,7 @@ public class HGArenaCommand implements CommandExecutor{
                 }
                 
                 if(hga_list){
-                    if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga list command");
+                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga list command");
                     if(sender.hasPermission(Perms.HGA_LIST.perm())){
                         String arenas = "";
                         
@@ -187,7 +188,7 @@ public class HGArenaCommand implements CommandExecutor{
                 }
                 
                 if(hga_tp){
-                    if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga tp command");
+                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga tp command");
                     if(isplayer){
                         if(sender.hasPermission(Perms.HGA_TP.perm())){
                             try{
@@ -207,7 +208,7 @@ public class HGArenaCommand implements CommandExecutor{
                 }
                 
                 if(hga_tpall){
-                    if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga tp command");
+                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga tp command");
                     if(sender.hasPermission(Perms.HGA_TPALL.perm())){
                         try{
                             String arenakey = Utility.getArenaByKey(args[1]);
@@ -225,7 +226,7 @@ public class HGArenaCommand implements CommandExecutor{
                 }
                 
                 if(hga_rename){
-                    if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga tp command");
+                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga tp command");
                     if(sender.hasPermission(Perms.HGA_RENAME.perm())){
                         try{
                             String 
@@ -233,14 +234,14 @@ public class HGArenaCommand implements CommandExecutor{
                                 renameto = args[2]
                             ;
                             if(arenakey!=null){
-                                List<String> cur_games = config.getStringList(YMLKeys.CURRENT_GAMES.key());
+                                List<String> cur_games = arenasfile.getStringList(YMLKeys.CURRENT_GAMES.key());
                                 for(String game : cur_games){
                                     if(game.equalsIgnoreCase(renameto)){
                                         cur_games.remove(game);
                                         cur_games.add(renameto);
                                     }
                                 }
-                                Arenas.configSet(YMLKeys.CURRENT_GAMES.key(), cur_games);
+                                Arenas.arenasSet(YMLKeys.CURRENT_GAMES.key(), cur_games);
                                 Arenas.renameArena(arenakey, renameto);
                                 
                                 sender.sendMessage(ChatColor.GREEN+"Renamed \""+arenakey+"\" to \""+renameto+"\"");
@@ -253,7 +254,7 @@ public class HGArenaCommand implements CommandExecutor{
                     } else PluginInfo.sendNoPermMsg(sender); return true;
                 }
             }catch(IndexOutOfBoundsException e){}
-            if(config.getBoolean(YMLKeys.OPTS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted to show /hga branch help");
+            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted to show /hga branch help");
                 PluginInfo.sendCommandInfo(sender, "/hga", "");
                 PluginInfo.sendCommandInfo(sender, "     info", "Gives info on an arena");
                 PluginInfo.sendCommandInfo(sender, "     new", "Create a new arena at your location");

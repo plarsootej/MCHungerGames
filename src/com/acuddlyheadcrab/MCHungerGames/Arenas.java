@@ -15,53 +15,53 @@ import com.acuddlyheadcrab.util.Utility;
 
 public class Arenas {
     
-	private static FileConfiguration config;
+	private static FileConfiguration arenas;
     public static HungerGames hungergames;
     public Arenas(HungerGames instance){
     	hungergames = instance;
 	}
     
     public static void submitNewArena(String name, Location center, double radius, List<String> gms, List<String> tribs, boolean ingame){
-    	String arenapath = YMLKeys.ARENAS+name;
-    	config.set(arenapath, null);
-    	config.set(getPathType(name, "center.World"), center.getWorld().getName());
-    	config.set(getPathType(name, "center.x"), center.getX());
-    	config.set(getPathType(name, "center.y"), center.getY());
-    	config.set(getPathType(name, "center.z"), center.getZ());
-    	config.set(getPathType(name, "radius"), radius);
-    	config.set(getPathType(name, "gms"), gms);
-    	config.set(getPathType(name, "tribs"), tribs);
-    	config.set(getPathType(name, "ingame"), ingame);
-    	hungergames.saveConfig();
+    	String arenapath = YMLKeys.ARENAS.key()+name;
+    	arenas.set(arenapath, null);
+    	arenas.set(getPathType(name, "center.World"), center.getWorld().getName());
+    	arenas.set(getPathType(name, "center.x"), center.getX());
+    	arenas.set(getPathType(name, "center.y"), center.getY());
+    	arenas.set(getPathType(name, "center.z"), center.getZ());
+    	arenas.set(getPathType(name, "radius"), radius);
+    	arenas.set(getPathType(name, "gms"), gms);
+    	arenas.set(getPathType(name, "tribs"), tribs);
+    	arenas.set(getPathType(name, "ingame"), ingame);
+    	hungergames.saveArenas();
     }
     
-    public static void initConfig(){
-        config = hungergames.getConfig();
+    public static void initFiles(){
+        arenas = hungergames.getArenasFile();
     }
     
     public static void deleteArena(String arenakey){
-    	configSet(getPathType(arenakey, "self"), null);
+    	arenasSet(getPathType(arenakey, "self"), null);
     }
     
     public static Location getCenter(String arenakey){
-        String worldstring = config.getString(getPathType(arenakey, "center.world"));
+        String worldstring = arenas.getString(getPathType(arenakey, "center.world"));
         World world = Bukkit.getWorld(worldstring);
         if(world==null) throw new NullPointerException("Could not find world \""+worldstring+"\"");
         double
-            x = config.getDouble(getPathType(arenakey, "center.x")),
-            y = config.getDouble(getPathType(arenakey, "center.y")),
-            z = config.getDouble(getPathType(arenakey, "center.z"))
+            x = arenas.getDouble(getPathType(arenakey, "center.x")),
+            y = arenas.getDouble(getPathType(arenakey, "center.y")),
+            z = arenas.getDouble(getPathType(arenakey, "center.z"))
         ;
         Location center = new Location(world, x, y, z);
         return center;
     }
     
     public static double getRadius(String arenakey){
-        return config.getDouble(getPathType(arenakey, "radius"));
+        return arenas.getDouble(getPathType(arenakey, "radius"));
     }
     
     public static List<String> getGMs(String arenakey){
-        return config.getStringList(getPathType(arenakey, "gms"));
+        return arenas.getStringList(getPathType(arenakey, "gms"));
     }
     
     public static List<Player> getOnlineGMs(String arenakey){
@@ -76,7 +76,7 @@ public class Arenas {
     }
     
     public static List<String> getTribs(String arenakey){
-        return config.getStringList(getPathType(arenakey, "tribs"));
+        return arenas.getStringList(getPathType(arenakey, "tribs"));
     }
     
     public static List<Player> getOnlineTribs(String arenakey){
@@ -91,28 +91,28 @@ public class Arenas {
     }
     
     public static boolean isInGame(String arenakey){
-        return config.getBoolean(getPathType(arenakey,"ingame"));
+        return arenas.getBoolean(getPathType(arenakey,"ingame"));
     }
     
     public static void renameArena(String arenakey, String renameto){
         submitNewArena(renameto, getCenter(arenakey), getRadius(arenakey), getGMs(arenakey), getTribs(arenakey), isInGame(arenakey));
         deleteArena(arenakey);
-        hungergames.saveConfig();
+        hungergames.saveArenas();
     }
     
     public static void setCenter(String arenakey, Location loc){
-        configSet(getPathType(arenakey, "center.world"), loc.getWorld().getName());
-        configSet(getPathType(arenakey, "center.x"), loc.getX());
-        configSet(getPathType(arenakey, "center.y"), loc.getY());
-        configSet(getPathType(arenakey, "center.z"), loc.getZ());
+        arenasSet(getPathType(arenakey, "center.world"), loc.getWorld().getName());
+        arenasSet(getPathType(arenakey, "center.x"), loc.getX());
+        arenasSet(getPathType(arenakey, "center.y"), loc.getY());
+        arenasSet(getPathType(arenakey, "center.z"), loc.getZ());
     }
     
     public static void setRadius(String arenakey, double radius){
-        configSet(getPathType(arenakey, "radius"), radius);
+        arenasSet(getPathType(arenakey, "radius"), radius);
     }
     
     public static void setGMs(String arenakey, List<String> gms){
-        configSet(getPathType(arenakey, "gms"), gms);
+        arenasSet(getPathType(arenakey, "gms"), gms);
     }
     
     public static void addGM(String arenakey, String player){
@@ -128,7 +128,7 @@ public class Arenas {
     }
     
     public static void setTribs(String arenakey, List<String> tribs){
-        configSet(getPathType(arenakey, "tribs"), tribs);
+        arenasSet(getPathType(arenakey, "tribs"), tribs);
     }
     
     public static void addTrib(String arenakey, String player){
@@ -144,16 +144,16 @@ public class Arenas {
     }
     
     public static void setInGame(String arenakey, boolean ingame){
-        configSet(getPathType(arenakey, "ingame"), ingame);
-        List<String> currentgames = config.getStringList(YMLKeys.CURRENT_GAMES.key());
+        arenasSet(getPathType(arenakey, "ingame"), ingame);
+        List<String> currentgames = arenas.getStringList(YMLKeys.CURRENT_GAMES.key());
         if(ingame) currentgames.add(arenakey); else currentgames.remove(arenakey);
-        configSet(YMLKeys.CURRENT_GAMES.key(), currentgames);
+        arenasSet(YMLKeys.CURRENT_GAMES.key(), currentgames);
     }
     
     
-    public static void configSet(String path, Object object){
-        config.set(path, object);
-        hungergames.saveConfig();
+    public static void arenasSet(String path, Object object){
+        arenas.set(path, object);
+        hungergames.saveArenas();
     }
     
     public static String getPathType(String arenakey, String type){
@@ -224,16 +224,16 @@ public class Arenas {
     
     public static void startGame(final String arenakey, int countdown){
         Arenas.tpAllOnlineTribs(arenakey, true);
-        configSet(YMLKeys.GAME_COUNT.key(), getGameCount()+1);
+        arenasSet(YMLKeys.GAME_COUNT.key(), getGameCount()+1);
         startCountdown(arenakey, countdown);
     }
 
     public static int getGameCount() {
-        return config.getInt(YMLKeys.GAME_COUNT.key());
+        return arenas.getInt(YMLKeys.GAME_COUNT.key());
     }
 
     public static void initGames() {
-        List<String> currentgames = config.getStringList(YMLKeys.CURRENT_GAMES.key());
+        List<String> currentgames = arenas.getStringList(YMLKeys.CURRENT_GAMES.key());
 //        checks for any extra games (aka removes unecessary)
         for(int c=0;c<currentgames.size();c++){
             String game = currentgames.get(c);
@@ -250,28 +250,28 @@ public class Arenas {
                 if(Arenas.isInGame(arena)) currentgames.add(arena);
             }
         }
-        configSet(YMLKeys.CURRENT_GAMES.key(), currentgames);
+        arenasSet(YMLKeys.CURRENT_GAMES.key(), currentgames);
     }
     
     public static boolean isInCountdown(String arenakey){
-        return config.getInt(getPathType(arenakey, "countdown"))>0 &&
-            config.get(getPathType(arenakey, "countdown"))!=null
+        return arenas.getInt(getPathType(arenakey, "countdown"))>0 &&
+            arenas.get(getPathType(arenakey, "countdown"))!=null
         ;
     }
     
     public static void startCountdown(final String arenakey, final int seconds){
 //        initialize path
         System.out.println("Setting "+arenakey+" in countdown with "+seconds+" to go!");
-        config.set(getPathType(arenakey, "countdown"), seconds);
+        arenas.set(getPathType(arenakey, "countdown"), seconds);
 //        cycle through each second
         Bukkit.getScheduler().scheduleSyncRepeatingTask(hungergames, new Runnable() {
             @Override
             public void run() {
-                int second = config.getInt(getPathType(arenakey, "countdown"));
+                int second = arenas.getInt(getPathType(arenakey, "countdown"));
                 Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+"[MCHungerGames] "+second);
                 if(second==0){
                     Bukkit.getScheduler().cancelTasks(hungergames);
-                    configSet(getPathType(arenakey, "countdown"), null);
+                    arenasSet(getPathType(arenakey, "countdown"), null);
                     setInGame(arenakey, true);
                     Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+arenakey+" is now in game!");
                 } else countdown(arenakey);
@@ -282,6 +282,6 @@ public class Arenas {
     
     public static void countdown(String arenakey){
         String path = getPathType(arenakey, "countdown");
-        configSet(path, config.getInt(path)-1);
+        arenasSet(path, arenas.getInt(path)-1);
     }
 }
