@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+@Deprecated
 public class PlayerLeaveArenaEvent extends PlayerMoveEvent{
     private static final HandlerList handlers = new HandlerList();
     private Location to;

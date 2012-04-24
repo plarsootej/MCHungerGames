@@ -69,4 +69,8 @@ public enum YMLKeys {
     public String key(){
         return key;
     }
+    
+    public static String getArenaSubkey(String arenakey, YMLKeys type){
+        return YMLKeys.ARENAS.key()+arenakey+type.key;
+    }
 }

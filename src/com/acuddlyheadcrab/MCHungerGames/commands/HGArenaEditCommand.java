@@ -37,7 +37,6 @@ public class HGArenaEditCommand implements CommandExecutor{
                 String arenakey = Utility.getArenaByKey(arg1);
                 
                 if(arenakey!=null){
-                    
                     try{
                         String arg2 = args[1];
                         
