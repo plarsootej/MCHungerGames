@@ -59,15 +59,13 @@ public class Utility {
     // done
     public static Map<String, String> getCommandsAndDescs() {
         Map<String, String> map = new HashMap<String, String>();
-        List<List<Object>> l_list = getVandK(HungerGamesPlugin.getDescription().getCommands());
-        List<Object> cmds = l_list.get(0);
-        List<Object> descs = l_list.get(1);
+        List<?> cmds = getKeys(HungerGamesPlugin.getDescription().getCommands());
+        List<?> descs =  getValues(HungerGamesPlugin.getDescription().getCommands());
         for (int c = 0; c < cmds.size(); c++) {
             String cmd = cmds.get(c).toString();
             String desc = " ";
-            List<List<Object>> l_list2 = getVandK((Map<?, ?>) descs.get(c));
-            List<Object> ks = l_list2.get(0);
-            List<Object> vs = l_list2.get(1);
+            List<?> ks = getKeys((Map<?, ?>) descs.get(c));
+            List<?> vs = getValues((Map<?, ?>) descs.get(c));
             for (int c2 = 0; c2 < ks.size(); c2++)
                 if (ks.get(c2).toString().equalsIgnoreCase("description"))
                     desc = vs.get(c2).toString();
@@ -77,24 +75,24 @@ public class Utility {
     }
     
 
-    // done
-    public static List<List<Object>> getVandK(Map<?, ?> map) {
-        List<Object> k_list = new ArrayList<Object>();
+    public static List<?> getValues(Map<?, ?> map){
         List<Object> v_list = new ArrayList<Object>();
-        Iterator<?> k_itr = map.keySet().iterator();
-        while (k_itr.hasNext()) {
-            Object ob = k_itr.next();
-            k_list.add(ob);
-        }
         Iterator<?> v_itr = map.values().iterator();
         while (v_itr.hasNext()) {
             Object ob = v_itr.next();
             v_list.add(ob);
         }
-        List<List<Object>> obj_list = new ArrayList<List<Object>>();
-        obj_list.add(k_list);
-        obj_list.add(v_list);
-        return obj_list;
+        return v_list;
+    }
+    
+    public static List<?> getKeys(Map<?, ?> map){
+        List<Object> k_list = new ArrayList<Object>();
+        Iterator<?> k_itr = map.keySet().iterator();
+        while (k_itr.hasNext()) {
+            Object ob = k_itr.next();
+            k_list.add(ob);
+        }
+        return k_list;
     }
 
     public static List<String> getArenasKeys() {

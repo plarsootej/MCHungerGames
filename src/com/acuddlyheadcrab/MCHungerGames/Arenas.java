@@ -2,6 +2,9 @@ package com.acuddlyheadcrab.MCHungerGames;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -91,13 +94,24 @@ public class Arenas {
         return onlinegms;
     }
     
-    public static List<String> getTribs(String arenakey){
-        return arenas.getStringList(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_TRIBS));
+    
+    public static List<String> getTribNames(String arenakey){
+        List<String> plist = new ArrayList<String>();
+        for(Map<?,?> map : arenas.getMapList(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_TRIBS))){
+            plist.add(Utility.getKeys(map).get(0).toString());
+        }
+        return plist;
     }
+    
+    public static List<Map<?,?>> getTribs(String arenakey){
+        return arenas.getMapList(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_TRIBS));
+    }
+    
+    
     
     public static List<Player> getOnlineTribs(String arenakey){
         List<Player> onlinetribs = new ArrayList<Player>();
-        for(String trib_s : getTribs(arenakey)){
+        for(String trib_s : getTribNames(arenakey)){
             try{
                 Player player = Bukkit.getPlayer(trib_s); 
                 if(player!=null) onlinetribs.add(player);
@@ -153,11 +167,11 @@ public class Arenas {
     	setGMs(arenakey, gms);
     }
     
-    public static void setTribs(String arenakey, List<String> tribs){
+    public static void setTribs(String arenakey, List<Map<?,?>> tribs){
         arenasSet(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_TRIBS), tribs);
     }
     
-    public static void addTrib(String arenakey, String player){
+    public static void addTrib(String arenakey, Entry<String, String>){
     	List<String> tribs = getTribs(arenakey);
     	tribs.add(player);
     	setTribs(arenakey, tribs);
