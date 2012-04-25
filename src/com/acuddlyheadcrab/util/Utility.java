@@ -10,13 +10,13 @@ import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.command.CommandSender;
@@ -105,51 +105,51 @@ public class Utility {
         return Arrays.asList(keyarr);
     }
     
-    public static String toLocKey(Location loc) {
+    public static String toLocKey(Location loc, boolean include_world) {
         double x = loc.getX(), y = loc.getY(), z = loc.getZ();
         String world = loc.getWorld().getName();
-        String key = (String.format("%4$s, %1$s, %2$s, %3$s", x, y, z, world));
+        String key = 
+                include_world ?
+                (String.format("%4$s, %1$s, %2$s, %3$s", x, y, z, world)) : (String.format("%1$s, %2$s, %3$s", x, y, z));
         return key;
     }
     
-    public static Location parseLocKey(String spawnkey) {
+    public static Location parseLocKey(String spawnkey, World world) {
         String[] sarr = spawnkey.split(", ");
-        World world = Bukkit.getWorlds().get(0);
-        try{
-            world = Bukkit.getWorld(sarr[0]);
-            
-            if(world!=null){
-                return new Location(world, Double.parseDouble(sarr[1]), Double.parseDouble(sarr[2]), Double.parseDouble(sarr[3]));
-            } else PluginInfo.sendPluginInfo("Error parsing location key! Could not find world \""+sarr[0]+"\"");
-        }catch(NullPointerException e){
-            PluginInfo.sendPluginInfo("Error parsing location key! Please make sure your config makes sense");
-        }
-        return null;
+        return new Location(world, Double.parseDouble(sarr[0]), Double.parseDouble(sarr[1]), Double.parseDouble(sarr[2]));
     }
     
     public static boolean spawnCCPChest(Block block){
         Block above = block.getRelative(BlockFace.UP);
-        if(checkChestBlock(above)){
+        BlockState state = null;
+        if(block.getType()==Material.CHEST) state = block.getState(); 
+        else if(checkChestBlock(above)) {
             above.setType(Material.CHEST);
-            Chest chest = (Chest) above.getState();
-            Inventory inv = chest.getInventory();
-            
-            Random rand = new Random();
-            
-            for(int c=0;c<rand.nextInt(inv.getSize());c++){
-                inv.setItem(rand.nextInt(inv.getSize()), getRandomItem());
-            }
-            
-            return true;
-        } return false;
+            state = above.getState();
+        }
+        else return false;
+        
+        Chest chest = (Chest) state;
+        Inventory inv = chest.getInventory();
+        
+        Random rand = new Random();
+        
+        for(int c=0;c<rand.nextInt(inv.getSize());c++){
+            inv.setItem(rand.nextInt(inv.getSize()), getRandomItem());
+        }
+        
+        return true;
     }
     
     public static ItemStack getRandomItem(){
         Random rand = new Random();
         Material mat = Material.values()[rand.nextInt(Material.values().length)];
+        int max = Math.abs(mat.getMaxDurability());
+        System.out.println(max);
         return new ItemStack(
             mat,
-            rand.nextInt(mat.getMaxStackSize())
+            rand.nextInt(mat.getMaxStackSize()),
+            (short) Math.abs(rand.nextInt(max))
         );
     }
     
@@ -286,6 +286,7 @@ public class Utility {
                 double 
                     distance = recip.getLocation().distance(talkingplayer.getLocation()),
                     clear = config.getDouble(YMLKeys.OPS_NEARCHAT_DISTS_CLEAR.key()),
+                    
                     disemboided = config.getDouble(YMLKeys.OPS_NEARCHAT_DISTS_DISEMBOIDED.key()),
                     garbled = config.getDouble(YMLKeys.OPS_NEARCHAT_DISTS_GARBLED.key())
                 ;

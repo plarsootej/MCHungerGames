@@ -1,10 +1,9 @@
 package com.acuddlyheadcrab.MCHungerGames;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -23,7 +22,7 @@ public class Arenas {
     	hungergames = instance;
 	}
     
-    public static void submitNewArena(String name, Location center, double radius, List<String> gms, List<String> tribs, boolean ingame){
+    public static void submitNewArena(String name, Location center, double radius, List<String> gms, List<Map<?, ?>> list, boolean ingame){
     	String arenapath = YMLKeys.ARENAS.key()+name;
     	arenas.set(arenapath, null);
     	arenas.set(YMLKeys.getArenaSubkey(name, YMLKeys.ARN_CENTER_WRLD), center.getWorld().getName());
@@ -32,7 +31,7 @@ public class Arenas {
     	arenas.set(YMLKeys.getArenaSubkey(name, YMLKeys.ARN_CENTER_Z), center.getZ());
     	arenas.set(YMLKeys.getArenaSubkey(name, YMLKeys.ARN_RADIUS), radius);
     	arenas.set(YMLKeys.getArenaSubkey(name, YMLKeys.ARN_GMS), gms);
-    	arenas.set(YMLKeys.getArenaSubkey(name, YMLKeys.ARN_TRIBS), tribs);
+    	arenas.set(YMLKeys.getArenaSubkey(name, YMLKeys.ARN_TRIBS), list);
     	arenas.set(YMLKeys.getArenaSubkey(name, YMLKeys.ARN_INGAME), ingame);
     	hungergames.saveArenas();
     }
@@ -103,11 +102,9 @@ public class Arenas {
         return plist;
     }
     
-    public static List<Map<?,?>> getTribs(String arenakey){
+    public static List<Map<?, ?>> getTribs(String arenakey){
         return arenas.getMapList(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_TRIBS));
     }
-    
-    
     
     public static List<Player> getOnlineTribs(String arenakey){
         List<Player> onlinetribs = new ArrayList<Player>();
@@ -118,6 +115,13 @@ public class Arenas {
             }catch(NullPointerException e){}
         }
         return onlinetribs;
+    }
+    
+    public static Location getTribSpawn(String arenakey, String trib){
+        for(Map<?, ?> maps : getTribs(arenakey)){
+            if(maps.containsKey(trib.toString())) return Utility.parseLocKey(maps.get(trib.toString()).toString(), getCenter(arenakey).getWorld());
+        }
+        return null;
     }
     
     public static boolean isInGame(String arenakey){
@@ -167,24 +171,41 @@ public class Arenas {
     	setGMs(arenakey, gms);
     }
     
-    public static void setTribs(String arenakey, List<Map<?,?>> tribs){
+    public static void setTribs(String arenakey, List<Map<?, ?>> tribs){
         arenasSet(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_TRIBS), tribs);
     }
     
-    public static void addTrib(String arenakey, Entry<String, String>){
-    	List<String> tribs = getTribs(arenakey);
-    	tribs.add(player);
+    public static void addTrib(String arenakey, Map<String, String> entry){
+    	List<Map<?, ?>> tribs = getTribs(arenakey);
+    	tribs.add(entry);
     	setTribs(arenakey, tribs);
     }
     
-    public static void removeTrib(String arenakey, String player, boolean from_event){
-    	List<String> tribs = getTribs(arenakey);
-    	tribs.remove(player);
-    	setTribs(arenakey, tribs);
-    	if(from_event){
-    	    Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+player+" is no longer in battle for "+arenakey+"!");
-    	    Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+"There are now "+getTribs(arenakey).size()+" tributes left for "+arenakey+"!");
-    	}
+    public static void addTrib(String arenakey, String player){
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(player, Utility.toLocKey(Utility.getRandomChunkLocation(getCenter(arenakey), 5), false));
+        addTrib(arenakey, map);
+    }
+    
+    public static void addTrib(String arenakey, Player player){
+        addTrib(arenakey, player.getName());
+    }
+    
+    public static void removeTrib(String arenakey, String player, boolean from_game){
+        Map<?, ?> map = null;
+        List<Map<?, ?>> tribs = getTribs(arenakey);
+        for(Map<?, ?> maps : tribs){
+            if(maps.containsKey(player)) map = maps;
+        }
+        tribs.remove(map);
+        setTribs(arenakey, tribs);
+        if(from_game){
+            Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+player+" is no longer a tribute for "+arenakey);
+        }
+    }
+    
+    public static void removeTrib(String arenakey, Player player, boolean from_game){
+        removeTrib(arenakey, player.getName(), from_game);
     }
     
     public static void setInGame(String arenakey, boolean ingame){
@@ -212,7 +233,7 @@ public class Arenas {
     }
     
     public static boolean isTribute(String arenakey, Player player){
-        for(String trib : getTribs(arenakey))
+        for(String trib : getTribNames(arenakey))
             if(Bukkit.getPlayer(trib)!=null&&player.equals(Bukkit.getPlayer(trib))) return true;
         return false;
     }
@@ -235,14 +256,11 @@ public class Arenas {
         return null;
     }
 
+    // TODO redo this
     public static void tpAllOnlineTribs(String arenakey, boolean startinggame) {
         for(Player trib : getOnlineTribs(arenakey)){
 //                TODO: add backup inventories IF startinggame
-            Location 
-                center  = getCenter(arenakey), 
-                rand = Utility.getRandomChunkLocation(center, 5)
-            ;
-            trib.teleport(rand);
+            trib.teleport(getTribSpawn(arenakey, trib.getName()));
             if(startinggame){
                 trib.getInventory().clear();
                 trib.setGameMode(GameMode.SURVIVAL);

@@ -125,11 +125,12 @@ public class HGArenaCommand implements CommandExecutor{
                                     gms = gms.concat(status+gm+" ");
                                 }
                                 
-                                for(String trib : Arenas.getTribs(arenakey)){
+                                for(String trib : Arenas.getTribNames(arenakey)){
                                     String status = ChatColor.GRAY+"";
                                     Player trib_player = Bukkit.getPlayerExact(trib);
                                     status = trib_player==null ? offlineplayer+""+offlineformat : reset+""+onlineplayer;
-                                    tribs = tribs.concat(status+trib+" ");
+                                    int index = Arenas.getTribNames(arenakey).indexOf(trib);
+                                    tribs = tribs.concat(ChatColor.GRAY+""+index+". "+status+trib+" ");
                                 }
                                 
                                 sender.sendMessage(main+""+"Arena name: "+value+arenakey+"        ".concat(ingame));
