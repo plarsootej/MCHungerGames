@@ -1,4 +1,4 @@
-# This is the start of a comment. However, I just forgot everyhitng i was going to put here so, fuck it, i'll just keep this.
+# This is the start of a comment. However, I just forgot everyhitng i was going to put here so, f*ck it, i'll just keep this.
 
 Options:
     Debug:
@@ -26,13 +26,3 @@ Options:
             Clear: 24
             Disembodied: 36
             Garbled: 50
-            
-           # TODO add these keys to YMLkeys enum 
-    Auto_games:
-        Enabled: false
-        Auto_join:
-            Enabled: false
-            Arena:
-        Start_when:
-            Player_count: 12
-            Idle_minutes: 10
