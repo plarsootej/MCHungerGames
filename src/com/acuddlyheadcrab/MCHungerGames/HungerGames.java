@@ -74,6 +74,8 @@ public class HungerGames extends JavaPlugin {
         getCommand("hgaedit").setExecutor(new HGArenaEditCommand(this));
         getCommand("hggame").setExecutor(new HGGameCommand(this));
         getCommand("spawnccp").setExecutor(new CornucopiaCommand(this));
+//        remove when in full release
+        getCommand("testcmd").setExecutor(new CornucopiaCommand(this));
     }
     
     public void loadConfig() {

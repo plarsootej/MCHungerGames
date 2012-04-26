@@ -244,7 +244,7 @@ public class HGArenaCommand implements CommandExecutor{
                                 
                                 if(arenakey!=null){
                                     player.teleport(Arenas.getCenter(arenakey));
-                                    player.sendMessage("Teleported you to the center of "+arenakey);
+                                    player.sendMessage(ChatColor.GREEN+"Teleported you to the center of "+arenakey);
                                 } else PluginInfo.wrongFormatMsg(sender, "Could not find the arena \""+arg2+"\""); return true;
                             }catch(IndexOutOfBoundsException e){
                                 PluginInfo.wrongFormatMsg(sender, "/hga tp <arena>"); return true;

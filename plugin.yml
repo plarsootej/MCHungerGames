@@ -24,3 +24,7 @@ commands:
         description: Spawn a cornucopia chest where you're looking
         usage: /<command>
         aliases: [spc]
+    testcmd:
+        description: A command used for testing
+        usage: /<command> <int x> <double distance>
+        aliases: [/tcmd]

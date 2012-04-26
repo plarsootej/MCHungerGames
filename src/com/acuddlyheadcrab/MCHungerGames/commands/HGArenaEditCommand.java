@@ -48,7 +48,8 @@ public class HGArenaEditCommand implements CommandExecutor{
                             addgm = arg2.equalsIgnoreCase("addgm"),
                             addtrib = arg2.equalsIgnoreCase("addtrib"),
                             removegm = arg2.equalsIgnoreCase("removegm"),
-                            removetrib = arg2.equalsIgnoreCase("removetrib")
+                            removetrib = arg2.equalsIgnoreCase("removetrib"),
+                            settribspawn = arg2.equalsIgnoreCase("settribspawn")
                         ;
                         
                         if(Arenas.isInGame(arenakey)||Arenas.isInCountdown(arenakey)){PluginInfo.sendAlreadyInGameMsg(sender, arenakey); return true;}
@@ -99,7 +100,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                                     
                                     try{
                                         if(!Arenas.getGMs(arenakey).contains(arg3)){
-                                            if(Arenas.getTribs(arenakey).contains(arg3)){
+                                            if(Arenas.getTribNames(arenakey).contains(arg3)){
                                                 sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"Warning: "+arg3+" is already a tribute for "+arenakey+"!");
                                             }
                                             Player gm = Bukkit.getPlayer(arg3);
@@ -129,7 +130,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                                     String arg3 = args[2];
                                     
                                     try{
-                                        if(!Arenas.getTribs(arenakey).contains(arg3)){
+                                        if(!Arenas.getTribNames(arenakey).contains(arg3)){
                                             if(Arenas.getGMs(arenakey).contains(arg3)){
                                                 sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"Warning: "+arg3+" is already a gamemaker for "+arenakey+"!");
                                             }
@@ -181,7 +182,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                                     String arg3 = args[2];
                                     
                                     try{
-                                        if(Arenas.getTribs(arenakey).contains(arg3)){
+                                        if(Arenas.getTribNames(arenakey).contains(arg3)){
                                             Arenas.removeTrib(arenakey, arg3, false);
                                             sender.sendMessage(ChatColor.GREEN+"Removed "+arg3+" from "+arenakey+"'s tributes");
                                              return true;
@@ -195,6 +196,23 @@ public class HGArenaEditCommand implements CommandExecutor{
                             } else PluginInfo.sendNoPermMsg(sender); return true;
                         }
                         
+                        if(settribspawn){
+                            try{
+                                if(!isplayer){
+                                    PluginInfo.sendOnlyPlayerMsg(sender);
+                                }
+                                int index = Integer.parseInt(args[2]);
+                                
+                                Arenas.setTribLoc(arenakey, index, player.getLocation());
+                                player.sendMessage(ChatColor.GREEN+"Set tribute "+Arenas.getTribNames(arenakey).get(index)+"'s spawn point to your location");
+                                
+                            }catch(IndexOutOfBoundsException e){
+                                PluginInfo.wrongFormatMsg(sender, "/hgae <arena> settribspawn <tribID>");
+                            }catch(NumberFormatException e){
+                                PluginInfo.wrongFormatMsg(sender, "/hgae <arena> settribspawn <tribID>"); 
+                            }
+                            return true;
+                        }
                         
                     }catch(IndexOutOfBoundsException e){}
                 } else PluginInfo.wrongFormatMsg(sender, "Could not find the arena \""+arg1+"\""); return true;

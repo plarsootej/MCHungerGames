@@ -105,12 +105,10 @@ public class Utility {
         return Arrays.asList(keyarr);
     }
     
-    public static String toLocKey(Location loc, boolean include_world) {
+    public static String toLocKey(Location loc, boolean custom) {
         double x = loc.getX(), y = loc.getY(), z = loc.getZ();
-        String world = loc.getWorld().getName();
-        String key = 
-                include_world ?
-                (String.format("%4$s, %1$s, %2$s, %3$s", x, y, z, world)) : (String.format("%1$s, %2$s, %3$s", x, y, z));
+        String key = (String.format("%1$s, %2$s, %3$s", x, y, z));
+        if(custom) key = key.concat(", <<custom>>");
         return key;
     }
     
@@ -227,26 +225,14 @@ public class Utility {
         player.setVelocity(reverse);
     }
     
-    public static Location getRandomChunkLocation(Location origin, double distance){
-        Random rand = new Random();
-        Block block = null;
-        for(int c=0;c<20;){
-            block = origin.getWorld().getHighestBlockAt(
-                origin.getChunk().getBlock(
-                    rand.nextInt(16),
-                    origin.getBlockY(),
-                    rand.nextInt(16)
-                ).getLocation()
-            );
-            if(block.getLocation().distance(origin)==distance) break; else c++;
-        }
-        return block.getWorld().getHighestBlockAt(block.getLocation()).getLocation();
-    }
-    
-    public static List<Location> getRandomChunkLocs(Location origin, int x){
+    public static List<Location> getSurroundingLocs(Location origin, int x, double distance){
         List<Location> loclist = new ArrayList<Location>();
-        for(int c=0;c<x;c++)
-            loclist.add(getRandomChunkLocation(origin, 10));
+        for(int i=0;i<x;i++){
+            Location newloc = origin.clone();
+            newloc.setYaw((360/x)*i);
+            newloc.setPitch(0);
+            loclist.add(newloc.add(newloc.getDirection().multiply(distance)));
+        }
         return loclist;
     }
     

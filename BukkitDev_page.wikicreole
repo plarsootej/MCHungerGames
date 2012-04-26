@@ -1,12 +1,11 @@
 ====== //About the plugin:// ======
 
-|<<right>><<color #2F4F2F>><<size 300%>>//__**MC Hunger Games**__//<</size>><</color>><<size 200%>><<color red>> v1.3 BETA<</color>><</size>><</right>>|<<center>><<size 150%>>[[https://github.com/acuddlyheadcrab/MCHungerGames|<<color #B0C4DE>>Github source<</color>>]]<</size>><</center>>|
+|<<right>><<color #2F4F2F>><<size 300%>>//__**MC Hunger Games**__//<</size>><</color>><<size 200%>><<color red>> v1.4 BETA<</color>><</size>><</right>>|<<center>><<size 150%>>[[https://github.com/acuddlyheadcrab/MCHungerGames|<<color #B0C4DE>>Github source<</color>>]]<</size>><</center>>|
 
 <<center>>=== <<color red>>//The first* Hunger Games plugin!<</color>> ===<</center>>
 <<center>><<size 20%>><<color gray>>*as far as project creation dates go<</color>><</size>><</center>>
 
 <<center>>{{http://i.imgur.com/Dska0l.png|IMAGE}}<</center>>
-<<center>>====== <<color #404040>>Create your own hunger games style server in a few minutes!<</color>>======<</center>>
 ----
 \\ \\
 
@@ -14,84 +13,58 @@
 
 
                                                               <<center>>=== //**__Summary__**// ===<</center>>
-<<center>><<size 125%>>You may be asking yourself: \\<<color blue>>"Do I want this plugin...? I mean would it really be that easy??"<</color>>\\Yes. And yes it is.\\<<color gray>>.. totally going to be...<</color>><</size>><</center>>
+<<center>>===<<color blue>>MCHungerGames is actually quite simple! Just make your arena, add tributes, and go!<</color>>===<</center>>
+
+
 MCHungerGames is designed to make running Hunger Games-style events much easier. Sure, there are some nice servers and plugins that have achieved this, but they constantly require Moderators/Admins to be on, and paying attention.
 \\If you don't know what Hunger Games is look [[http://en.wikipedia.org/wiki/The_Hunger_Games|here]] for the series by Suzanne Collins, and [[http://en.wikipedia.org/wiki/The_Hunger_Games_universe#The_Hunger_Games|here]] for the namesake fictional "Hunger Games" event
-\\<<color white>>.<</color>>\\
-=== **++Things I wish to add++** ===
-* Reaping that selects from players that have played for an X to Y amount of hours
-* Maybe a hook into factions (so admins could set up "districts")? Depending on what the most popular faction plugin is
-** Also depending on this, but may hook into economy plugin too. (ie. Give rewards to the winning "district") 
-**Either:**
+
+\\ \\
+
+=== **++Planned++** ===
+* The Reaping
+* Hook into factions
+* Rewards
 * Script-able game events (eg. Fires, Floods, Poison Gas)
-* **OR** API for custom events
-\\<<color white>>.<</color>>\\
+
+\\ \\
+
 === //**Features:**// ===
 
 **See changelog for the latest features!**
-\\<<color white>>.<</color>>\\
-
-
+\\ \\
 
 
                                                               <<center>>=== //**__How to use:__**// ===<</center>>
 ====== Commands: ======
 //Download the plugin to see how it works!//
-*  hg:
+*  /hg:
 ** reload
-* hgarena:
-** info <name>
-** new <name> <limit>
-* hgaedit <name>:
-** limit <double>
-** addgm <player>
-**  addtrib <player> 
-** removegm <player>
-** removetrib <player>
-*  hggame:
+* /hgarena: (/hga)
+** list
+** info <arena>
+** new <arena> <radius>
+** del <arena>
+** rename <old arena name> <new arena name>
+** tp <arena>
+** tpall <arena>
+** join <arena>
+** lounge <arena>
+* /hgaedit: (/hgae)
+** <arena> setcornucopia (setccp)
+** <arena> setlounge
+** <arena> radius <number>
+** <arena> addgm <player>
+** <arena> addtrib <player> 
+** <arena> removegm <player>
+** <arena> removetrib <player>
+* /hggame:
 ** start <arena> <int countdown>
 ** stop <arena>
-* spawnccp
-\\<<color white>>_<</color>>\\
-====== Config: ======
-If you want an example of an Arena in the config here's the one i'm testing with :) :
-<<code yml>>Options:
-  Debug:
-    onCommand: true
-    onBlockChange: true
-  BlockProtection:
-    Building_enabled: true
-    Breaking_enabled: true
-    Crafting_enabled: true
-    InArenas: true
-    Only_while_ingame: true
-    OutsideArenas: true
-    Show_warning_to_players: true
-  Gamemakers_can_edit: true
-  During_games:
-    kick_on_disconnect: false
-    noTeleporting: true
-    nearbyTributeChat: true
-    noMobSpawnInArena: false
-Currentgames: []
-Game_count: 0
-Arenas:
-  minecrabs:
-    cornucopia:
-      World: world
-      x: -1587.6966923813288
-      y: 75.0
-      z: 303.2501390700929
-    Maxdistance: 75.0
-    gamemakers: []
-    tributes: []
-    in_game: false
-<</code>>
+* /spawnccp (/spc)
 
 
-
-
-                                                              <<center>>=== //**__Links and downloads_:__**// ===<</center>>
+                                                              <<center>>=== //**__Links and downloads:__**// ===<</center>>
 - [[http://dev.bukkit.org/server-modsmchungergames/files/|Download page]] \\
 - [[http://forums.bukkit.org/threads/hunger-games-plugin.64072/|Original Request]]
 \\<<color white>>.<</color>>\\<<color white>>.<</color>>\\<<color white>>_<</color>>\\<<color white>>_<</color>>\\

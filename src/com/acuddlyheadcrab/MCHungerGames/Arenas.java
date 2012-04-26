@@ -175,6 +175,20 @@ public class Arenas {
         arenasSet(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_TRIBS), tribs);
     }
     
+    public static void setTribLoc(String arenakey, int tribID, String lockey){
+        List<Map<?,?>> maplist = getTribs(arenakey);
+        @SuppressWarnings("unchecked")
+        Map<String, String> map = (Map<String, String>) maplist.get(tribID);
+        map.put(Utility.getKeys(map).get(0).toString(), lockey);
+        maplist.remove(tribID);
+        maplist.add(tribID, map);
+        setTribs(arenakey, maplist);
+    }
+    
+    public static void setTribLoc(String arenakey, int tribID, Location loc){
+        setTribLoc(arenakey, tribID, Utility.toLocKey(loc, true));
+    }
+    
     public static void addTrib(String arenakey, Map<String, String> entry){
     	List<Map<?, ?>> tribs = getTribs(arenakey);
     	tribs.add(entry);
@@ -183,8 +197,37 @@ public class Arenas {
     
     public static void addTrib(String arenakey, String player){
         Map<String, String> map = new HashMap<String, String>();
-        map.put(player, Utility.toLocKey(Utility.getRandomChunkLocation(getCenter(arenakey), 5), false));
+        map.put(player, "null");
         addTrib(arenakey, map);
+        updateTribLocs(arenakey);
+    }
+    
+    public static void updateTribLocs(String arenakey){
+        // Eww ew ew. This is probably so inefficient, but oh well.
+        List<Map<?,?>> 
+            alltribs = getTribs(arenakey), 
+            noncust_tribs = getNonCustomTribs(arenakey), 
+            maplist = noncust_tribs
+        ;
+        List<Location> loclist = Utility.getSurroundingLocs(getCenter(arenakey), maplist.size(), 7);
+        for(int i=0;i<maplist.size();i++){
+            @SuppressWarnings("unchecked")
+            Map<String,String> map = (Map<String, String>) maplist.get(i);
+            map.put(Utility.getKeys(map).get(0).toString(), Utility.toLocKey(loclist.get(i), false));
+        }
+       alltribs.removeAll(noncust_tribs);
+       alltribs.addAll(maplist);
+       setTribs(arenakey, alltribs);
+    }
+    
+    public static List<Map<?,?>> getNonCustomTribs(String arenakey){
+        List<Map<?,?>> maplist = getTribs(arenakey);
+        for(int i=0;i<maplist.size();i++){
+            Map<?,?> maps = maplist.get(i);
+            if(Utility.getValues(maps).get(0).toString().contains("<<custom>>"))
+                maplist.remove(i);
+        }
+        return maplist;
     }
     
     public static void addTrib(String arenakey, Player player){

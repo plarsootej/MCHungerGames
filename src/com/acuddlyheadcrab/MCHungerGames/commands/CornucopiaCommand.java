@@ -1,8 +1,10 @@
 package com.acuddlyheadcrab.MCHungerGames.commands;
 
 import java.util.HashSet;
+import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -50,7 +52,29 @@ public class CornucopiaCommand implements CommandExecutor{
             } else PluginInfo.sendOnlyPlayerMsg(sender);
         }
         
+        if(cmd.getName().equalsIgnoreCase("testcmd")){
+            if(isplayer){
+                try{
+                    int x = Integer.parseInt(args[0]);
+                    double dist = Double.parseDouble(args[1]);
+                    
+                    List<Location> loclist = Utility.getSurroundingLocs(player.getLocation(), x, dist);
+                    
+                    for(Location loc : loclist){
+                        loc.getBlock().setTypeIdAndData(35, (byte) 14, false);
+                    }
+                    
+                }catch(IndexOutOfBoundsException e){
+                    return false;
+                }catch(NumberFormatException e){
+                    return false;
+                }
+            }
+        }
+        
         return true;
     }
+    
+    
         
 }
