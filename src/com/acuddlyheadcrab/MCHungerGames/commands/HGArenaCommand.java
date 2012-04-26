@@ -57,7 +57,13 @@ public class HGArenaCommand implements CommandExecutor{
                                 String arenakey = Utility.getArenaByKey(args[1]);
                                 
                                 if(arenakey!=null){
-                                    if(Arenas.isInGame(arenakey)||Arenas.isInCountdown(arenakey)) PluginInfo.wrongFormatMsg(sender, arenakey+" is currently in game!");
+                                    if(Arenas.isInGame(arenakey)||Arenas.isInCountdown(arenakey)) {
+                                        PluginInfo.wrongFormatMsg(sender, arenakey+" is currently in game!"); return true;
+                                    }
+                                    if(Arenas.isTribute(arenakey, player)){
+                                        PluginInfo.wrongFormatMsg(sender, "You're already a tribute for "+arenakey+"!");
+                                        return true;
+                                    }
                                     Arenas.addTrib(arenakey, player.getName());
                                     player.sendMessage(ChatColor.LIGHT_PURPLE+"You have added yourself as a tribute to "+arenakey); return true;
                                 } else PluginInfo.wrongFormatMsg(sender, "Could not find \""+args[1]+"\"!"); return true; 

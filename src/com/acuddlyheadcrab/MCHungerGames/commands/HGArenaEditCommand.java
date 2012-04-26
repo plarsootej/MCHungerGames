@@ -209,7 +209,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                             }catch(IndexOutOfBoundsException e){
                                 PluginInfo.wrongFormatMsg(sender, "/hgae <arena> settribspawn <tribID>");
                             }catch(NumberFormatException e){
-                                PluginInfo.wrongFormatMsg(sender, "/hgae <arena> settribspawn <tribID>"); 
+                                PluginInfo.wrongFormatMsg(sender, "\""+args[2]+"\" is not a valid number!"); 
                             }
                             return true;
                         }
@@ -219,12 +219,14 @@ public class HGArenaEditCommand implements CommandExecutor{
             }catch(IndexOutOfBoundsException e){}
             if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted to show /hgae branch help");
             PluginInfo.sendCommandInfo(sender, "/hgae <arena>", "");
-            PluginInfo.sendCommandInfo(sender, "     cornucopia (ccp)", "Set the center to your location");
+            PluginInfo.sendCommandInfo(sender, "     setcornucopia (setccp)", "Set the center to your location");
+            PluginInfo.sendCommandInfo(sender, "     setlounge", "Set the lounge to your location");
             PluginInfo.sendCommandInfo(sender, "     radius", "Create a new arena at your location");
             PluginInfo.sendCommandInfo(sender, "     addgm", "Add a gamemaker");
             PluginInfo.sendCommandInfo(sender, "     addtrib", "Add a tribute");
             PluginInfo.sendCommandInfo(sender, "     removegm", "Remove a gamemaker");
             PluginInfo.sendCommandInfo(sender, "     removetrib", "Remove a tribute");
+            PluginInfo.sendCommandInfo(sender, "     settribspawn", "Set the spawn point for a tribute");
         } 
         
         return true;

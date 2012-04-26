@@ -18,9 +18,9 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import com.acuddlyheadcrab.util.PluginInfo;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Utility;
+import com.acuddlyheadcrab.util.Utility.ChatProximity;
 
 
 public class TributeListener implements Listener {
@@ -44,19 +44,20 @@ public class TributeListener implements Listener {
     }
     
 
-  @EventHandler(priority = EventPriority.HIGHEST)
+  @EventHandler(priority = EventPriority.HIGH)
   public void onPlayerChat(PlayerChatEvent event){
       if(config.getBoolean(YMLKeys.OPS_NEARCHAT_ENABLED.key())){
           event.setCancelled(true);
-          
           Player talkingplayer = event.getPlayer();
           String format = event.getFormat(), msg = event.getMessage();
-          
           Set<Player> recips = event.getRecipients();
           for (Iterator<Player> i=recips.iterator();i.hasNext();) {
               Player recip = i.next();
-              PluginInfo.log.info(ChatColor.stripColor(format));
-              Utility.sendChatProxMessage(recip, talkingplayer, msg, format);
+              
+              ChatProximity prox = Utility.getChatProximity(talkingplayer, recip);
+              System.out.println(talkingplayer.getName()+" --> "+recip.getName()+": "+prox+"("+prox.getDistance()+")");
+              
+              Utility.sendChatProxMessage(talkingplayer, recip, format, msg);
           }
       }
   }
@@ -126,7 +127,7 @@ public class TributeListener implements Listener {
                   event.setCancelled(true);
                   return;
               }
-              player.sendMessage(ChatColor.LIGHT_PURPLE+"("+to_arena+" is currently in game)");
+              player.sendMessage(ChatColor.LIGHT_PURPLE+"("+from_arena+" is currently in game)");
           }
           player.sendMessage(yellow+"You are now leaving "+gold+from_arena);
       }
@@ -190,7 +191,7 @@ public class TributeListener implements Listener {
                       return;
                   }
               }
-              player.sendMessage(ChatColor.LIGHT_PURPLE+"("+to_arena+" is currently in game)");
+              player.sendMessage(ChatColor.LIGHT_PURPLE+"("+from_arena+" is currently in game)");
           }
           player.sendMessage(yellow+"You are now leaving "+gold+from_arena);
       }

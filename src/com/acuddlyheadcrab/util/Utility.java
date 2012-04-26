@@ -221,7 +221,6 @@ public class Utility {
             direction = ploc.toVector().subtract(repulsive.toVector()),
             reverse = direction.multiply(force)
         ;
-//        bug: if the player is looking away from the boundry, they will be pushed back into the boundry when they hit it.
         player.setVelocity(reverse);
     }
     
@@ -265,6 +264,7 @@ public class Utility {
     }
     
     public static ChatProximity getChatProximity(Player talkingplayer, Player recip){
+        config = HungerGamesPlugin.getConfig();
         String arenakey = Arenas.getArenaByTrib(recip);
         if(talkingplayer==recip) return ChatProximity.SELF;
         if(arenakey!=null){
@@ -272,7 +272,6 @@ public class Utility {
                 double 
                     distance = recip.getLocation().distance(talkingplayer.getLocation()),
                     clear = config.getDouble(YMLKeys.OPS_NEARCHAT_DISTS_CLEAR.key()),
-                    
                     disemboided = config.getDouble(YMLKeys.OPS_NEARCHAT_DISTS_DISEMBOIDED.key()),
                     garbled = config.getDouble(YMLKeys.OPS_NEARCHAT_DISTS_GARBLED.key())
                 ;
@@ -284,15 +283,15 @@ public class Utility {
         }
         return ChatProximity.GLOBAL;
     }
-
-
-    public static void sendChatProxMessage(Player recip, Player talkingplayer, String msg, String format) {
+    
+    public static void sendChatProxMessage(Player talkingplayer, Player recip, String format, String msg){
         switch (Utility.getChatProximity(talkingplayer, recip)) {
+            case INAUDIBLE : break;
             case SELF: recip.sendMessage(format); break; 
             case CLEAR: recip.sendMessage(format); break;
             case GLOBAL: recip.sendMessage(format); break;
-            case DISEMBODIED: recip.sendMessage(format.replaceAll(talkingplayer.getName(), garblifyString(talkingplayer.getName(), ChatColor.GRAY))); break;
-            case GARBLED: recip.sendMessage(format.replaceAll(talkingplayer.getName(), garblifyString(talkingplayer.getName(), ChatColor.DARK_GRAY)).replaceAll(msg, garblifyString(msg, ChatColor.GRAY))); break;
+            case DISEMBODIED: recip.sendMessage(format.replaceAll(talkingplayer.getName(), Utility.garblifyString(talkingplayer.getName(), ChatColor.GRAY))); break;
+            case GARBLED: recip.sendMessage(format.replaceAll(talkingplayer.getName(), Utility.garblifyString(talkingplayer.getName(), ChatColor.DARK_GRAY)).replaceAll(msg, Utility.garblifyString(msg, ChatColor.GRAY))); break;
             default: break;
         }
     }

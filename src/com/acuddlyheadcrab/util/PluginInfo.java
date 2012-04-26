@@ -45,7 +45,7 @@ public class PluginInfo {
     }
     
     public static void sendAlreadyInGameMsg(CommandSender sender, String arena) {
-        sender.sendMessage(red + arena+"is currently in game!");
+        sender.sendMessage(ChatColor.GOLD+arena+red+" is currently in game!");
     }
     
     public static void sendCommandInfo(CommandSender sender, String cmd, String desc){
