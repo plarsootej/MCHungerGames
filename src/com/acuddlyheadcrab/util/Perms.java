@@ -15,9 +15,9 @@ public enum Perms {
     HGA_RENAME("HG.arena.rename"),
     HGA_JOIN("HG.arena.join"),
     
-    HGAE_SETCCP("HG.edit.setcornucopia"),
+    HGAE_SETCCP("HG.edit.setcenter"),
     HGAE_SETLOUNGE("HG.edit.setlounge"),
-    HGAE_LIMIT("HG.edit.limit"),
+    HGAE_LIMIT("HG.edit.radius"),
     HGAE_ADDGM("HG.edit.addgm"),
     HGAE_ADDTRIB("HG.edit.addtrib"),
     HGAE_REMOVEGM("HG.edit.removegm"),
@@ -26,7 +26,7 @@ public enum Perms {
     HGG_START("HG.game.start"),
     HGG_STOP("HG.game.stop"),
     
-    SPC("HG.spawncornucopia")
+    SPC("HG.spawnchest")
     ;
     
     private final String permission;

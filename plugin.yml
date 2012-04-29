@@ -28,3 +28,100 @@ commands:
         description: A command used for testing
         usage: /<command> <int x> <double distance>
         aliases: [/tcmd]
+permissions:
+    HG.*:
+        description: Gives access to all todo list commands
+        children:
+            HG.reload: true
+            HG.arena.*: true
+            HG.edit.*: true
+            HG.game.*: true
+            HG.spawnchest: true
+    HG.reload:
+        description: Access to command /hg reload
+        default: op
+    HG.arena.*:
+        description: Access to /hga branch of commands
+        children:
+            HG.arena.lounge: true
+            HG.arena.tp: true
+            HG.arena.tpall: true
+            HG.arena.info: true
+            HG.arena.new: true
+            HG.arena.del: true
+            HG.arena.list: true
+            HG.arena.rename: true
+            HG.arena.join: true
+    HG.arena.lounge:
+        description:
+        default: op
+    HG.arena.tp:
+        description:
+        default: op
+    HG.arena.tpall:
+        description:
+        default: op
+    HG.arena.info:
+        description:
+        default: op
+    HG.arena.new:
+        description:
+        default: op
+    HG.arena.del:
+        description:
+        default: op
+    HG.arena.list:
+        description:
+        default: op
+    HG.arena.rename:
+        description:
+        default: op
+    HG.arena.join:
+        description:
+        default: op
+    HG.edit.*:
+        description: Access to /hgae branch of commands
+        children:
+            HG.edit.setcenter: true
+            HG.edit.setlounge: true
+            HG.edit.radius: true
+            HG.edit.addgm: true
+            HG.edit.addtrib: true
+            HG.edit.removegm: true
+            HG.edit.removetrib: true
+    HG.edit.setcenter:
+        description:
+        default: op
+    HG.edit.setlounge:
+        description:
+        default: op
+    HG.edit.radius:
+        description:
+        default: op
+    HG.edit.addgm:
+        description:
+        default: op
+    HG.edit.addtrib:
+        description:
+        default: op
+    HG.edit.removegm:
+        description:
+        default: op
+    HG.edit.removetrib:
+        description:
+        default: op
+    HG.game.*:
+        description: Access to /hgg branch of commands
+        children:
+            HG.game.start: true
+            HG.game.stop: true
+    HG.game.start:
+        description:
+        default: op        
+    HG.game.stop:
+        description:
+        default: op
+        
+    HG.spawnchest:
+        description: Access to command /spc 
+        default: op
