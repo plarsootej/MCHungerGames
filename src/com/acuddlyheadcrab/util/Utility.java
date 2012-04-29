@@ -144,6 +144,7 @@ public class Utility {
         Material mat = Material.values()[rand.nextInt(Material.values().length)];
         int max = Math.abs(mat.getMaxDurability());
         System.out.println(max);
+        System.out.println("0-1 is: "+(0-1));
         return new ItemStack(
             mat,
             rand.nextInt(mat.getMaxStackSize()),
