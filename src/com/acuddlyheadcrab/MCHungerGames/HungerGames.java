@@ -15,7 +15,6 @@ import com.acuddlyheadcrab.MCHungerGames.commands.HGGameCommand;
 import com.acuddlyheadcrab.MCHungerGames.commands.HungerGamesCommand;
 import com.acuddlyheadcrab.util.PluginInfo;
 import com.acuddlyheadcrab.util.Utility;
-import com.acuddlyheadcrab.util.YMLKeys;
 
 public class HungerGames extends JavaPlugin {
     
@@ -23,11 +22,11 @@ public class HungerGames extends JavaPlugin {
     public static FileConfiguration config;
     public static FileConfiguration ArenasFile;
     public static FileConfiguration ChestItemsFile;
-    private File fileChestItems = null;
-    private File fileArenas = null;
+    private File fileChestItems;
+    private File fileArenas;
     
     public PluginInfo pluginIO = new PluginInfo(this);
-    public Utility util = new Utility(this);
+    public Utility utility = new Utility(this);
     public Arenas arenas = new Arenas(this);
     
     @Override
@@ -42,25 +41,6 @@ public class HungerGames extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new TributeListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockListener(this), this);
         HungerListener.initConfig();
-        
-//       This is just to update old configs
-        boolean containsoldkey = false;
-        for(String arena : Utility.getArenasKeys()){
-            if(ArenasFile.getConfigurationSection(YMLKeys.ARENAS.key()+arena).contains(".Maxdistance"))
-                containsoldkey = true;
-        }
-        if(containsoldkey){
-            PluginInfo.sendPluginInfo("Updating config...");
-            for(String arena : Utility.getArenasKeys()){
-                String arenakey = YMLKeys.ARENAS.key()+arena, path = arenakey+".Maxdistance";
-                double radius = config.getDouble(path);
-                config.set(arenakey+YMLKeys.ARN_RADIUS.key(), radius);
-                config.set(path, null);
-                PluginInfo.sendPluginInfo("Updated arena "+arena+"...");
-                saveConfig();
-            }
-            PluginInfo.sendPluginInfo("Done!");
-        }
     }
     
     @Override

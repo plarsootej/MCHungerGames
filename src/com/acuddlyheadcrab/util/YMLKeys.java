@@ -42,6 +42,7 @@ public enum YMLKeys {
     CURRENT_GAMES("Currentgames"),
     GAME_COUNT("Game_count"),
     ARENAS("Arenas."),
+        ARN_SELF(""),
             ARN_CENTER_WRLD(".cornucopia.World"),
             ARN_CENTER_X(".cornucopia.x"),
             ARN_CENTER_Y(".cornucopia.y"),
@@ -59,7 +60,7 @@ public enum YMLKeys {
             ARN_INCOUNTDOWN(".in_countdown(DO_NOT_TOUCH)")
     ;
     
-    private final String key;
+    private String key;
     
     
     private YMLKeys(String configkey) {
@@ -70,7 +71,12 @@ public enum YMLKeys {
         return key;
     }
     
+    public void setKey(String newkey){
+        key = newkey;
+    }
+    
     public static String getArenaSubkey(String arenakey, YMLKeys type){
-        return YMLKeys.ARENAS.key()+arenakey+type.key;
+        if(type==YMLKeys.ARN_SELF) return ARENAS.key()+arenakey;
+        return YMLKeys.ARENAS.key()+arenakey+type.key();
     }
 }
