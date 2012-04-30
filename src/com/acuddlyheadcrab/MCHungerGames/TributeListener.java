@@ -20,7 +20,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Utility;
-import com.acuddlyheadcrab.util.Utility.ChatProximity;
 
 
 public class TributeListener implements Listener {
@@ -53,10 +52,7 @@ public class TributeListener implements Listener {
           Set<Player> recips = event.getRecipients();
           for (Iterator<Player> i=recips.iterator();i.hasNext();) {
               Player recip = i.next();
-              
-              ChatProximity prox = Utility.getChatProximity(talkingplayer, recip);
-              System.out.println(talkingplayer.getName()+" --> "+recip.getName()+": "+prox+"("+prox.getDistance()+")");
-              
+              Utility.log.info(format.toString());
               Utility.sendChatProxMessage(talkingplayer, recip, format, msg);
           }
       }

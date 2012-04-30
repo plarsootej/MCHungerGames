@@ -121,7 +121,8 @@ permissions:
     HG.game.stop:
         description:
         default: op
-        
     HG.spawnchest:
-        description: Access to command /spc 
-        default: op
+        description: 
+        default: op    
+        
+        

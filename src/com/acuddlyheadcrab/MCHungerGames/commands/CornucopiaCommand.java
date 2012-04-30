@@ -36,15 +36,16 @@ public class CornucopiaCommand implements CommandExecutor{
         if(cmd.getName().equalsIgnoreCase("spawnccp")){
             if(isplayer){
                 if(sender.hasPermission(Perms.SPC.perm())){
-                    
                     HashSet<Byte> bset = new HashSet<Byte>();
-//                    adds water to transparent blocks
-                    bset.add((byte) 9);
-                    bset.add((byte) 8);
-//                    and dont forget air
-                    bset.add((byte) 0);
+                    bset.add((byte) 9); bset.add((byte) 8); bset.add((byte) 0);
                     
-                    String msg = Utility.spawnCCPChest(player.getTargetBlock(bset, 10)) ?
+                    boolean addtochest = false;
+                    
+                    try{
+                        addtochest = args[0].contains("+");
+                    }catch(IndexOutOfBoundsException e){}
+                    
+                    String msg = Utility.spawnCCPChest(player.getTargetBlock(bset, 10), addtochest) ?
                             ChatColor.GREEN+"Spawned a chest" : ChatColor.LIGHT_PURPLE+"Cannot spawn chests next to double chests!";
                     player.sendMessage(msg);
                     

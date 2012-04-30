@@ -51,7 +51,6 @@ public class Utility {
         matwhitelist.remove(Material.ENDER_PORTAL);
         matwhitelist.remove(Material.ENDER_PORTAL_FRAME);
         matwhitelist.remove(Material.ENDER_STONE);
-//        add more later... im tired
     }
     public final static Logger log = Logger.getLogger("Minecraft");
     public static FileConfiguration config;
@@ -117,10 +116,13 @@ public class Utility {
         return new Location(world, Double.parseDouble(sarr[0]), Double.parseDouble(sarr[1]), Double.parseDouble(sarr[2]));
     }
     
-    public static boolean spawnCCPChest(Block block){
+    public static boolean spawnCCPChest(Block block, boolean addtochest){
         Block above = block.getRelative(BlockFace.UP);
         BlockState state = null;
-        if(block.getType()==Material.CHEST) state = block.getState(); 
+        if(block.getType()==Material.CHEST){
+            state = block.getState();
+            if(!addtochest) ((Chest) state).getInventory().clear();
+        }
         else if(checkChestBlock(above)) {
             above.setType(Material.CHEST);
             state = above.getState();
@@ -133,7 +135,9 @@ public class Utility {
         Random rand = new Random();
         
         for(int c=0;c<rand.nextInt(inv.getSize());c++){
-            inv.setItem(rand.nextInt(inv.getSize()), getRandomItem());
+            ItemStack randitem = getRandomItem();
+            inv.setItem(rand.nextInt(inv.getSize()), randitem);
+            System.out.println("Added "+randitem.getType().name()+" with SS "+randitem.getAmount()+" and dmg "+randitem.getDurability());
         }
         
         return true;
@@ -141,14 +145,15 @@ public class Utility {
     
     public static ItemStack getRandomItem(){
         Random rand = new Random();
-        Material mat = Material.values()[rand.nextInt(Material.values().length)];
-        int max = Math.abs(mat.getMaxDurability());
-        System.out.println(max);
-        System.out.println("0-1 is: "+(0-1));
+        Material mat = (Material) Utility.getKeys(matwhitelist).get(rand.nextInt(matwhitelist.size()));
+        int max = mat.getMaxStackSize();
+        short dmg = mat.getMaxDurability()==((short) 0) ? (short) 0 : (short) rand.nextInt(mat.getMaxDurability());
+        
+        
         return new ItemStack(
             mat,
-            rand.nextInt(mat.getMaxStackSize()),
-            (short) Math.abs(rand.nextInt(max))
+            max,
+            dmg
         );
     }
     
