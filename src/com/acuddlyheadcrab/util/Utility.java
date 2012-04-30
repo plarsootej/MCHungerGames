@@ -137,7 +137,6 @@ public class Utility {
         for(int c=0;c<rand.nextInt(inv.getSize());c++){
             ItemStack randitem = getRandomItem();
             inv.setItem(rand.nextInt(inv.getSize()), randitem);
-            System.out.println("Added "+randitem.getType().name()+" with SS "+randitem.getAmount()+" and dmg "+randitem.getDurability());
         }
         
         return true;
@@ -148,13 +147,7 @@ public class Utility {
         Material mat = (Material) Utility.getKeys(matwhitelist).get(rand.nextInt(matwhitelist.size()));
         int max = mat.getMaxStackSize();
         short dmg = mat.getMaxDurability()==((short) 0) ? (short) 0 : (short) rand.nextInt(mat.getMaxDurability());
-        
-        
-        return new ItemStack(
-            mat,
-            max,
-            dmg
-        );
+        return new ItemStack(mat,max,dmg);
     }
     
     
@@ -198,7 +191,6 @@ public class Utility {
     
     public static boolean isGameMakersArena(CommandSender sender, String arena) {
         FileConfiguration arenas = HungerGamesPlugin.getArenasFile();
-        
         if(sender instanceof Player){
             String arenakey = getArenaByKey(arena);
             if(arenakey!=null){

@@ -41,6 +41,9 @@ public class HungerGames extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new TributeListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockListener(this), this);
         HungerListener.initConfig();
+        
+        PluginInfo.log.info("------------ [MCHungerGames] is now enabled ------------");
+        PluginInfo.log.info("------------       by acuddlyheadcrab       ------------");
     }
     
     @Override
