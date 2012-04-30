@@ -24,3 +24,13 @@ Options:
             Clear: 24
             Disembodied: 36
             Garbled: 50
+
+           # TODO add these keys to YMLkeys enum 
+    Auto_games:
+        Enabled: false
+        Auto_join:
+            Enabled: false
+            Arena:
+        Start_when:
+            Player_count: 12
+            Idle_minutes: 10
