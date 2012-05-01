@@ -2,7 +2,7 @@ name: MCHungerGames
 main: com.acuddlyheadcrab.MCHungerGames.HungerGames
 version: 1.6.1 BETA
 description: >
-             The first Hunger Games plugin! (kinda...)
+             'The first Hunger Games plugin! (kinda...)'
 commands:
     hungergames: #list cmds and version
         description: Lists main commands and/or reload
