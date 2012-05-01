@@ -14,7 +14,7 @@ import com.acuddlyheadcrab.MCHungerGames.commands.HGArenaEditCommand;
 import com.acuddlyheadcrab.MCHungerGames.commands.HGGameCommand;
 import com.acuddlyheadcrab.MCHungerGames.commands.HungerGamesCommand;
 import com.acuddlyheadcrab.util.PluginInfo;
-import com.acuddlyheadcrab.util.Utility;
+import com.acuddlyheadcrab.util.Util;
 
 public class HungerGames extends JavaPlugin {
     
@@ -26,7 +26,7 @@ public class HungerGames extends JavaPlugin {
     private File fileArenas;
     
     public PluginInfo pluginIO = new PluginInfo(this);
-    public Utility utility = new Utility(this);
+    public Util util = new Util(this);
     public Arenas arenas = new Arenas(this);
     
     @Override

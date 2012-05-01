@@ -55,7 +55,7 @@ public class PluginInfo {
     public static void sendCommandsHelp(CommandSender sender) {
         String v = plugin.getDescription().getVersion();
         sender.sendMessage(aqua + "    MC Hunger Games v" + v);
-        Map<String, String> cmd_map = Utility.getCommandsAndDescs();
+        Map<String, String> cmd_map = Util.getCommandsAndDescs();
         for (String cmd : cmd_map.keySet()) {
             String desc = cmd_map.get(cmd);
             sender.sendMessage(red + cmd + gray + ": " + desc);

@@ -15,7 +15,7 @@ import com.acuddlyheadcrab.MCHungerGames.HungerGames;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Perms;
 import com.acuddlyheadcrab.util.PluginInfo;
-import com.acuddlyheadcrab.util.Utility;
+import com.acuddlyheadcrab.util.Util;
 
 public class HGArenaCommand implements CommandExecutor{
     
@@ -31,7 +31,7 @@ public class HGArenaCommand implements CommandExecutor{
         boolean isplayer = sender instanceof Player;
         Player player = isplayer ? (Player) sender : null;
         
-        if(isplayer) PluginInfo.sendPluginInfo(sender.getName()+": /"+label+Utility.concatArray(args, " "));
+        if(isplayer) PluginInfo.sendPluginInfo(sender.getName()+": /"+label+Util.concatArray(args, " "));
         
         if(cmd.getName().equalsIgnoreCase("hgarena")){
             try{
@@ -54,7 +54,7 @@ public class HGArenaCommand implements CommandExecutor{
                     if(sender.hasPermission(Perms.HGA_JOIN.perm())){
                         if(isplayer){
                             try{
-                                String arenakey = Utility.getArenaByKey(args[1]);
+                                String arenakey = Util.getArenaByKey(args[1]);
                                 
                                 if(arenakey!=null){
                                     if(Arenas.isInGame(arenakey)||Arenas.isInCountdown(arenakey)) {
@@ -81,7 +81,7 @@ public class HGArenaCommand implements CommandExecutor{
                             String arg2 = args[1];
                             
                             String 
-                                arenakey = Utility.getArenaByKey(arg2),
+                                arenakey = Util.getArenaByKey(arg2),
                                 arenapath = YMLKeys.ARENAS.key()+arenakey
                             ;
                             
@@ -167,7 +167,7 @@ public class HGArenaCommand implements CommandExecutor{
                                 String name = args[1];
                                 double size = Double.parseDouble(args[2]);
                                 
-                                if(Utility.getArenasKeys().contains(name)){
+                                if(Util.getArenasKeys().contains(name)){
                                     PluginInfo.wrongFormatMsg(sender, "Arena \""+name+"\" has already been set!"); return true;
                                 }
                                 
@@ -189,7 +189,7 @@ public class HGArenaCommand implements CommandExecutor{
                         try{
                             String name = args[1];
                             
-                            if(Utility.getArenasKeys().contains(name)){
+                            if(Util.getArenasKeys().contains(name)){
                                 Arenas.deleteArena(name);
                                 sender.sendMessage(ChatColor.GREEN+"Deleted \""+ChatColor.GOLD+name+ChatColor.GREEN+"\" from the arenas!");
                                 return true;
@@ -205,7 +205,7 @@ public class HGArenaCommand implements CommandExecutor{
                     if(sender.hasPermission(Perms.HGA_LIST.perm())){
                         String arenas = "";
                         
-                        for(String arena : Utility.getArenasKeys()){
+                        for(String arena : Util.getArenasKeys()){
                             arenas = arenas.concat(arena+" ");
                         }
                         
@@ -220,7 +220,7 @@ public class HGArenaCommand implements CommandExecutor{
                         if(sender.hasPermission(Perms.HGA_LOUNGE.perm())){
                             try{
                                 String arg2 = args[1];
-                                String arenakey = Utility.getArenaByKey(arg2);
+                                String arenakey = Util.getArenaByKey(arg2);
                                 
                                 if(arenakey!=null){
                                     Location loc = null;
@@ -246,7 +246,7 @@ public class HGArenaCommand implements CommandExecutor{
                             try{
                                 String arg2 = args[1];
                                 
-                                String arenakey = Utility.getArenaByKey(arg2);
+                                String arenakey = Util.getArenaByKey(arg2);
                                 
                                 if(arenakey!=null){
                                     player.teleport(Arenas.getCenter(arenakey));
@@ -263,7 +263,7 @@ public class HGArenaCommand implements CommandExecutor{
                     if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga tp command");
                     if(sender.hasPermission(Perms.HGA_TPALL.perm())){
                         try{
-                            String arenakey = Utility.getArenaByKey(args[1]);
+                            String arenakey = Util.getArenaByKey(args[1]);
                             
                             if(arenakey!=null){
                                 Arenas.tpAllOnlineTribs(arenakey, false);
@@ -282,7 +282,7 @@ public class HGArenaCommand implements CommandExecutor{
                     if(sender.hasPermission(Perms.HGA_RENAME.perm())){
                         try{
                             String 
-                                arenakey = Utility.getArenaByKey(args[1]),
+                                arenakey = Util.getArenaByKey(args[1]),
                                 renameto = args[2]
                             ;
                             if(arenakey!=null){

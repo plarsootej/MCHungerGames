@@ -31,12 +31,12 @@ import com.acuddlyheadcrab.MCHungerGames.HungerGames;
 
 
 
-public class Utility {
+public class Util {
     
     public static Map<Material, Integer> matwhitelist;
     
     public static HungerGames HungerGamesPlugin;
-    public Utility(HungerGames instance) {
+    public Util(HungerGames instance) {
         HungerGamesPlugin = instance;
         matwhitelist = new HashMap<Material, Integer>();
         for(Material mat : Material.values()) matwhitelist.put(mat, mat.getMaxStackSize());
@@ -144,7 +144,7 @@ public class Utility {
     
     public static ItemStack getRandomItem(){
         Random rand = new Random();
-        Material mat = (Material) Utility.getKeys(matwhitelist).get(rand.nextInt(matwhitelist.size()));
+        Material mat = (Material) Util.getKeys(matwhitelist).get(rand.nextInt(matwhitelist.size()));
         int max = mat.getMaxStackSize();
         short dmg = mat.getMaxDurability()==((short) 0) ? (short) 0 : (short) rand.nextInt(mat.getMaxDurability());
         return new ItemStack(mat,max,dmg);
@@ -283,13 +283,13 @@ public class Utility {
     }
     
     public static void sendChatProxMessage(Player talkingplayer, Player recip, String format, String msg){
-        switch (Utility.getChatProximity(talkingplayer, recip)) {
+        switch (Util.getChatProximity(talkingplayer, recip)) {
             case INAUDIBLE : break;
             case SELF: recip.sendMessage(format); break; 
             case CLEAR: recip.sendMessage(format); break;
             case GLOBAL: recip.sendMessage(format); break;
-            case DISEMBODIED: recip.sendMessage(format.replaceAll(talkingplayer.getName(), Utility.garblifyString(talkingplayer.getName(), ChatColor.GRAY))); break;
-            case GARBLED: recip.sendMessage(format.replaceAll(talkingplayer.getName(), Utility.garblifyString(talkingplayer.getName(), ChatColor.DARK_GRAY)).replaceAll(msg, Utility.garblifyString(msg, ChatColor.GRAY))); break;
+            case DISEMBODIED: recip.sendMessage(format.replaceAll(talkingplayer.getName(), Util.garblifyString(talkingplayer.getName(), ChatColor.GRAY))); break;
+            case GARBLED: recip.sendMessage(format.replaceAll(talkingplayer.getName(), Util.garblifyString(talkingplayer.getName(), ChatColor.DARK_GRAY)).replaceAll(msg, Util.garblifyString(msg, ChatColor.GRAY))); break;
             default: break;
         }
     }

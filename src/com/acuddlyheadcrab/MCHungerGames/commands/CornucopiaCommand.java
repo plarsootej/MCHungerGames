@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
 import com.acuddlyheadcrab.util.Perms;
 import com.acuddlyheadcrab.util.PluginInfo;
-import com.acuddlyheadcrab.util.Utility;
+import com.acuddlyheadcrab.util.Util;
 
 
 
@@ -31,7 +31,7 @@ public class CornucopiaCommand implements CommandExecutor{
         boolean isplayer = sender instanceof Player;
         Player player = isplayer ? (Player) sender : null;
         
-        if(isplayer) PluginInfo.sendPluginInfo(sender.getName()+": /"+label+Utility.concatArray(args, " "));
+        if(isplayer) PluginInfo.sendPluginInfo(sender.getName()+": /"+label+Util.concatArray(args, " "));
         
         if(cmd.getName().equalsIgnoreCase("spawnccp")){
             if(isplayer){
@@ -45,7 +45,7 @@ public class CornucopiaCommand implements CommandExecutor{
                         addtochest = args[0].contains("+");
                     }catch(IndexOutOfBoundsException e){}
                     
-                    String msg = Utility.spawnCCPChest(player.getTargetBlock(bset, 10), addtochest) ?
+                    String msg = Util.spawnCCPChest(player.getTargetBlock(bset, 10), addtochest) ?
                             ChatColor.GREEN+"Spawned a chest" : ChatColor.LIGHT_PURPLE+"Cannot spawn chests next to double chests!";
                     player.sendMessage(msg);
                     
@@ -59,7 +59,7 @@ public class CornucopiaCommand implements CommandExecutor{
                     int x = Integer.parseInt(args[0]);
                     double dist = Double.parseDouble(args[1]);
                     
-                    List<Location> loclist = Utility.getSurroundingLocs(player.getLocation(), x, dist);
+                    List<Location> loclist = Util.getSurroundingLocs(player.getLocation(), x, dist);
                     
                     for(Location loc : loclist){
                         loc.getBlock().setTypeIdAndData(35, (byte) 14, false);

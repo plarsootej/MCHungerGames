@@ -15,7 +15,7 @@ import com.acuddlyheadcrab.MCHungerGames.HungerGames;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Perms;
 import com.acuddlyheadcrab.util.PluginInfo;
-import com.acuddlyheadcrab.util.Utility;
+import com.acuddlyheadcrab.util.Util;
 
 
 
@@ -32,7 +32,7 @@ public class HGGameCommand implements CommandExecutor{
         FileConfiguration config = hungergames.getConfig();
         FileConfiguration arenasfile = hungergames.getArenasFile();
         
-        if(sender instanceof Player) PluginInfo.sendPluginInfo(sender.getName()+": /"+label+Utility.concatArray(args, " "));
+        if(sender instanceof Player) PluginInfo.sendPluginInfo(sender.getName()+": /"+label+Util.concatArray(args, " "));
         
         if(cmd.getName().equalsIgnoreCase("hggame")){
             try{
@@ -48,10 +48,10 @@ public class HGGameCommand implements CommandExecutor{
                     try{
                         String arg2 = args[1];
                         
-                        final String arenakey = Utility.getArenaByKey(arg2);
+                        final String arenakey = Util.getArenaByKey(arg2);
                         
                         if(arenakey!=null){
-                            if(sender.hasPermission(Perms.HGG_START.perm())||Utility.isGameMakersArena(sender, arenakey)){
+                            if(sender.hasPermission(Perms.HGG_START.perm())||Util.isGameMakersArena(sender, arenakey)){
 
                                 
                                 try{
@@ -83,10 +83,10 @@ public class HGGameCommand implements CommandExecutor{
                     try{
                         String arg2 = args[1];
                         
-                        String arenakey = Utility.getArenaByKey(arg2);
+                        String arenakey = Util.getArenaByKey(arg2);
                         
                         if(arenakey!=null){
-                            if(sender.hasPermission(Perms.HGG_STOP.perm())||Utility.isGameMakersArena(sender, arenakey)){
+                            if(sender.hasPermission(Perms.HGG_STOP.perm())||Util.isGameMakersArena(sender, arenakey)){
                                 
                             	Arenas.setInGame(arenakey, false);
                                 List<String> games = arenasfile.getStringList(YMLKeys.CURRENT_GAMES.key());

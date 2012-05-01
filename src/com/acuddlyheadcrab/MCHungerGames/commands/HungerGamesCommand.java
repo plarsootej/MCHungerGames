@@ -11,7 +11,7 @@ import com.acuddlyheadcrab.MCHungerGames.HungerGames;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Perms;
 import com.acuddlyheadcrab.util.PluginInfo;
-import com.acuddlyheadcrab.util.Utility;
+import com.acuddlyheadcrab.util.Util;
 
 
 
@@ -26,7 +26,7 @@ public class HungerGamesCommand implements CommandExecutor{
     public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args) {
         FileConfiguration config = hungergames.getConfig();
         
-        if(sender instanceof Player) PluginInfo.sendPluginInfo(sender.getName()+": /"+label+Utility.concatArray(args, " "));
+        if(sender instanceof Player) PluginInfo.sendPluginInfo(sender.getName()+": /"+label+Util.concatArray(args, " "));
         
         if(cmd.getName().equalsIgnoreCase("hungergames")){
             try{
