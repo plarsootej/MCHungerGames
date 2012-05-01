@@ -12,7 +12,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import com.acuddlyheadcrab.util.YMLKeys;
-import com.acuddlyheadcrab.util.Utility;
+import com.acuddlyheadcrab.util.Util;
 
 public class Arenas {
     
@@ -108,7 +108,7 @@ public class Arenas {
     public static List<String> getTribNames(String arenakey){
         List<String> plist = new ArrayList<String>();
         for(Map<?,?> map : arenas.getMapList(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_TRIBS))){
-            plist.add(Utility.getKeys(map).get(0).toString());
+            plist.add(Util.getKeys(map).get(0).toString());
         }
         return plist;
     }
@@ -130,7 +130,7 @@ public class Arenas {
     
     public static Location getTribSpawn(String arenakey, String trib){
         for(Map<?, ?> maps : getTribs(arenakey)){
-            if(maps.containsKey(trib.toString())) return Utility.parseLocKey(maps.get(trib.toString()).toString(), getCenter(arenakey).getWorld());
+            if(maps.containsKey(trib.toString())) return Util.parseLocKey(maps.get(trib.toString()).toString(), getCenter(arenakey).getWorld());
         }
         return null;
     }
@@ -190,14 +190,14 @@ public class Arenas {
         List<Map<?,?>> maplist = getTribs(arenakey);
         @SuppressWarnings("unchecked")
         Map<String, String> map = (Map<String, String>) maplist.get(tribID);
-        map.put(Utility.getKeys(map).get(0).toString(), lockey);
+        map.put(Util.getKeys(map).get(0).toString(), lockey);
         maplist.remove(tribID);
         maplist.add(tribID, map);
         setTribs(arenakey, maplist);
     }
     
     public static void setTribLoc(String arenakey, int tribID, Location loc){
-        setTribLoc(arenakey, tribID, Utility.toLocKey(loc, true));
+        setTribLoc(arenakey, tribID, Util.toLocKey(loc, true));
     }
     
     public static void addTrib(String arenakey, Map<String, String> entry){
@@ -220,11 +220,11 @@ public class Arenas {
             noncust_tribs = getNonCustomTribs(arenakey), 
             maplist = noncust_tribs
         ;
-        List<Location> loclist = Utility.getSurroundingLocs(getCenter(arenakey), maplist.size(), 7);
+        List<Location> loclist = Util.getSurroundingLocs(getCenter(arenakey), maplist.size(), 7);
         for(int i=0;i<maplist.size();i++){
             @SuppressWarnings("unchecked")
             Map<String,String> map = (Map<String, String>) maplist.get(i);
-            map.put(Utility.getKeys(map).get(0).toString(), Utility.toLocKey(loclist.get(i), false));
+            map.put(Util.getKeys(map).get(0).toString(), Util.toLocKey(loclist.get(i), false));
         }
        alltribs.removeAll(noncust_tribs);
        alltribs.addAll(maplist);
@@ -235,7 +235,7 @@ public class Arenas {
         List<Map<?,?>> maplist = getTribs(arenakey);
         for(int i=0;i<maplist.size();i++){
             Map<?,?> maps = maplist.get(i);
-            if(Utility.getValues(maps).get(0).toString().contains("<<custom>>"))
+            if(Util.getValues(maps).get(0).toString().contains("<<custom>>"))
                 maplist.remove(i);
         }
         return maplist;
@@ -281,31 +281,36 @@ public class Arenas {
     }
     
     public static String getNearbyArena(Location loc){
-        for(String arenakey : Utility.getArenasKeys())
+        for(String arenakey : Util.getArenasKeys())
             if(isWithinArena(arenakey, loc)) return arenakey;
         return null;
     }
     
+    public static boolean isTribute(String arenakey, String player){
+        return getTribNames(arenakey).contains(player);
+    }
+    
     public static boolean isTribute(String arenakey, Player player){
-        for(String trib : getTribNames(arenakey))
-            if(Bukkit.getPlayer(trib)!=null&&player.equals(Bukkit.getPlayer(trib))) return true;
-        return false;
+        return isTribute(arenakey, player.getName());
     }
     
     public static String getArenaByTrib(Player player){
-        for(String arenakey : Utility.getArenasKeys())
+        for(String arenakey : Util.getArenasKeys()){
             if(isTribute(arenakey, player)) return arenakey;
+        }
         return null;
     }
     
+    public static boolean isGM(String arenakey, String player){
+        return getGMs(arenakey).contains(player);
+    }
+    
     public static boolean isGM(String arenakey, Player player){
-        for(String gm : getGMs(arenakey))
-            if(Bukkit.getPlayer(gm)!=null&&player.equals(Bukkit.getPlayer(gm))) return true;
-        return false;
+        return isGM(arenakey, player.getName());
     }
     
     public static String getArenaByGM(Player player){
-        for(String arenakey : Utility.getArenasKeys())
+        for(String arenakey : Util.getArenasKeys())
             if(isGM(arenakey, player)) return arenakey;
         return null;
     }
@@ -338,13 +343,13 @@ public class Arenas {
 //        checks for any extra games (aka removes unecessary)
         for(int c=0;c<currentgames.size();c++){
             String game = currentgames.get(c);
-            boolean contains = Utility.getArenasKeys().contains(game), ingame = Arenas.isInGame(game);
+            boolean contains = Util.getArenasKeys().contains(game), ingame = Arenas.isInGame(game);
             if(!contains||!ingame){
                 currentgames.remove(c);
             }
         }
 //        checks if any arenas are excluded (aka adds not included ones)
-        for(String arena : Utility.getArenasKeys()){
+        for(String arena : Util.getArenasKeys()){
             if(currentgames.contains(arena)){
                 if(!Arenas.isInGame(arena)) currentgames.remove(arena);
             } else {

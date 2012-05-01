@@ -15,11 +15,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import com.acuddlyheadcrab.util.YMLKeys;
-import com.acuddlyheadcrab.util.Utility;
+import com.acuddlyheadcrab.util.Util;
 
 
 public class TributeListener implements Listener {
@@ -31,17 +30,6 @@ public class TributeListener implements Listener {
     // note to self: config is instantiated ONLY once initConfig() is called.
     public static void initConfig(){config = plugin.getConfig();}
     
-    
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerDisconnect(PlayerQuitEvent e){
-        String arenakey = Arenas.getArenaByTrib(e.getPlayer());
-        if(arenakey!=null) 
-            if(Arenas.isInGame(arenakey)) 
-                if(config.getBoolean(YMLKeys.OPS_DURGM_DISQUALONDISC.key()))
-                    Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+""+e.getPlayer().getName()+" has been disqualified from "+arenakey+"!");
-                    Arenas.removeTrib(arenakey, e.getPlayer().getName(), true);
-    }
-    
 
   @EventHandler(priority = EventPriority.HIGH)
   public void onPlayerChat(PlayerChatEvent event){
@@ -52,8 +40,8 @@ public class TributeListener implements Listener {
           Set<Player> recips = event.getRecipients();
           for (Iterator<Player> i=recips.iterator();i.hasNext();) {
               Player recip = i.next();
-              Utility.log.info(ChatColor.stripColor(format));
-              Utility.sendChatProxMessage(talkingplayer, recip, format, msg);
+              Util.log.info(ChatColor.stripColor(format));
+              Util.sendChatProxMessage(talkingplayer, recip, format, msg);
           }
       }
   }
@@ -183,7 +171,7 @@ public class TributeListener implements Listener {
                       player.sendMessage(red+"You are not allowed to leave "+from_arena+"!");
                       event.setCancelled(true);
                       player.teleport(from);
-                      Utility.repelPlayer(player, to, 5);
+                      Util.repelPlayer(player, to, 5);
                       return;
                   }
               }
@@ -201,7 +189,7 @@ public class TributeListener implements Listener {
                       player.sendMessage(red+"You are not allowed to enter "+to_arena+"!");
                       event.setCancelled(true);
                       player.teleport(from);
-                      Utility.repelPlayer(player, to, 5);
+                      Util.repelPlayer(player, to, 5);
                       return;
                   }
               }

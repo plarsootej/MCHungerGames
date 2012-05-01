@@ -1,12 +1,16 @@
 package com.acuddlyheadcrab.MCHungerGames;
 
 import com.acuddlyheadcrab.util.YMLKeys;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 
 public class HungerListener implements Listener {
@@ -41,5 +45,17 @@ public class HungerListener implements Listener {
         }
     }
     
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerDisconnect(PlayerQuitEvent e){
+        String arenakey = Arenas.getArenaByTrib(e.getPlayer());
+        if(arenakey!=null){
+            if(Arenas.isInGame(arenakey)){
+                if(config.getBoolean(YMLKeys.OPS_DURGM_DISQUALONDISC.key())){
+                    Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+""+e.getPlayer().getName()+" has been disqualified from "+arenakey+"!");
+                    Arenas.removeTrib(arenakey, e.getPlayer().getName(), true);
+                }
+            }
+        }
+    }
     
 }
