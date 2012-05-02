@@ -204,12 +204,17 @@ public class Util {
     public static String concatArray(String[] array, String param) {
         return concatList(Arrays.asList(array), param);
     }
-
-
-    public static String concatList(List<String> list, String param) {
+    
+    public static String concatList(List<? extends Object> list, String separator){
         String returnable = "";
-        for(String i : list)
-            returnable = returnable.concat(param+i);
+        for(int i=0;i<=list.size()-1;i++){
+            Object object = list.get(i);
+            if(i!=list.size()-1){
+                returnable += object.toString().concat(separator);
+            } else if(i==list.size()-1){
+                returnable += object.toString();
+            }
+        }
         return returnable;
     }
     

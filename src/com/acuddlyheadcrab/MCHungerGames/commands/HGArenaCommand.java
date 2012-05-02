@@ -12,6 +12,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import com.acuddlyheadcrab.MCHungerGames.Arenas;
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.util.PluginInfo.MCHGCommandBranch;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Perms;
 import com.acuddlyheadcrab.util.PluginInfo;
@@ -144,8 +145,9 @@ public class HGArenaCommand implements CommandExecutor{
                                 sender.sendMessage(main+"    World: "+value+corn.getWorld().getName());
                                 sender.sendMessage(main+"    Radius: "+value+size);
                                 if(isplayer){
-                                    int dist = (int) player.getLocation().distance(corn);
-                                    player.sendMessage(main+"    Current distance from center: "+value+dist);
+                                    int dist = player.getWorld()==corn.getWorld() ? (int) player.getLocation().distance(corn) : -1;
+                                    String distmsg = dist==-1 ? value+"Not in same world" : value+dist;
+                                    player.sendMessage(main+"    Current distance from center: "+distmsg);
                                 }
                                 sender.sendMessage(main+"    Gamemakers:"+ChatColor.RESET+ChatColor.ITALIC+onlineplayer+"    online"+offlineplayer+"    offline");
                                 sender.sendMessage(gms);
@@ -203,13 +205,12 @@ public class HGArenaCommand implements CommandExecutor{
                 if(hga_list){
                     if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga list command");
                     if(sender.hasPermission(Perms.HGA_LIST.perm())){
-                        String arenas = "";
-                        
-                        for(String arena : Util.getArenasKeys()){
-                            arenas = arenas.concat(arena+" ");
+                        String arenas = Util.concatList(Util.getArenasKeys(), ChatColor.GRAY+", "+ChatColor.GOLD);
+                        if(arenas.length()==0){
+                            arenas = ChatColor.DARK_GRAY+"(none)";
                         }
                         
-                        sender.sendMessage(ChatColor.AQUA+"Arenas: "+arenas);
+                        sender.sendMessage(ChatColor.AQUA+"Arenas: "+ChatColor.GOLD+arenas);
                         return true;
                     }
                 }
@@ -249,6 +250,14 @@ public class HGArenaCommand implements CommandExecutor{
                                 String arenakey = Util.getArenaByKey(arg2);
                                 
                                 if(arenakey!=null){
+                                    try{
+                                        player = Bukkit.getPlayer(args[2]);
+                                        if(player==null){
+                                            PluginInfo.wrongFormatMsg(sender, "Could not find player \""+args[2]+"\"");
+                                            return true;
+                                        }
+                                    }catch(IndexOutOfBoundsException e){}
+                                    
                                     player.teleport(Arenas.getCenter(arenakey));
                                     player.sendMessage(ChatColor.GREEN+"Teleported you to the center of "+arenakey);
                                 } else PluginInfo.wrongFormatMsg(sender, "Could not find the arena \""+arg2+"\""); return true;
@@ -307,14 +316,7 @@ public class HGArenaCommand implements CommandExecutor{
                 }
             }catch(IndexOutOfBoundsException e){}
             if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted to show /hga branch help");
-                PluginInfo.sendCommandInfo(sender, "/hga", "");
-                PluginInfo.sendCommandInfo(sender, "     info", "Gives info on an arena");
-                PluginInfo.sendCommandInfo(sender, "     new", "Create a new arena at your location");
-                PluginInfo.sendCommandInfo(sender, "     del", "Delete an arena from the config");
-                PluginInfo.sendCommandInfo(sender, "     list", "Lists all arenas");
-                PluginInfo.sendCommandInfo(sender, "     tp", "Teleport to the cornucopia");
-                PluginInfo.sendCommandInfo(sender, "     tpall", "Teleport all tributes to the cornucopia");
-                PluginInfo.sendCommandInfo(sender, "     rename", "Rename an arena");
+                PluginInfo.sendCommandUsage(MCHGCommandBranch.HGA, sender);
         }
         
         

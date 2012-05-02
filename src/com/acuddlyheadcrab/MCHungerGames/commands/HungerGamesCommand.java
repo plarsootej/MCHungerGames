@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.util.PluginInfo.MCHGCommandBranch;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Perms;
 import com.acuddlyheadcrab.util.PluginInfo;
@@ -41,7 +42,7 @@ public class HungerGamesCommand implements CommandExecutor{
                 }
             }catch(IndexOutOfBoundsException e){
                 if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted to show main cmd tree help");
-                PluginInfo.sendCommandsHelp(sender);
+                PluginInfo.sendCommandUsage(MCHGCommandBranch.HG, sender);
             }
         }
         

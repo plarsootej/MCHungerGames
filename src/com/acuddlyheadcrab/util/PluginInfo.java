@@ -31,7 +31,7 @@ public class PluginInfo {
     }
     
     public static void sendTestMsg(CommandSender sender, String msg) {
-        sender.sendMessage("        MCHungerGames TEST:");
+        sender.sendMessage("\t    MCHungerGames TEST:");
         sender.sendMessage(msg);
     }
 
@@ -52,20 +52,60 @@ public class PluginInfo {
         sender.sendMessage(purple+cmd+gray+": "+desc);
     }
     
-    public static void sendCommandsHelp(CommandSender sender) {
-        String v = plugin.getDescription().getVersion();
-        sender.sendMessage(aqua + "    MC Hunger Games v" + v);
-        Map<String, String> cmd_map = Util.getCommandsAndDescs();
-        for (String cmd : cmd_map.keySet()) {
-            String desc = cmd_map.get(cmd);
-            sender.sendMessage(red + cmd + gray + ": " + desc);
-        }
-        sender.sendMessage(red+"hg reload"+gray+": "+"Reloads MCHungerGames' config");
-    }
-    
     
     public static void wrongFormatMsg(CommandSender sender, String msg) {
         sender.sendMessage(red+msg);
+    }
+    
+    public static void sendCommandUsage(MCHGCommandBranch branch, CommandSender sender){
+        switch (branch) {
+            default:
+            case HG:
+                String v = plugin.getDescription().getVersion();
+                sender.sendMessage(aqua + "    MC Hunger Games v" + v);
+                Map<String, String> cmd_map = Util.getCommandsAndDescs();
+                for (String cmd : cmd_map.keySet()) {
+                    String desc = cmd_map.get(cmd);
+                    sendCommandInfo(sender, cmd, desc);
+                }
+                sendCommandInfo(sender, "hg reload", "Reloads the config");
+                break;
+            case HGA:
+                PluginInfo.sendCommandInfo(sender, "/hga", "");
+                PluginInfo.sendCommandInfo(sender, "    list", "Lists all arenas");
+                PluginInfo.sendCommandInfo(sender, "    info", "Gives info on an arena");
+                PluginInfo.sendCommandInfo(sender, "    new", "Create a new arena at your location");
+                PluginInfo.sendCommandInfo(sender, "    del", "Delete an arena from the config");
+                PluginInfo.sendCommandInfo(sender, "    tp", "Teleport to the cornucopia");
+                PluginInfo.sendCommandInfo(sender, "    tpall", "Teleport all tributes to the cornucopia");
+                PluginInfo.sendCommandInfo(sender, "    rename", "Rename an arena");
+                PluginInfo.sendCommandInfo(sender, "    lounge", "Teleport to the arena's lounge");
+                PluginInfo.sendCommandInfo(sender, "    join", "Join an arena");
+                break;
+            case HGAE:
+                PluginInfo.sendCommandInfo(sender, "/hgae <arena>", "");
+                PluginInfo.sendCommandInfo(sender, "    setcornucopia (setccp)", "Set the center to your location");
+                PluginInfo.sendCommandInfo(sender, "    setlounge", "Set the lounge to your location");
+                PluginInfo.sendCommandInfo(sender, "    radius", "Create a new arena at your location");
+                PluginInfo.sendCommandInfo(sender, "    addgm", "Add a gamemaker");
+                PluginInfo.sendCommandInfo(sender, "    addtrib", "Add a tribute");
+                PluginInfo.sendCommandInfo(sender, "    removegm", "Remove a gamemaker");
+                PluginInfo.sendCommandInfo(sender, "    removetrib", "Remove a tribute");
+                PluginInfo.sendCommandInfo(sender, "    settribspawn", "Set the spawn point for a tribute");
+                break;
+            case HGG:
+                PluginInfo.sendCommandInfo(sender, "/hgg", "");
+                PluginInfo.sendCommandInfo(sender, "    start <arena>", "Starts a game");
+                PluginInfo.sendCommandInfo(sender, "    stop <arena>", "Stops an ongoing game");
+                break;
+        }
+    }
+    
+    public enum MCHGCommandBranch{
+        HG,
+        HGA,
+        HGAE,
+        HGG;
     }
 
 }

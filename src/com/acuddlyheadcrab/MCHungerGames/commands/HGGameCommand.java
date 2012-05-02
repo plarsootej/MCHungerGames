@@ -99,9 +99,7 @@ public class HGGameCommand implements CommandExecutor{
                     return true;
                 }
                 
-                PluginInfo.sendCommandInfo(sender, "/hgg", "");
-                PluginInfo.sendCommandInfo(sender, "    start <arena>", "Starts a game");
-                PluginInfo.sendCommandInfo(sender, "    stop <arena>", "Stops an ongoing game");
+                
                 
             }catch(IndexOutOfBoundsException e){
                 String cur_games = arenasfile.getString(YMLKeys.CURRENT_GAMES.key());

@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import com.acuddlyheadcrab.MCHungerGames.Arenas;
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.util.PluginInfo.MCHGCommandBranch;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Perms;
 import com.acuddlyheadcrab.util.PluginInfo;
@@ -58,6 +59,10 @@ public class HGArenaEditCommand implements CommandExecutor{
                             if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> setccp command");
                             if(sender.hasPermission(Perms.HGAE_SETCCP.perm())||Util.isGameMakersArena(sender, arenakey)){
                                 if(isplayer){
+                                    if(Arenas.isInGame(arenakey)){
+                                        sender.sendMessage(ChatColor.GOLD+arenakey+ChatColor.RED+" is currently in game!");
+                                        return true;
+                                    }
                                 	Arenas.setCenter(arenakey, player.getLocation());
                                     player.sendMessage(ChatColor.GREEN+"Set your location as the center of "+arenakey);
                                     return true;
@@ -70,6 +75,9 @@ public class HGArenaEditCommand implements CommandExecutor{
                             if(sender.hasPermission(Perms.HGAE_SETLOUNGE.perm())||Util.isGameMakersArena(sender, arenakey)){
                                 if(isplayer){
                                     Arenas.setLounge(arenakey, player.getLocation());
+                                    if(Arenas.isInGame(arenakey)){
+                                        sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"(Warning): "+ChatColor.GOLD+arenakey+ChatColor.LIGHT_PURPLE+" is currently in game");
+                                    }
                                     player.sendMessage(ChatColor.GREEN+"Set your location as the lounge of "+arenakey);
                                     return true;
                                 } else PluginInfo.sendOnlyPlayerMsg(sender); return true;
@@ -79,16 +87,21 @@ public class HGArenaEditCommand implements CommandExecutor{
                         if(radius){
                             if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> radius command");
                             if(sender.hasPermission(Perms.HGAE_LIMIT.perm())||Util.isGameMakersArena(sender, arenakey)){
+                                if(Arenas.isInGame(arenakey)){
+                                    sender.sendMessage(ChatColor.GOLD+arenakey+ChatColor.RED+" is currently in game!");
+                                    return true;
+                                }
                                 try{
-                                    String arg3 = args[2];
-                                    try{
-                                        Arenas.setRadius(arenakey, Double.parseDouble(arg3));
-                                        player.sendMessage(ChatColor.GREEN+"Set "+arenakey+"'s radius to "+arg3);
-                                        return true;
-                                    }catch(NumberFormatException e){
-                                        PluginInfo.wrongFormatMsg(sender, arg3+" is not a valid number!"); return true;
-                                    }
-                                }catch(IndexOutOfBoundsException e){PluginInfo.wrongFormatMsg(sender, "/hgae <arena> radius (number)"); return true;}
+                                    Arenas.setRadius(arenakey, Double.parseDouble(args[2]));
+                                    player.sendMessage(ChatColor.GREEN+"Set "+arenakey+"'s radius to "+args[2]);
+                                    return true;
+                                }catch(NumberFormatException e){
+                                    PluginInfo.wrongFormatMsg(sender, args[2]+" is not a valid number!"); 
+                                    return true;
+                                }catch(IndexOutOfBoundsException e){
+                                    PluginInfo.wrongFormatMsg(sender, "/hgae <arena> radius (number)"); 
+                                    return true;
+                                }
                             } else PluginInfo.sendNoPermMsg(sender); return true;
                         }
                         
@@ -106,13 +119,24 @@ public class HGArenaEditCommand implements CommandExecutor{
                                             Player gm = Bukkit.getPlayer(arg3);
                                             if(gm!=null){
                                                 arg3 = gm.getName();
+                                                
+                                                if(Arenas.isGM(arenakey, arg3)){
+                                                    PluginInfo.wrongFormatMsg(sender, ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+arg3+" is already a gamemaker for "+ChatColor.GOLD+arenakey);
+                                                    return true;
+                                                }
+                                                
                                                 gm.sendMessage(ChatColor.LIGHT_PURPLE+"You have been added as a gamemaker to the arena: "+arenakey);
+                                                
+                                                Arenas.addGM(arenakey, arg3);
+                                                if(Arenas.isInGame(arenakey))
+                                                    sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"(Warning): "+ChatColor.GOLD+arenakey+ChatColor.LIGHT_PURPLE+" is currently in game");
+                                                sender.sendMessage(ChatColor.GREEN+"Added "+arg3+" to "+arenakey+"'s gamemakers");
+                                                return true;
+                                                
                                             } else{
                                                 sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"(Warning): Could not find player online \""+arg3+"\"");
+                                                return true;
                                             }
-                                            Arenas.addGM(arenakey, arg3);
-                                            sender.sendMessage(ChatColor.GREEN+"Added "+arg3+" to "+arenakey+"'s gamemakers");
-                                            return true;
                                         } else PluginInfo.wrongFormatMsg(sender, arg3+" is already a gamemaker for "+arenakey+"!"); return true;
                                     }catch(NullPointerException e){
                                         PluginInfo.wrongFormatMsg(sender, "Could not find the player \""+arg3+"\""); return true;
@@ -138,12 +162,17 @@ public class HGArenaEditCommand implements CommandExecutor{
                                             if(trib!=null){
                                                 arg3 = trib.getName();
                                                 trib.sendMessage(ChatColor.LIGHT_PURPLE+"You have been added as a tribute to the arena: "+arenakey);
+                                                
+                                                if(Arenas.isTribute(arenakey, arg3)){
+                                                    PluginInfo.wrongFormatMsg(sender, ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+arg3+" is already a tribute for "+ChatColor.GOLD+arenakey);
+                                                    return true;
+                                                }
+                                                Arenas.addTrib(arenakey, arg3);
+                                                sender.sendMessage(ChatColor.GREEN+"Added "+arg3+" to "+arenakey+"'s tributes");
+                                                return true;
                                             } else{
                                                 sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"(Warning): Could not find player online \""+arg3+"\"");
                                             }
-                                            Arenas.addTrib(arenakey, arg3);
-                                            sender.sendMessage(ChatColor.GREEN+"Added "+arg3+" to "+arenakey+"'s tributes");
-                                             return true;
                                         } else PluginInfo.wrongFormatMsg(sender, arg3+" is already a tribute for "+arenakey+"!"); return true;
                                     }catch(NullPointerException e){
                                         PluginInfo.wrongFormatMsg(sender, "Could not find the player \""+arg3+"\""); return true;
@@ -204,6 +233,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                                 int index = Integer.parseInt(args[2]);
                                 
                                 Arenas.setTribLoc(arenakey, index, player.getLocation());
+//                                TODO: add check for in the same world
                                 player.sendMessage(ChatColor.GREEN+"Set tribute "+Arenas.getTribNames(arenakey).get(index)+"'s spawn point to your location");
                                 
                             }catch(IndexOutOfBoundsException e){
@@ -217,16 +247,9 @@ public class HGArenaEditCommand implements CommandExecutor{
                     }catch(IndexOutOfBoundsException e){}
                 } else PluginInfo.wrongFormatMsg(sender, "Could not find the arena \""+arg1+"\""); return true;
             }catch(IndexOutOfBoundsException e){}
+            
             if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted to show /hgae branch help");
-            PluginInfo.sendCommandInfo(sender, "/hgae <arena>", "");
-            PluginInfo.sendCommandInfo(sender, "     setcornucopia (setccp)", "Set the center to your location");
-            PluginInfo.sendCommandInfo(sender, "     setlounge", "Set the lounge to your location");
-            PluginInfo.sendCommandInfo(sender, "     radius", "Create a new arena at your location");
-            PluginInfo.sendCommandInfo(sender, "     addgm", "Add a gamemaker");
-            PluginInfo.sendCommandInfo(sender, "     addtrib", "Add a tribute");
-            PluginInfo.sendCommandInfo(sender, "     removegm", "Remove a gamemaker");
-            PluginInfo.sendCommandInfo(sender, "     removetrib", "Remove a tribute");
-            PluginInfo.sendCommandInfo(sender, "     settribspawn", "Set the spawn point for a tribute");
+            PluginInfo.sendCommandUsage(MCHGCommandBranch.HGAE, sender);
         } 
         
         return true;
