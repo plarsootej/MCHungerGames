@@ -11,6 +11,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 
+import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.PluginInfo;
 

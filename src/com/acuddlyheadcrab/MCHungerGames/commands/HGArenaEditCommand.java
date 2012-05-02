@@ -8,13 +8,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.acuddlyheadcrab.MCHungerGames.Arenas;
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaIO;
+import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
 import com.acuddlyheadcrab.util.PluginInfo.MCHGCommandBranch;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Perms;
 import com.acuddlyheadcrab.util.PluginInfo;
-import com.acuddlyheadcrab.util.Util;
 
 public class HGArenaEditCommand implements CommandExecutor{
     
@@ -34,7 +34,7 @@ public class HGArenaEditCommand implements CommandExecutor{
             try{
                 String arg1 = args[0];
                 
-                String arenakey = Util.getArenaByKey(arg1);
+                String arenakey = ArenaIO.getArenaByKey(arg1);
                 
                 if(arenakey!=null){
                     try{
@@ -56,7 +56,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                         
                         if(setccp){
                             if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> setccp command");
-                            if(sender.hasPermission(Perms.HGAE_SETCCP.perm())||Util.isGameMakersArena(sender, arenakey)){
+                            if(sender.hasPermission(Perms.HGAE_SETCCP.perm())||Arenas.isGameMakersArena(sender, arenakey)){
                                 if(isplayer){
                                     if(Arenas.isInGame(arenakey)){
                                         sender.sendMessage(ChatColor.GOLD+arenakey+ChatColor.RED+" is currently in game!");
@@ -71,7 +71,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                         
                         if(setlounge){
                             if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> setlounge command");
-                            if(sender.hasPermission(Perms.HGAE_SETLOUNGE.perm())||Util.isGameMakersArena(sender, arenakey)){
+                            if(sender.hasPermission(Perms.HGAE_SETLOUNGE.perm())||Arenas.isGameMakersArena(sender, arenakey)){
                                 if(isplayer){
                                     Arenas.setLounge(arenakey, player.getLocation());
                                     if(Arenas.isInGame(arenakey)){
@@ -85,7 +85,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                         
                         if(radius){
                             if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> radius command");
-                            if(sender.hasPermission(Perms.HGAE_LIMIT.perm())||Util.isGameMakersArena(sender, arenakey)){
+                            if(sender.hasPermission(Perms.HGAE_LIMIT.perm())||Arenas.isGameMakersArena(sender, arenakey)){
                                 if(Arenas.isInGame(arenakey)){
                                     sender.sendMessage(ChatColor.GOLD+arenakey+ChatColor.RED+" is currently in game!");
                                     return true;
@@ -148,7 +148,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                         
                         if(addtrib){
                             if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> addtrib command");
-                            if(sender.hasPermission(Perms.HGAE_ADDTRIB.perm())||Util.isGameMakersArena(sender, arenakey)){
+                            if(sender.hasPermission(Perms.HGAE_ADDTRIB.perm())||Arenas.isGameMakersArena(sender, arenakey)){
                                 try{
                                     String arg3 = args[2];
                                     
@@ -205,7 +205,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                         
                         if(removetrib){
                             if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> removetrib command");
-                            if(sender.hasPermission(Perms.HGAE_REMOVETRIB.perm())||Util.isGameMakersArena(sender, arenakey)){
+                            if(sender.hasPermission(Perms.HGAE_REMOVETRIB.perm())||Arenas.isGameMakersArena(sender, arenakey)){
                                 try{
                                     String arg3 = args[2];
                                     

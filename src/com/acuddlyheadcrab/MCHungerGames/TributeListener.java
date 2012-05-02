@@ -17,6 +17,9 @@ import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
+import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaUtil;
+import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
+import com.acuddlyheadcrab.MCHungerGames.chat.ChatHandler;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Util;
 
@@ -41,7 +44,7 @@ public class TributeListener implements Listener {
           for (Iterator<Player> i=recips.iterator();i.hasNext();) {
               Player recip = i.next();
               Util.log.info(ChatColor.stripColor(format));
-              Util.sendChatProxMessage(talkingplayer, recip, format, msg);
+              ChatHandler.sendChatProxMessage(talkingplayer, recip, format, msg);
           }
       }
   }
@@ -55,7 +58,7 @@ public class TributeListener implements Listener {
               if(Arenas.isTribute(arena, player)){
                   Arenas.removeTrib(arena, player.getName(), false);
                   // replace with broadcast to non-tributes
-                  for(Player remainingtrib : Arenas.getOnlineTribs(arena)){
+                  for(Player remainingtrib : Arenas.getOnlineTribNames(arena)){
                       Location loc = remainingtrib.getLocation();
                       loc.setY(loc.getY()+10);
                       remainingtrib.getWorld().createExplosion(loc, 0);
@@ -63,7 +66,7 @@ public class TributeListener implements Listener {
                   Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+"Tribute "+player.getName()+" has died!");
                   Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+"There are now "+Arenas.getTribs(arena).size()+" tributes left for "+arena+"!");
                   int winner = 1; //this is here in case I might want to change the rules ;D (like in the story)
-                  if(Arenas.getOnlineTribs(arena).size()==winner){
+                  if(Arenas.getOnlineTribNames(arena).size()==winner){
                       String suffix = "";
                       int gc = Arenas.getGameCount();
                       switch (gc%10) {
@@ -73,8 +76,8 @@ public class TributeListener implements Listener {
                           default: suffix = "th"; break;
                       }
                       String gmcount = gc+""+ChatColor.ITALIC+suffix+ChatColor.RESET+ChatColor.LIGHT_PURPLE;
-                      Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+""+Arenas.getOnlineTribs(arena).get(winner-1).getName()+" has won the "+gmcount+" Hunger Games in "+ChatColor.GOLD+player.getWorld().getName()+ChatColor.LIGHT_PURPLE+"!");
-                      Arenas.tpAllOnlineTribs(arena, false); //im too lazy to use player.teleport(), okay?
+                      Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+""+Arenas.getOnlineTribNames(arena).get(winner-1).getName()+" has won the "+gmcount+" Hunger Games in "+ChatColor.GOLD+player.getWorld().getName()+ChatColor.LIGHT_PURPLE+"!");
+                      ArenaUtil.tpAllOnlineTribs(arena, false); //im too lazy to use player.teleport(), okay?
                       Arenas.setInGame(arena, false);
                   }
               }

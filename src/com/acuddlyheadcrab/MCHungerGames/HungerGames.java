@@ -8,6 +8,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaIO;
+import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
+import com.acuddlyheadcrab.MCHungerGames.chat.ChatHandler;
+import com.acuddlyheadcrab.MCHungerGames.chests.ChestHandler;
 import com.acuddlyheadcrab.MCHungerGames.commands.CornucopiaCommand;
 import com.acuddlyheadcrab.MCHungerGames.commands.HGArenaCommand;
 import com.acuddlyheadcrab.MCHungerGames.commands.HGArenaEditCommand;
@@ -27,6 +31,8 @@ public class HungerGames extends JavaPlugin {
     
     public PluginInfo pluginIO = new PluginInfo(this);
     public Util util = new Util(this);
+    public ChestHandler chests = new ChestHandler(this);
+    public ChatHandler chaths = new ChatHandler(this);
     public Arenas arenas = new Arenas(this);
     
     @Override
@@ -34,12 +40,15 @@ public class HungerGames extends JavaPlugin {
         loadConfig();
         loadArenasFile();
         loadChestItemsFile();
+        
         initCommands();
-        Arenas.initFiles();
-        Arenas.initGames();
+        
+        ArenaIO.initArenas();
+        
         getServer().getPluginManager().registerEvents(new HungerListener(this), this);
         getServer().getPluginManager().registerEvents(new TributeListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockListener(this), this);
+        
         HungerListener.initConfig();
         
         PluginInfo.log.info("------------ [MCHungerGames] is now enabled ------------");

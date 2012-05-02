@@ -8,12 +8,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import com.acuddlyheadcrab.MCHungerGames.Arenas;
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaIO;
+import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaUtil;
+import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Perms;
 import com.acuddlyheadcrab.util.PluginInfo;
-import com.acuddlyheadcrab.util.Util;
 
 
 
@@ -46,10 +47,10 @@ public class HGGameCommand implements CommandExecutor{
                     try{
                         String arg2 = args[1];
                         
-                        final String arenakey = Util.getArenaByKey(arg2);
+                        final String arenakey = ArenaIO.getArenaByKey(arg2);
                         
                         if(arenakey!=null){
-                            if(sender.hasPermission(Perms.HGG_START.perm())||Util.isGameMakersArena(sender, arenakey)){
+                            if(sender.hasPermission(Perms.HGG_START.perm())||Arenas.isGameMakersArena(sender, arenakey)){
 
                                 
                                 try{
@@ -59,7 +60,7 @@ public class HGGameCommand implements CommandExecutor{
                                     Bukkit.broadcastMessage(color+"Hunger Games are starting in the arena "+arenakey+" in "+countdown+" seconds");
                                     
                                     try{
-                                        Arenas.startGame(arenakey, countdown);
+                                        ArenaUtil.startGame(arenakey, countdown);
                                         return true;
 //                                        the following probably wont happen (right now)
                                     }catch(NullPointerException e){
@@ -81,15 +82,15 @@ public class HGGameCommand implements CommandExecutor{
                     try{
                         String arg2 = args[1];
                         
-                        String arenakey = Util.getArenaByKey(arg2);
+                        String arenakey = ArenaIO.getArenaByKey(arg2);
                         
                         if(arenakey!=null){
-                            if(sender.hasPermission(Perms.HGG_STOP.perm())||Util.isGameMakersArena(sender, arenakey)){
+                            if(sender.hasPermission(Perms.HGG_STOP.perm())||Arenas.isGameMakersArena(sender, arenakey)){
                                 
                             	Arenas.setInGame(arenakey, false);
                                 List<String> games = arenasfile.getStringList(YMLKeys.CURRENT_GAMES.key());
                                 games.remove(arenakey);
-                                Arenas.arenasSet(YMLKeys.CURRENT_GAMES.key(), games);
+                                ArenaIO.arenasSet(YMLKeys.CURRENT_GAMES.key(), games);
                                 Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+"Force stopped game in "+arenakey);
                             } else PluginInfo.sendNoPermMsg(sender);
                         } else PluginInfo.wrongFormatMsg(sender, "Could not find the arena \""+arg2+"\"");

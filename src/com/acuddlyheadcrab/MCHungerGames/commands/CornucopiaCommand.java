@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.MCHungerGames.chests.ChestHandler;
 import com.acuddlyheadcrab.util.Perms;
 import com.acuddlyheadcrab.util.PluginInfo;
 import com.acuddlyheadcrab.util.Util;
@@ -45,8 +46,8 @@ public class CornucopiaCommand implements CommandExecutor{
                         addtochest = args[0].contains("+");
                     }catch(IndexOutOfBoundsException e){}
                     
-                    String msg = Util.spawnCCPChest(player.getTargetBlock(bset, 10), addtochest) ?
-                            ChatColor.GREEN+"Spawned a chest" : ChatColor.LIGHT_PURPLE+"Cannot spawn chests next to double chests!";
+                    String msg = ChestHandler.spawnCCPChest(player.getTargetBlock(bset, 10), addtochest) ?
+                            ChatColor.GREEN+"Spawned a chest" : ChatColor.LIGHT_PURPLE+"Could not spawn chest!";
                     player.sendMessage(msg);
                     
                 } else PluginInfo.sendNoPermMsg(sender);

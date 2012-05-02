@@ -1,5 +1,6 @@
 package com.acuddlyheadcrab.MCHungerGames;
 
+import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
 import com.acuddlyheadcrab.util.YMLKeys;
 
 import org.bukkit.Bukkit;
