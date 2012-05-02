@@ -5,14 +5,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
 import com.acuddlyheadcrab.util.PluginInfo.MCHGCommandBranch;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Perms;
 import com.acuddlyheadcrab.util.PluginInfo;
-import com.acuddlyheadcrab.util.Util;
 
 
 
@@ -26,8 +23,7 @@ public class HungerGamesCommand implements CommandExecutor{
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args) {
         FileConfiguration config = hungergames.getConfig();
-        
-        if(sender instanceof Player) PluginInfo.sendPluginInfo(sender.getName()+": /"+label+Util.concatArray(args, " "));
+        PluginInfo.printConsoleCommandInfo(sender, label, args);
         
         if(cmd.getName().equalsIgnoreCase("hungergames")){
             try{

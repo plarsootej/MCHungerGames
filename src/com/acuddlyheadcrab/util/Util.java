@@ -145,7 +145,7 @@ public class Util {
     public static ItemStack getRandomItem(){
         Random rand = new Random();
         Material mat = (Material) Util.getKeys(matwhitelist).get(rand.nextInt(matwhitelist.size()));
-        int max = mat.getMaxStackSize();
+        int max = rand.nextInt(mat.getMaxStackSize());
         short dmg = mat.getMaxDurability()==((short) 0) ? (short) 0 : (short) rand.nextInt(mat.getMaxDurability());
         return new ItemStack(mat,max,dmg);
     }

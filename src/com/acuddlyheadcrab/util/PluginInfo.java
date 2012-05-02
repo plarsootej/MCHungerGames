@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
@@ -106,6 +107,10 @@ public class PluginInfo {
         HGA,
         HGAE,
         HGG;
+    }
+
+    public static void printConsoleCommandInfo(CommandSender sender, String cmdlabel, String[] args) {
+        if(sender instanceof Player) PluginInfo.sendPluginInfo(sender.getName()+": /"+cmdlabel+" "+Util.concatArray(args, " "));
     }
 
 }

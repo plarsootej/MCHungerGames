@@ -8,8 +8,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-
 import com.acuddlyheadcrab.MCHungerGames.Arenas;
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
 import com.acuddlyheadcrab.util.YMLKeys;
@@ -32,7 +30,7 @@ public class HGGameCommand implements CommandExecutor{
         FileConfiguration config = hungergames.getConfig();
         FileConfiguration arenasfile = hungergames.getArenasFile();
         
-        if(sender instanceof Player) PluginInfo.sendPluginInfo(sender.getName()+": /"+label+Util.concatArray(args, " "));
+        PluginInfo.printConsoleCommandInfo(sender, label, args);
         
         if(cmd.getName().equalsIgnoreCase("hggame")){
             try{

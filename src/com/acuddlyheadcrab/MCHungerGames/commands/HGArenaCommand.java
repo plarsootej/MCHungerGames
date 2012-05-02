@@ -31,8 +31,7 @@ public class HGArenaCommand implements CommandExecutor{
         
         boolean isplayer = sender instanceof Player;
         Player player = isplayer ? (Player) sender : null;
-        
-        if(isplayer) PluginInfo.sendPluginInfo(sender.getName()+": /"+label+Util.concatArray(args, " "));
+        PluginInfo.printConsoleCommandInfo(sender, label, args);
         
         if(cmd.getName().equalsIgnoreCase("hgarena")){
             try{
