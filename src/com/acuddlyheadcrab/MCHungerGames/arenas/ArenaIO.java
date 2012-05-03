@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
@@ -18,8 +19,8 @@ public class ArenaIO {
     public static HungerGames hungergames;
     public ArenaIO(HungerGames instance){hungergames = instance;}
     
-    public static void initArenas(){
-        initFiles();
+    public static void initArenas(FileConfiguration arenasFile){
+        initFiles(arenasFile);
         Arenas.arenas = arenas;
         ArenaUtil.arenas = arenas;
         ArenaUtil.initGames();
@@ -50,16 +51,17 @@ public class ArenaIO {
         hungergames.saveArenas();
     }
     
-    public static void initFiles(){
-        arenas = hungergames.getArenasFile();
+    public static void initFiles(FileConfiguration arenasFile){
+        arenas = arenasFile;
     }
     
     public static void deleteArena(String arenakey){
-        arenasSet(YMLKeys.ARENAS+arenakey, null);
+        arenasSet(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_SELF), null);
     }
     
     public static void renameArena(String arenakey, String renameto){
-        submitNewArena(renameto, Arenas.getCenter(arenakey), Arenas.getRadius(arenakey), Arenas.getGMs(arenakey), Arenas.getTribs(arenakey), Arenas.isInGame(arenakey));
+        ConfigurationSection cs = arenas.getConfigurationSection(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_SELF));
+        arenasSet(YMLKeys.getArenaSubkey(renameto, YMLKeys.ARN_SELF), cs);
         deleteArena(arenakey);
         hungergames.saveArenas();
     }
@@ -77,7 +79,6 @@ public class ArenaIO {
     }
     
     public static List<String> getArenasKeys() {
-        FileConfiguration arenas = hungergames.getArenasFile();
         
         Set<String> str_set = arenas.getConfigurationSection("Arenas").getKeys(false);
         String[] keyarr = new String[str_set.size()];
