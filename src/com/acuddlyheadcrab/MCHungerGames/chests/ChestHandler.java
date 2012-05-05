@@ -1,20 +1,26 @@
 package com.acuddlyheadcrab.MCHungerGames.chests;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.util.PluginInfo;
 import com.acuddlyheadcrab.util.Util;
+import com.acuddlyheadcrab.util.YMLKeys;
 
 
 public class ChestHandler {
@@ -22,6 +28,8 @@ public class ChestHandler {
 public static Map<Material, Integer> matwhitelist;
     
     public static HungerGames HungerGamesPlugin;
+    public static FileConfiguration chestitems;
+    
     public ChestHandler(HungerGames instance) {
         HungerGamesPlugin = instance;
         matwhitelist = new HashMap<Material, Integer>();
@@ -39,6 +47,10 @@ public static Map<Material, Integer> matwhitelist;
         matwhitelist.remove(Material.ENDER_STONE);
     }
     
+    
+    public static void initChestItems(){
+        chestitems = HungerGamesPlugin.getChestItemsFile();
+    }
     
     public static boolean spawnCCPChest(Block block, boolean addtochest){
         Block above = block.getRelative(BlockFace.UP);
@@ -62,7 +74,7 @@ public static Map<Material, Integer> matwhitelist;
             ItemStack randitem = getRandomItem();
             inv.setItem(rand.nextInt(inv.getSize()), randitem);
         }
-        
+        addChestLoc(chest.getLocation());
         return true;
     }
     
@@ -104,5 +116,84 @@ public static Map<Material, Integer> matwhitelist;
             Chest chest = (Chest) block.getState();
             return chest.getInventory().getHolder().getClass().equals(DoubleChest.class);
         } else return false;
+    }
+    
+    public static void checkChestLocs(){
+//        List<Location> loclist = getChestLocs();
+//        for(int i=0;i<loclist.size();i++){
+//            Location chestloc = loclist.get(i);
+//            if(chestloc.getBlock().getState().getType()!=Material.CHEST)
+//                System.out.println("Removing "+Util.toLocKey(chestloc, false, true)+" from the chestloc list");
+//                loclist.remove(i);
+//        }
+//        setChestLocs(loclist);
+    }
+    
+    public static void addChestLoc(Location loc){
+        List<Location> loclist = getChestLocs();
+        if(!getChestLocs().contains(loc)){
+            PluginInfo.sendPluginInfo("Added a chest location to chestitems.yml");
+            loclist.add(loc);
+        }
+        setChestLocs(loclist);
+    }
+    
+    public static void removeChestLoc(Location loc){
+        List<Location> loclist = getChestLocs();
+        if(getChestLocs().contains(loc)){
+            PluginInfo.sendPluginInfo("Removed a chest location from chestitems.yml");
+            loclist.remove(loc);
+        }
+        setChestLocs(loclist);
+    }
+    
+    public static void removeChestLocKey(String lockey){
+        List<String> loclist = getChestLocStrings();
+        if(getChestLocs().contains(lockey)){
+            PluginInfo.sendPluginInfo("Removed a chest location from chestitems.yml");
+            loclist.remove(lockey);
+        }
+        setChestLocKeys(loclist);
+    }
+    
+    public static void setChestLocKeys(List<String> loclist){
+        chestitemsset(YMLKeys.CHESTITEMS_CHESTLOCS.key(), loclist);
+    }
+    
+    public static void setChestLocs(List<Location> loclist){
+        List<String> lockeylist = new ArrayList<String>();
+        for(Location loc : loclist){
+            lockeylist.add(Util.toLocKey(loc, false, true));
+        }
+        setChestLocKeys(lockeylist);
+    }
+    
+    public static void clearChestLocs(){
+        setChestLocKeys(new ArrayList<String>());
+    }
+    
+    public static List<Location> getChestLocs(){
+        List<Location> loclist = new ArrayList<Location>();
+        for(String lockey : getChestLocStrings()){
+            loclist.add(Util.parseLocKey(lockey));
+        }
+        return loclist;
+    }
+    
+    public static List<String> getChestLocStrings(){
+        return chestitems.getStringList(YMLKeys.CHESTITEMS_CHESTLOCS.key());
+    }
+    
+    
+    public static void chestitemsset(String path, Object object) {
+        chestitems.set(path, object);
+        HungerGamesPlugin.saveChestItems();
+    }
+    
+    public static void resetChests(){
+        checkChestLocs();
+        for(Location chest : getChestLocs()){
+            spawnCCPChest(chest.getBlock(), chestitems.getBoolean(YMLKeys.CHESTITEMS_ADDTO.key()));
+        }
     }
 }

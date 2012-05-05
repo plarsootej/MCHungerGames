@@ -14,6 +14,7 @@ public enum Perms {
     HGA_LIST("HG.arena.list"),
     HGA_RENAME("HG.arena.rename"),
     HGA_JOIN("HG.arena.join"),
+    HGA_CHESTRESET("HG.arena.chestreset"),
     
     HGAE_SETCCP("HG.edit.setcenter"),
     HGAE_SETLOUNGE("HG.edit.setlounge"),

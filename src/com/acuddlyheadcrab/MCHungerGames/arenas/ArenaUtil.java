@@ -11,6 +11,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.util.PluginInfo;
 import com.acuddlyheadcrab.util.Util;
 import com.acuddlyheadcrab.util.YMLKeys;
 
@@ -34,11 +35,11 @@ public class ArenaUtil {
         for(int i=0;i<maplist.size();i++){
             @SuppressWarnings("unchecked")
             Map<String,String> map = (Map<String, String>) maplist.get(i);
-            map.put(Util.getKeys(map).get(0).toString(), Util.toLocKey(loclist.get(i), false));
+            map.put(Util.getKeys(map).get(0).toString(), Util.toLocKey(loclist.get(i), false, false));
         }
        alltribs.removeAll(noncust_tribs);
        alltribs.addAll(maplist);
-       Arenas.setTribs(arenakey, alltribs);
+       Arenas.setTribs(arenakey, alltribs, false);
     }
     
  // TODO redo this
@@ -87,8 +88,9 @@ public class ArenaUtil {
     
     public static void startCountdown(final String arenakey, final int seconds){
 //        initialize path
-        System.out.println("Setting "+arenakey+" in countdown with "+seconds+" to go!");
+        PluginInfo.sendPluginInfo("Setting "+arenakey+" in countdown with "+seconds+" to go!");
         arenas.set(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_INCOUNTDOWN), seconds);
+        Bukkit.broadcastMessage(ChatColor.YELLOW+"Hunger Games are starting in the arena "+arenakey+" in "+seconds+" seconds");
 //        cycle through each second
         Bukkit.getScheduler().scheduleSyncRepeatingTask(hungergames, new Runnable() {
             @Override

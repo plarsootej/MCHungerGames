@@ -12,6 +12,8 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 
 import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
+import com.acuddlyheadcrab.MCHungerGames.chests.ChestHandler;
+import com.acuddlyheadcrab.util.Util;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.PluginInfo;
 
@@ -28,6 +30,14 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent e){
         Location loc = e.getBlock().getLocation();
+        
+        String lockey = Util.toLocKey(loc, false, true);
+        if(ChestHandler.getChestLocStrings().contains(lockey)){
+            ChestHandler.removeChestLocKey(lockey);
+        }
+        if(ChestHandler.getChestLocs().contains(loc)){
+            ChestHandler.removeChestLoc(loc);
+        }
         
         if(!config.getBoolean(YMLKeys.OPS_BP_RULES_BREAK.key())){
             String arenakey = Arenas.getNearbyArena(loc);

@@ -22,6 +22,7 @@ public class ArenaIO {
     public static void initArenas(FileConfiguration arenasFile){
         initFiles(arenasFile);
         Arenas.arenas = arenas;
+        Arenas.config = hungergames.getConfig();
         ArenaUtil.arenas = arenas;
         ArenaUtil.initGames();
     }

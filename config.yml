@@ -34,3 +34,4 @@ Options:
         Start_when:
             Tribute_count: 24
             Idle_minutes: 10
+        Countdown: 10

@@ -53,6 +53,7 @@ public class HungerGames extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BlockListener(this), this);
         
         HungerListener.initConfig();
+        ChestHandler.initChestItems();
         
         PluginInfo.log.info("------------ [MCHungerGames] is now enabled ------------");
         PluginInfo.log.info("------------       by acuddlyheadcrab       ------------");

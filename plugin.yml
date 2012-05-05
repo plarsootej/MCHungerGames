@@ -79,6 +79,9 @@ permissions:
     HG.arena.join:
         description:
         default: op
+    HG.arena.chestreset:
+        description:
+        default: op
     HG.edit.*:
         description: Access to /hgae branch of commands
         children:

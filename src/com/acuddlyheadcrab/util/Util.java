@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -65,15 +66,25 @@ public class Util {
         return k_list;
     }
     
-    public static String toLocKey(Location loc, boolean custom) {
+    public static String toLocKey(Location loc, boolean custom, boolean world) {
         double x = loc.getX(), y = loc.getY(), z = loc.getZ();
         String key = (String.format("%1$s, %2$s, %3$s", x, y, z));
         if(custom) key = key.concat(", <<custom>>");
+        if(world) key = key.concat(", "+loc.getWorld().getName());
         return key;
     }
     
     public static Location parseLocKey(String spawnkey, World world) {
         String[] sarr = spawnkey.split(", ");
+        return new Location(world, Double.parseDouble(sarr[0]), Double.parseDouble(sarr[1]), Double.parseDouble(sarr[2]));
+    }
+    
+    public static Location parseLocKey(String spawnkey) {
+        String[] sarr = spawnkey.split(", ");
+        World world = Bukkit.getWorlds().get(0);
+        try{
+            world = Bukkit.getWorld(sarr[3]);
+        }catch(NullPointerException e){}
         return new Location(world, Double.parseDouble(sarr[0]), Double.parseDouble(sarr[1]), Double.parseDouble(sarr[2]));
     }
 

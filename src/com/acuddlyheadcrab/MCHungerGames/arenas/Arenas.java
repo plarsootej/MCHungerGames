@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -13,12 +14,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.MCHungerGames.chests.ChestHandler;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Util;
 
 public class Arenas {
     
 	public static FileConfiguration arenas;
+	public static FileConfiguration config;
     public static HungerGames hungergames;
     public Arenas(HungerGames instance){
     	hungergames = instance;
@@ -150,6 +153,14 @@ public class Arenas {
     
     public static void setTribs(String arenakey, List<Map<?, ?>> tribs){
         ArenaIO.arenasSet(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_TRIBS), tribs);
+        ArenaUtil.updateTribLocs(arenakey);
+    }
+    
+    public static void setTribs(String arenakey, List<Map<?, ?>> tribs, boolean update){
+        ArenaIO.arenasSet(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_TRIBS), tribs);
+        if(update){
+            ArenaUtil.updateTribLocs(arenakey);
+        }
     }
     
     public static void setTribLoc(String arenakey, int tribID, String lockey){
@@ -163,7 +174,7 @@ public class Arenas {
     }
     
     public static void setTribLoc(String arenakey, int tribID, Location loc){
-        setTribLoc(arenakey, tribID, Util.toLocKey(loc, true));
+        setTribLoc(arenakey, tribID, Util.toLocKey(loc, false, true));
     }
     
     public static void addTrib(String arenakey, Map<String, String> entry){
@@ -176,7 +187,12 @@ public class Arenas {
         Map<String, String> map = new HashMap<String, String>();
         map.put(player, "null");
         addTrib(arenakey, map);
-        ArenaUtil.updateTribLocs(arenakey);
+        if(config.getBoolean(YMLKeys.AG_ENABLED.key())){
+            int limit = config.getInt(YMLKeys.AG_STARTWHEN_PLAYERCOUNT.key());
+            if(Arenas.getOnlineTribNames(arenakey).size()>=limit){
+                ArenaUtil.startGame(arenakey, config.getInt(YMLKeys.AG_COUNTDOWN.key()));
+            }
+        }
     }
     
     public static void addTrib(String arenakey, Player player){
@@ -206,6 +222,7 @@ public class Arenas {
         List<String> currentgames = arenas.getStringList(YMLKeys.CURRENT_GAMES.key());
         if(ingame) currentgames.add(arenakey); else currentgames.remove(arenakey);
         ArenaIO.arenasSet(YMLKeys.CURRENT_GAMES.key(), currentgames);
+        ChestHandler.resetChests();
     }
     
     public static List<Map<?,?>> getNonCustomTribs(String arenakey){

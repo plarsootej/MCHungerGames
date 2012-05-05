@@ -40,29 +40,42 @@ public class HungerListener implements Listener {
     
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent e){
-        if(config.getBoolean(YMLKeys.AG_AUTOJOIN_ENABLED.key())){
-            String 
-                configarena = config.getString(YMLKeys.AG_AUTOJOIN_ARENA.key()),
-                arenakey = ArenaIO.getArenaByKey(configarena),
-                joinmsg = config.getString(YMLKeys.AG_AUTOJOIN_JOINMSG.key())
-            ;
-            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONPLAYERJOIN.key())){
-                PluginInfo.sendPluginInfo("Matching \""+configarena+"\" to "+arenakey);
-                PluginInfo.sendPluginInfo("Player involved: "+e.getPlayer().getName());
-            }
-            if(arenakey!=null){
-                if(!(Arenas.isInGame(arenakey)||Arenas.isInCountdown(arenakey))){
-                    Arenas.addTrib(arenakey, e.getPlayer());
-                    /* Hrm... should i use arenakey which is either an existing arena or NULL, 
-                     * OR should i use configarena which is whatever is in their config? */
-                    joinmsg = joinmsg.
-                            replaceAll("<arena>", arenakey).
-                            replaceAll("(&([a-f0-9]))", "\u00A7$2")
-                    ;
-                    e.getPlayer().sendMessage(joinmsg);
+        boolean
+            ag = config.getBoolean(YMLKeys.AG_ENABLED.key()),
+            ag_autog = config.getBoolean(YMLKeys.AG_AUTOJOIN_ENABLED.key())
+        ;
+        if(config.getBoolean(YMLKeys.OPS_DEBUG_ONPLAYERJOIN.key())){
+            PluginInfo.sendPluginInfo("AutoGames: "+ag);
+            PluginInfo.sendPluginInfo("AutoGames_AutoJoin: "+ag_autog);
+        }
+        if(ag){
+            if(ag_autog){
+                String 
+                    configarena = config.getString(YMLKeys.AG_AUTOJOIN_ARENA.key()),
+                    arenakey = ArenaIO.getArenaByKey(configarena),
+                    joinmsg = config.getString(YMLKeys.AG_AUTOJOIN_JOINMSG.key())
+                ;
+                if(config.getBoolean(YMLKeys.OPS_DEBUG_ONPLAYERJOIN.key())){
+                    PluginInfo.sendPluginInfo("Matching \""+configarena+"\" to "+arenakey);
+                    PluginInfo.sendPluginInfo("Player involved: "+e.getPlayer().getName());
                 }
-            } else {
-                PluginInfo.sendPluginInfo("Error joining player to arena \""+configarena+"\": No such arena");
+                if(arenakey!=null){
+                    if(!(Arenas.isInGame(arenakey)||Arenas.isInCountdown(arenakey))){
+                        if(!Arenas.getTribNames(arenakey).contains(e.getPlayer().getName())){
+                            Arenas.addTrib(arenakey, e.getPlayer());
+                            /* Hrm... should i use arenakey which is either an existing arena or NULL, 
+                             * OR should i use configarena which is whatever is in their config? */
+                            joinmsg = joinmsg.
+                                    replaceAll("<arena>", arenakey).
+                                    replaceAll("(&([a-f0-9]))", "\u00A7$2")
+                            ;
+                            e.getPlayer().sendMessage(joinmsg);
+                        }
+                    }
+                } else {
+                    PluginInfo.sendPluginInfo("Error joining player to arena \""+configarena+"\": No such arena");
+                    PluginInfo.sendPluginInfo("Please replace \""+configarena+"\" in the config with an existing arena");
+                }
             }
         }
         String arenakey = Arenas.getArenaByTrib(e.getPlayer());

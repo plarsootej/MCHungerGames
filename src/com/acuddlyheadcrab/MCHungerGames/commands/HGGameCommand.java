@@ -55,10 +55,6 @@ public class HGGameCommand implements CommandExecutor{
                                 
                                 try{
                                     final int countdown = Integer.parseInt(args[2]);
-                                    final ChatColor color = ChatColor.YELLOW;
-                                    
-                                    Bukkit.broadcastMessage(color+"Hunger Games are starting in the arena "+arenakey+" in "+countdown+" seconds");
-                                    
                                     try{
                                         ArenaUtil.startGame(arenakey, countdown);
                                         return true;

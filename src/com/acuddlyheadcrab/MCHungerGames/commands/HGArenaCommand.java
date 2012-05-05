@@ -14,6 +14,7 @@ import com.acuddlyheadcrab.MCHungerGames.HungerGames;
 import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaIO;
 import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaUtil;
 import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
+import com.acuddlyheadcrab.MCHungerGames.chests.ChestHandler;
 import com.acuddlyheadcrab.util.PluginInfo.MCHGCommandBranch;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Perms;
@@ -48,7 +49,8 @@ public class HGArenaCommand implements CommandExecutor{
                     hga_tp = arg1.equalsIgnoreCase("tp"),
                     hga_tpall = arg1.equalsIgnoreCase("tpall")||arg1.equalsIgnoreCase("tpa"),
                     hga_rename = arg1.equalsIgnoreCase("rename"),
-                    hga_join = arg1.equalsIgnoreCase("join")
+                    hga_join = arg1.equalsIgnoreCase("join"),
+                    hga_chestreset = arg1.equalsIgnoreCase("chests")||arg1.equalsIgnoreCase("chestreset")
                 ;
                 
                 if(hga_join){
@@ -316,6 +318,22 @@ public class HGArenaCommand implements CommandExecutor{
                         }
                     } else PluginInfo.sendNoPermMsg(sender); return true;
                 }
+                
+                if(hga_chestreset){
+                    if(sender.hasPermission(Perms.HGA_CHESTRESET.perm())){
+                        try{
+                            if(args[1].equalsIgnoreCase("clear")){
+                                ChestHandler.clearChestLocs();
+                                sender.sendMessage(ChatColor.GREEN+"Cleared all chests from chestitems.yml");
+                                return true;
+                            }
+                        }catch(IndexOutOfBoundsException e){}
+                        ChestHandler.resetChests();
+                        sender.sendMessage(ChatColor.GREEN+"Reset all chests");
+                        return true;
+                    } else PluginInfo.sendNoPermMsg(sender);
+                }
+                
             }catch(IndexOutOfBoundsException e){}
             if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted to show /hga branch help");
                 PluginInfo.sendCommandUsage(MCHGCommandBranch.HGA, sender);

@@ -43,9 +43,9 @@ public class TributeListener implements Listener {
           Set<Player> recips = event.getRecipients();
           for (Iterator<Player> i=recips.iterator();i.hasNext();) {
               Player recip = i.next();
-              Util.log.info(ChatColor.stripColor(format));
               ChatHandler.sendChatProxMessage(talkingplayer, recip, format, msg);
           }
+          Util.log.info(ChatColor.stripColor(format));
       }
   }
   
