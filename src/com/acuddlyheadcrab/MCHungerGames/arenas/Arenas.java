@@ -40,7 +40,6 @@ public class Arenas {
     public static Location getLounge(String arenakey){
         String worldstring = arenas.getString(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_LOUNGE_WRLD));
         World world = Bukkit.getWorld(worldstring);
-        if(world==null) throw new NullPointerException("Could not find world \""+worldstring+"\"");
         double
             x = arenas.getDouble(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_LOUNGE_X)),
             y = arenas.getDouble(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_LOUNGE_Y)),
@@ -50,6 +49,8 @@ public class Arenas {
             pitch = (float) arenas.getDouble(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_LOUNGE_PITCH)),
             yaw = (float) arenas.getDouble(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_LOUNGE_YAW))
         ;
+        if(x==0||y==0||z==0) return null;
+        if(world==null) throw new NullPointerException("[MCHungerGames] Could not find world \""+worldstring+"\"");
         Location lounge = new Location(world, x, y, z, yaw, pitch);
         return lounge;
     }
@@ -215,6 +216,10 @@ public class Arenas {
                 maplist.remove(i);
         }
         return maplist;
+    }
+    
+    public static boolean hasLounge(String arenakey){
+        return getLounge(arenakey)!=null;
     }
     
     

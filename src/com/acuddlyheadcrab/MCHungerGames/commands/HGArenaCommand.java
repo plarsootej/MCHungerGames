@@ -297,6 +297,7 @@ public class HGArenaCommand implements CommandExecutor{
                             ;
                             if(arenakey!=null){
                                 List<String> cur_games = arenasfile.getStringList(YMLKeys.CURRENT_GAMES.key());
+                                //renames current games
                                 for(String game : cur_games){
                                     if(game.equalsIgnoreCase(renameto)){
                                         cur_games.remove(game);

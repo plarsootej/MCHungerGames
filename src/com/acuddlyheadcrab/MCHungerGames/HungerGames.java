@@ -9,6 +9,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaIO;
+import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaUtil;
 import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
 import com.acuddlyheadcrab.MCHungerGames.chat.ChatHandler;
 import com.acuddlyheadcrab.MCHungerGames.chests.ChestHandler;
@@ -34,6 +35,8 @@ public class HungerGames extends JavaPlugin {
     public ChestHandler chests = new ChestHandler(this);
     public ChatHandler chaths = new ChatHandler(this);
     public Arenas arenas = new Arenas(this);
+    public ArenaIO arenaio = new ArenaIO(this);
+    public ArenaUtil arenautil = new ArenaUtil(this);
     
     @Override
     public void onEnable() {
@@ -43,7 +46,7 @@ public class HungerGames extends JavaPlugin {
         
         initCommands();
         
-        ArenaIO.initArenas();
+        ArenaIO.initArenas(ArenasFile);
         
         getServer().getPluginManager().registerEvents(new HungerListener(this), this);
         getServer().getPluginManager().registerEvents(new TributeListener(this), this);
