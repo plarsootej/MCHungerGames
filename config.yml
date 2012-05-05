@@ -2,6 +2,7 @@ Options:
     Debug:
         onCommand: false
         onBlockChange: false
+        onPlayerJoin: false
     BlockProtection:
         Rules:
             Building_enabled: true
@@ -24,13 +25,12 @@ Options:
             Clear: 24
             Disembodied: 36
             Garbled: 50
-
-# TODO add these keys to YMLkeys enum 
     Auto_games:
         Enabled: false
         Auto_join:
+            Join_msg: "&dYou have been automatically added to &6<arena>&d! Get ready!"
             Enabled: false
-            Arena:
+            Arena: ""
         Start_when:
-            Player_count: 12
+            Tribute_count: 24
             Idle_minutes: 10

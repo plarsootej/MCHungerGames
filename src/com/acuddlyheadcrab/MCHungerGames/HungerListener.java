@@ -1,6 +1,8 @@
 package com.acuddlyheadcrab.MCHungerGames;
 
+import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaIO;
 import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
+import com.acuddlyheadcrab.util.PluginInfo;
 import com.acuddlyheadcrab.util.YMLKeys;
 
 import org.bukkit.Bukkit;
@@ -38,6 +40,31 @@ public class HungerListener implements Listener {
     
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent e){
+        if(config.getBoolean(YMLKeys.AG_AUTOJOIN_ENABLED.key())){
+            String 
+                configarena = config.getString(YMLKeys.AG_AUTOJOIN_ARENA.key()),
+                arenakey = ArenaIO.getArenaByKey(configarena),
+                joinmsg = config.getString(YMLKeys.AG_AUTOJOIN_JOINMSG.key())
+            ;
+            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONPLAYERJOIN.key())){
+                PluginInfo.sendPluginInfo("Matching \""+configarena+"\" to "+arenakey);
+                PluginInfo.sendPluginInfo("Player involved: "+e.getPlayer().getName());
+            }
+            if(arenakey!=null){
+                if(!(Arenas.isInGame(arenakey)||Arenas.isInCountdown(arenakey))){
+                    Arenas.addTrib(arenakey, e.getPlayer());
+                    /* Hrm... should i use arenakey which is either an existing arena or NULL, 
+                     * OR should i use configarena which is whatever is in their config? */
+                    joinmsg = joinmsg.
+                            replaceAll("<arena>", arenakey).
+                            replaceAll("(&([a-f0-9]))", "\u00A7$2")
+                    ;
+                    e.getPlayer().sendMessage(joinmsg);
+                }
+            } else {
+                PluginInfo.sendPluginInfo("Error joining player to arena \""+configarena+"\": No such arena");
+            }
+        }
         String arenakey = Arenas.getArenaByTrib(e.getPlayer());
         if(arenakey!=null){
             if(Arenas.isInGame(arenakey)||Arenas.isInCountdown(arenakey)){

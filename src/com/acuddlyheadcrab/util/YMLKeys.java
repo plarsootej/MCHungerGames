@@ -14,6 +14,7 @@ public enum YMLKeys {
         OPS_DEBUG(OPTIONS.key().concat("Debug.")),
             OPS_DEBUG_ONCMD(OPS_DEBUG.key().concat("onCommand")),
             OPS_DEBUG_ONBLOCKCHANGE(OPS_DEBUG.key().concat("onBlockChange")),
+            OPS_DEBUG_ONPLAYERJOIN(OPS_DEBUG.key().concat("onPlayerJoin")),
         OPS_GMCANEDIT(OPTIONS.key().concat("Gamemakers_can_edit")),
         OPS_BLOCKPROT(OPTIONS.key().concat("BlockProtection.")),
             OPS_BP_RULES(OPS_BLOCKPROT.key().concat("InArenas")),
@@ -38,9 +39,20 @@ public enum YMLKeys {
                 OPS_DURGM_DISQUALONDISC(OPS_DURING_GAME.key().concat("disqualify_on_disconnect")),
                 OPS_DURGM_NOTP(OPS_DURING_GAME.key().concat("noTeleporting")),
                 OPS_DURGM_NOMOBS(OPS_DURING_GAME.key().concat("noMobSpawnInArena")),
-            
+                
+    AUTO_GAMES("Auto_games"),
+        AG_ENABLED(AUTO_GAMES.key().concat("Enabled")),
+        AG_AUTOJOIN(AUTO_GAMES.key().concat("Auto_join")),
+            AG_AUTOJOIN_ENABLED(AG_AUTOJOIN.key().concat("Enabled")),
+            AG_AUTOJOIN_ARENA(AG_AUTOJOIN.key().concat("Arena")),
+            AG_AUTOJOIN_JOINMSG(AG_AUTOJOIN.key().concat("Join_msg")),
+        AG_STARTWHEN(AUTO_GAMES.key().concat("Start_when")),
+            AG_STARTWHEN_PLAYERCOUNT(AG_STARTWHEN.key().concat("Tribute_count")),
+            AG_STARTWHEN_IDLEMINUTES(AG_STARTWHEN.key().concat("Idle_minutes")),
+    
     CURRENT_GAMES("Currentgames"),
     GAME_COUNT("Game_count"),
+    
     ARENAS("Arenas."),
         ARN_SELF(""),
             ARN_CENTER_WRLD(".cornucopia.World"),
