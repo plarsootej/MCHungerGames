@@ -5,7 +5,7 @@ A plugin designed to make Hunger Games style server easier to administrate!
 
 ## Downloads
 
-* [MCHungerGames.jar (1.6_1 BETA)](http://dev.bukkit.org/media/files/591/162/MCHungerGames.jar)
+* [MCHungerGames.jar (1.6_2 BETA)](http://goo.gl/vDTRL)
 * [Download page on dev.bukkit.org](http://dev.bukkit.org/server-mods/mchungergames/files/5-mchunger-games-1-2-beta/)
 
 ## Links
