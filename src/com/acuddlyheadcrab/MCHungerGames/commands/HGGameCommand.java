@@ -29,7 +29,7 @@ public class HGGameCommand implements CommandExecutor{
     public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args) {
         
         FileConfiguration config = hungergames.getConfig();
-        FileConfiguration arenasfile = hungergames.getArenasFile();
+        FileConfiguration arenasfile = HungerGames.getArenasFile();
         
         PluginInfo.printConsoleCommandInfo(sender, label, args);
         

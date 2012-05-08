@@ -14,6 +14,8 @@ public enum Perms {
     HGA_LIST("HG.arena.list"),
     HGA_RENAME("HG.arena.rename"),
     HGA_JOIN("HG.arena.join"),
+    HGA_LEAVE("HG.arena.leave"),
+    HGA_TRIBUTES("HG.arena.tributes"),
     HGA_CHESTRESET("HG.arena.chestreset"),
     
     HGAE_SETCCP("HG.edit.setcenter"),
@@ -23,6 +25,7 @@ public enum Perms {
     HGAE_ADDTRIB("HG.edit.addtrib"),
     HGAE_REMOVEGM("HG.edit.removegm"),
     HGAE_REMOVETRIB("HG.edit.removetrib"),
+    HGAE_ADDSPP("HG.edit.addspp"),
     
     HGG_START("HG.game.start"),
     HGG_STOP("HG.game.stop"),

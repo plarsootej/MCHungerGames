@@ -52,6 +52,8 @@ permissions:
             HG.arena.list: true
             HG.arena.rename: true
             HG.arena.join: true
+            HG.arena.leave: true
+            HG.arena.chestreset: true
     HG.arena.lounge:
         description:
         default: op
@@ -77,6 +79,9 @@ permissions:
         description:
         default: op
     HG.arena.join:
+        description:
+        default: op
+    HG.arena.leave:
         description:
         default: op
     HG.arena.chestreset:

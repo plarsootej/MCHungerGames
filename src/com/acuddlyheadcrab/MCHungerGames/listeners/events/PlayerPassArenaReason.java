@@ -1,4 +1,4 @@
-package com.acuddlyheadcrab.MCHungerGames.events;
+package com.acuddlyheadcrab.MCHungerGames.listeners.events;
 
 @Deprecated
 public enum PlayerPassArenaReason {

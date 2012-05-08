@@ -1,7 +1,9 @@
-package com.acuddlyheadcrab.MCHungerGames;
+package com.acuddlyheadcrab.MCHungerGames.listeners;
 
+import com.acuddlyheadcrab.MCHungerGames.HungerGames;
 import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaIO;
 import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
+import com.acuddlyheadcrab.MCHungerGames.inventories.InventoryHandler;
 import com.acuddlyheadcrab.util.PluginInfo;
 import com.acuddlyheadcrab.util.YMLKeys;
 
@@ -93,7 +95,8 @@ public class HungerListener implements Listener {
             if(Arenas.isInGame(arenakey)){
                 if(config.getBoolean(YMLKeys.OPS_DURGM_DISQUALONDISC.key())){
                     Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+""+e.getPlayer().getName()+" has been disqualified from "+arenakey+"!");
-                    Arenas.removeTrib(arenakey, e.getPlayer().getName(), true);
+                    InventoryHandler.updateInventory(e.getPlayer());
+                    Arenas.removeTrib(arenakey, e.getPlayer(), true);
                 }
             }
         }

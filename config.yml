@@ -1,9 +1,44 @@
+# This is a summary of the options!
+#    Debug - use this when you're having a problem that doesn't show any errors
+#    BlockProtection
+#        Mushroom/leaf mode - The popular "only breaking mushrooms and leaves" mode
+#        Rules - the ruling for crafting/placings/breaking
+#        Conditions - Rules only apply when these conditions are met
+#        Show warning to players - when they try to build/break and are denied
+#    GameMakers - removed, but it meant that gamemakers could edit arenas when this is true
+#               - now this is, by default, true
+#    ArenaOptions - These are misc. options for how things are handled with arenas
+#      Countdown message - message to display when the countdown is incremented
+#                        - <count> is replaced with the current number the coutndown is on
+#      TP to lounge
+#        on tribute join - teleports when a player is assigned as a tribute to an arena
+#        on tribute death - teleports when a tribute dies while in game
+#        on tribute win - teleports when a tribute wins a game
+#      During games
+#        no mob spawn - What it says. No mobs will spawn in an arena if it's in game, if this is true
+#        disqualify - This will remove <player> as a tribute when they disconnect when they're in a game
+#    Nearby chat - this is going to be like the RealisticChat plugin
+#        - This certainly doesn't work with EssentialsChat and HeroChat. 
+#        - I'm currently fixing this, but for now you if you have one of these plugins, just disable this feature
+#        Distances
+#          - Clear - this means they can see the message and sender just fine
+#          - Disembodied - they can see the message, but not very clearly who sent it
+#          - Garbled - both the message and player name are obscured and hard to read
+#    Auto-games!
+#        Auto join - automatic joining to an arena when a play logs on
+#          Join message - Message shown when they are automatically added to the arena
+#                       - this message can take color codes (&a-f OR 0-9 or &m,r,i,b,s,u)
+#          Arena - this has to be an existing arena, or else nothing will happen
+#        Start when - start at configurable occurrences - request/suggest ideas
+#          Tribute count - start when the number of tributes reaches this
+#        Countdown - the countdown to start with for auto-games
 Options:
     Debug:
         onCommand: false
         onBlockChange: false
         onPlayerJoin: false
     BlockProtection:
+        Only_mushroom_leaf_mode: false
         Rules:
             Building_enabled: true
             Breaking_enabled: true
@@ -13,14 +48,17 @@ Options:
             Only_while_ingame: true
             OutsideArenas: true
         Show_warning_to_players: true
-    Gamemakers_can_edit: true
     Arena_Options:
+        Countdown_msg: '[MCHungerGames] <count>'
+        TP_to_lounge:
+            onTribJoin: true
+            onTribDeath: true 
+            onTributeWin: true
         During_games:
             noMobSpawnInArena: false
             disqualify_on_disconnect: false
-            noTeleporting: true
     NearbyTributeChat:
-        Enabled: true
+        Enabled: false
         Distances:
             Clear: 24
             Disembodied: 36
@@ -28,10 +66,9 @@ Options:
     Auto_games:
         Enabled: false
         Auto_join:
-            Join_msg: "&dYou have been automatically added to &6<arena>&d! Get ready!"
             Enabled: false
+            Join_msg: "&dYou have been automatically added to &6<arena>&d! Get ready!"
             Arena: ""
         Start_when:
             Tribute_count: 24
-            Idle_minutes: 10
         Countdown: 10

@@ -1,13 +1,9 @@
 package com.acuddlyheadcrab.MCHungerGames;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.acuddlyheadcrab.MCHungerGames.FileIO.Configs;
 import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaIO;
 import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaUtil;
 import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
@@ -18,17 +14,16 @@ import com.acuddlyheadcrab.MCHungerGames.commands.HGArenaCommand;
 import com.acuddlyheadcrab.MCHungerGames.commands.HGArenaEditCommand;
 import com.acuddlyheadcrab.MCHungerGames.commands.HGGameCommand;
 import com.acuddlyheadcrab.MCHungerGames.commands.HungerGamesCommand;
+import com.acuddlyheadcrab.MCHungerGames.inventories.InventoryHandler;
+import com.acuddlyheadcrab.MCHungerGames.listeners.BlockListener;
+import com.acuddlyheadcrab.MCHungerGames.listeners.HungerListener;
+import com.acuddlyheadcrab.MCHungerGames.listeners.TributeListener;
 import com.acuddlyheadcrab.util.PluginInfo;
 import com.acuddlyheadcrab.util.Util;
 
-public class HungerGames extends JavaPlugin {
+public class HungerGames extends JavaPlugin{
     
     public static HungerGames plugin;
-    public static FileConfiguration config;
-    public static FileConfiguration ArenasFile;
-    public static FileConfiguration ChestItemsFile;
-    private File fileChestItems;
-    private File fileArenas;
     
     public PluginInfo pluginIO = new PluginInfo(this);
     public Util util = new Util(this);
@@ -37,17 +32,15 @@ public class HungerGames extends JavaPlugin {
     public Arenas arenas = new Arenas(this);
     public ArenaIO arenaio = new ArenaIO(this);
     public ArenaUtil arenautil = new ArenaUtil(this);
+    public InventoryHandler invhandler = new InventoryHandler(this);
+    public Configs configs = new Configs(this);
     
     @Override
     public void onEnable() {
-        loadConfig();
-        loadArenasFile();
-        loadChestItemsFile();
-        
+        loadConfigs();
         initCommands();
         
-        ArenaIO.initArenas(ArenasFile);
-        
+        ArenaIO.initArenas(getArenasFile());
         getServer().getPluginManager().registerEvents(new HungerListener(this), this);
         getServer().getPluginManager().registerEvents(new TributeListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockListener(this), this);
@@ -74,85 +67,30 @@ public class HungerGames extends JavaPlugin {
         getCommand("testcmd").setExecutor(new CornucopiaCommand(this));
     }
     
-    public void loadConfig() {
-        config = getConfig();
-        config.options().copyDefaults(true);
-        saveConfig();
-    }
-    
-    public void reloadArenas() {
-        if (fileArenas == null) {
-        fileArenas = new File(getDataFolder(), "Arenas.yml");
-        }
-        ArenasFile = YamlConfiguration.loadConfiguration(fileArenas);
-        
-        InputStream defConfigStream = getResource("Arenas.yml");
-        if (defConfigStream != null) {
-            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-            ArenasFile.setDefaults(defConfig);
-        }
-    }
-    
-    public void loadArenasFile(){
-        ArenasFile = getArenasFile();
-        ArenasFile.options().copyDefaults(true);
-        saveArenas();
-    }
-    
-    public FileConfiguration getArenasFile() {
-        if (ArenasFile == null) reloadArenas();
-        return ArenasFile;
-    }
-    
-    public void saveArenas() {
-        if (ArenasFile == null || fileArenas == null) return;
-        try {
-            ArenasFile.save(fileArenas);
-        } catch (IOException ex) {
-            PluginInfo.sendPluginInfo("Could not save config to " + fileArenas.getName() + ex);
-        }
-    }
-    
-    public void reloadChestItems() {
-        if (fileChestItems == null) {
-        fileChestItems = new File(getDataFolder(), "ChestItems.yml");
-        }
-        ChestItemsFile = YamlConfiguration.loadConfiguration(fileChestItems);
-        
-        InputStream defConfigStream = getResource("ChestItems.yml");
-        if (defConfigStream != null) {
-            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-            ChestItemsFile.setDefaults(defConfig);
-        }
-    }
-    
-    public void loadChestItemsFile(){
-        ChestItemsFile = getChestItemsFile();
-        ChestItemsFile.options().copyDefaults(true);
-        saveChestItems();
-    }
-    
-    public FileConfiguration getChestItemsFile() {
-        if (ChestItemsFile == null) reloadChestItems();
-        return ChestItemsFile;
-    }
-    
-    public void saveChestItems() {
-        if (ChestItemsFile == null || fileChestItems == null) return;
-        try {
-            ChestItemsFile.save(fileChestItems);
-        } catch (IOException ex) {
-            PluginInfo.sendPluginInfo("Could not save config to " + fileChestItems.getName() + ex);
-        }
+    public static void loadConfigs(){
+        Configs.loadConfig();
+        Configs.loadArenasFile();
+        Configs.loadChestItemsFile();
     }
     
     public static JavaPlugin getPlugin(){
         return plugin;
     }
     
-    public static FileConfiguration getInstConfig(){
-        /** Only safe AFTER plugin is enabled */
-        if(config==null){throw new NullPointerException("CONFIG IS NULL!");} else return config;
+    public static FileConfiguration getArenasFile() {
+        return Configs.getArenasFile();
+    }
+    
+    public static FileConfiguration getChestItemsFile(){
+        return Configs.getChestItemsFile();
+    }
+    
+    public static void saveArenasFile(){
+        Configs.saveArenas();
+    }
+    
+    public static void saveChestItems(){
+        Configs.saveChestItems();
     }
 
 }

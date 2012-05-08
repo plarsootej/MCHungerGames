@@ -10,6 +10,12 @@ package com.acuddlyheadcrab.util;
 
 public enum YMLKeys {
     
+        UD_LASTLOGINTIME("LastLogin"),
+        UD_INV("Inventory."),
+            UD_INV_TIME(UD_INV.key()+"Time"),
+            UD_INV_CONTENTS(UD_INV.key()+"Contents"),
+            UD_INV_ARMOR(UD_INV.key()+"Armor"),
+    
     CHESTITEMS_CHESTLOCS("Chest_Locs"),
     CHESTITEMS_ADDTO("Chest_reset_addto"),
     
@@ -20,6 +26,8 @@ public enum YMLKeys {
             OPS_DEBUG_ONPLAYERJOIN(OPS_DEBUG.key().concat("onPlayerJoin")),
         OPS_GMCANEDIT(OPTIONS.key().concat("Gamemakers_can_edit")),
         OPS_BLOCKPROT(OPTIONS.key().concat("BlockProtection.")),
+//         hehe.. mushleaf sounds funny
+            OPS_BP_MUSHLEAF(OPS_BLOCKPROT.key().concat("InArenas")),
             OPS_BP_RULES(OPS_BLOCKPROT.key().concat("InArenas")),
                 OPS_BP_RULES_BUILD(OPS_BLOCKPROT.key().concat("Building_enabled")),
                 OPS_BP_RULES_BREAK(OPS_BLOCKPROT.key().concat("Breaking_enabled")),
@@ -38,6 +46,11 @@ public enum YMLKeys {
                 OPS_NEARCHAT_DISTS_GARBLED(OPS_NEARCHAT_DISTANCES.key().concat("Garbled")),
             
         OPS_ARENAOPS(OPTIONS.key().concat("Arena_Options.")),
+            OPS_COUNTDOWNMSG(OPS_ARENAOPS.key().concat("Countdown_msg")),
+            OPS_LOUNGETP(OPS_ARENAOPS.key().concat("TP_to_lounge.")),
+                OPS_LOUNGETP_ONJOIN(OPS_LOUNGETP.key().concat("onTribJoin")),
+                OPS_LOUNGETP_ONDEATH(OPS_LOUNGETP.key().concat("onTribDeath")),
+                OPS_LOUNGETP_ONWIN(OPS_LOUNGETP.key().concat("onTribWin")),
             OPS_DURING_GAME(OPS_ARENAOPS.key().concat("During_games.")),
                 OPS_DURGM_DISQUALONDISC(OPS_DURING_GAME.key().concat("disqualify_on_disconnect")),
                 OPS_DURGM_NOTP(OPS_DURING_GAME.key().concat("noTeleporting")),
@@ -73,7 +86,10 @@ public enum YMLKeys {
             ARN_GMS(".gamemakers"),
             ARN_TRIBS(".tributes"),
             ARN_INGAME(".in_game"),
-            ARN_INCOUNTDOWN(".in_countdown(DO_NOT_TOUCH)")
+            ARN_INCOUNTDOWN(".in_countdown(DO_NOT_TOUCH)"),
+            ARN_SPAWNLOCS(".SpawnLocations."),
+                ARN_SPAWNLOCLIST(ARN_SPAWNLOCS.key().concat("List")),
+                ARN_SPAWNLOC_ENABLED(ARN_SPAWNLOCS.key().concat("Enabled")),
     ;
     
     private String key;

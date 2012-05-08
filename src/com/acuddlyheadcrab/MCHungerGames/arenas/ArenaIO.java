@@ -38,7 +38,7 @@ public class ArenaIO {
         arenas.set(YMLKeys.getArenaSubkey(name, YMLKeys.ARN_TRIBS), tribs);
         arenas.set(YMLKeys.getArenaSubkey(name, YMLKeys.ARN_INGAME), ingame);
         arenas.set(YMLKeys.getArenaSubkey(name, YMLKeys.ARN_INGAME), ingame);
-        hungergames.saveArenas();
+        HungerGames.saveArenasFile();
     }
     
     public static void submitNewArena(String name, Location center, double radius, List<String> gms, List<Map<?, ?>> tribs, boolean ingame, Location lounge){
@@ -49,7 +49,7 @@ public class ArenaIO {
         arenasSet(YMLKeys.getArenaSubkey(name, YMLKeys.ARN_LOUNGE_Z), lounge.getZ());
         arenasSet(YMLKeys.getArenaSubkey(name, YMLKeys.ARN_LOUNGE_YAW), lounge.getYaw());
         arenasSet(YMLKeys.getArenaSubkey(name, YMLKeys.ARN_LOUNGE_PITCH), lounge.getPitch());
-        hungergames.saveArenas();
+        HungerGames.saveArenasFile();
     }
     
     public static void initFiles(FileConfiguration arenasFile){
@@ -64,12 +64,12 @@ public class ArenaIO {
         ConfigurationSection cs = arenas.getConfigurationSection(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_SELF));
         arenasSet(YMLKeys.getArenaSubkey(renameto, YMLKeys.ARN_SELF), cs);
         deleteArena(arenakey);
-        hungergames.saveArenas();
+        HungerGames.saveArenasFile();
     }
     
     public static void arenasSet(String path, Object object){
         arenas.set(path, object);
-        hungergames.saveArenas();
+        HungerGames.saveArenasFile();
     }
     
     public static String getArenaByKey(String arg1) {

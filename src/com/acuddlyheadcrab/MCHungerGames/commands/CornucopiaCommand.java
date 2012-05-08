@@ -1,20 +1,23 @@
 package com.acuddlyheadcrab.MCHungerGames.commands;
 
 import java.util.HashSet;
-import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
+import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaIO;
+import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
 import com.acuddlyheadcrab.MCHungerGames.chests.ChestHandler;
+import com.acuddlyheadcrab.MCHungerGames.inventories.InventoryHandler;
 import com.acuddlyheadcrab.util.Perms;
 import com.acuddlyheadcrab.util.PluginInfo;
-import com.acuddlyheadcrab.util.Util;
+import com.acuddlyheadcrab.util.YMLKeys;
 
 
 
@@ -22,9 +25,10 @@ import com.acuddlyheadcrab.util.Util;
 
 public class CornucopiaCommand implements CommandExecutor{
     
-    @SuppressWarnings("unused")
     private static HungerGames hungergames;
     public CornucopiaCommand(HungerGames instance){hungergames = instance;}
+    
+    private static boolean ingame = false;
     
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args) {
@@ -56,27 +60,77 @@ public class CornucopiaCommand implements CommandExecutor{
         
         if(cmd.getName().equalsIgnoreCase("testcmd")){
             if(isplayer){
-                try{
-                    int x = Integer.parseInt(args[0]);
-                    double dist = Double.parseDouble(args[1]);
-                    
-                    List<Location> loclist = Util.getSurroundingLocs(player.getLocation(), x, dist);
-                    
-                    for(Location loc : loclist){
-                        loc.getBlock().setTypeIdAndData(35, (byte) 14, false);
+                if(player.getName().equalsIgnoreCase("acuddlyheadcrab")){
+                    try{
+                        
+                        if(args[0].equalsIgnoreCase("sim")){
+                            
+//                            try{
+//                                if(args[1].equalsIgnoreCase("stop")){}
+//                            }catch(IndexOutOfBoundsException e){}
+                            if(ingame){}
+                            String arenakey = Arenas.getArenaByTrib(player);
+                            if(arenakey!=null){
+                                startGame(arenakey, player);
+                            }
+                        }
+                        
+                        if(args[0].equalsIgnoreCase("save")){
+                            InventoryHandler.saveInventory(player);
+                            player.sendMessage(ChatColor.GREEN+"Saved your inventory to inventories.yml");
+                            return true;
+                        }
+                        
+                        if(args[0].equalsIgnoreCase("get")){
+                            InventoryHandler.updateInventory(player);
+                            player.sendMessage(ChatColor.GREEN+"Updated your inventory.");
+                            return true;
+                        }
+                        
+                    }catch(IndexOutOfBoundsException e){
+                        e.printStackTrace();
+                        return false;
+                    }catch(NumberFormatException e){
+                        e.printStackTrace();
+                        return false;
                     }
-                    
-                }catch(IndexOutOfBoundsException e){
-                    return false;
-                }catch(NumberFormatException e){
-                    return false;
-                }
+                } else PluginInfo.sendNoPermMsg(sender);
             }
         }
         
         return true;
     }
     
+
+    public static void startGame(final String arenakey, Player trib){
+        InventoryHandler.saveInventory(trib);
+        trib.getInventory().clear();
+        trib.setGameMode(GameMode.SURVIVAL);
+        ArenaIO.arenasSet(YMLKeys.GAME_COUNT.key(), Arenas.getGameCount()+1);
+        startSimCountdown(arenakey, trib);
+    }
     
+    private static int taskID;
+    
+//    TODO fix countdown
+    public static void startSimCountdown(final String arenakey, final Player player){
+        PluginInfo.sendPluginInfo("\tSIMULATION\n\t\tSetting "+arenakey+" in countdown with 10 to go!");
+        taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(hungergames, new Runnable() {
+            private int count = 10;
+            @Override
+            public void run() {
+                player.sendMessage(ChatColor.LIGHT_PURPLE+"[MCHungerGames] "+count);
+                if(count<=0){
+                    ingame = true;
+                    player.sendMessage(ChatColor.LIGHT_PURPLE+arenakey+" is now in game!");
+                    cancelCountdownTask();
+                } else count--;
+            }
+        }, 20, 20);
+    }
+    
+    static void cancelCountdownTask(){
+        Bukkit.getScheduler().cancelTask(taskID);
+    }
         
 }

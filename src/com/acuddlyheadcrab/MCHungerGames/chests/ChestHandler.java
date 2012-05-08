@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -33,23 +34,51 @@ public static Map<Material, Integer> matwhitelist;
     public ChestHandler(HungerGames instance) {
         HungerGamesPlugin = instance;
         matwhitelist = new HashMap<Material, Integer>();
-        for(Material mat : Material.values()) matwhitelist.put(mat, mat.getMaxStackSize());
-        matwhitelist.remove(Material.AIR);
-        matwhitelist.remove(Material.BED_BLOCK);
-        matwhitelist.remove(Material.BEDROCK);
-        matwhitelist.remove(Material.BREWING_STAND);
-        matwhitelist.remove(Material.BURNING_FURNACE);
-        matwhitelist.remove(Material.CAKE_BLOCK);
-        matwhitelist.remove(Material.CAULDRON);
-        matwhitelist.remove(Material.DRAGON_EGG);
-        matwhitelist.remove(Material.ENDER_PORTAL);
-        matwhitelist.remove(Material.ENDER_PORTAL_FRAME);
-        matwhitelist.remove(Material.ENDER_STONE);
+        matwhitelist.put(Material.ARROW, 9);
+        matwhitelist.put(Material.ARROW, 9);
+        matwhitelist.put(Material.ARROW, 9);
+        matwhitelist.put(Material.ARROW, 9);
+        matwhitelist.put(Material.ARROW, 9);
+        matwhitelist.put(Material.ARROW, 9);
+        matwhitelist.put(Material.BOW, 1);
+        matwhitelist.put(Material.BOW, 1);
+        matwhitelist.put(Material.BOW, 1);
+        matwhitelist.put(Material.BOW, 1);
+        matwhitelist.put(Material.BOW, 1);
+        matwhitelist.put(Material.STONE_SWORD, 1);
+        matwhitelist.put(Material.STONE_SWORD, 1);
+        matwhitelist.put(Material.STONE_SWORD, 1);
+        matwhitelist.put(Material.STONE_SWORD, 1);
+        matwhitelist.put(Material.GOLD_SWORD, 1);
+        matwhitelist.put(Material.GOLD_SWORD, 1);
+        matwhitelist.put(Material.GOLD_SWORD, 1);
+        matwhitelist.put(Material.GOLD_SWORD, 1);
+        matwhitelist.put(Material.IRON_SWORD, 1);
+        matwhitelist.put(Material.LEATHER_HELMET, 1);
+        matwhitelist.put(Material.LEATHER_HELMET, 1);
+        matwhitelist.put(Material.LEATHER_BOOTS, 1);
+        matwhitelist.put(Material.LEATHER_BOOTS, 1);
+        matwhitelist.put(Material.LEATHER_LEGGINGS, 1);
+        matwhitelist.put(Material.LEATHER_LEGGINGS, 1);
+        matwhitelist.put(Material.LEATHER_CHESTPLATE, 1);
+        matwhitelist.put(Material.LEATHER_CHESTPLATE, 1);
+        matwhitelist.put(Material.IRON_BOOTS, 1);
+        matwhitelist.put(Material.IRON_LEGGINGS, 1);
+        matwhitelist.put(Material.IRON_CHESTPLATE, 1);
+        matwhitelist.put(Material.IRON_HELMET, 1);
+        matwhitelist.put(Material.COMPASS, 1);
+        matwhitelist.put(Material.COMPASS, 1);
+        matwhitelist.put(Material.COMPASS, 1);
+        matwhitelist.put(Material.COMPASS, 1);
+        matwhitelist.put(Material.BREAD, 2);
+        matwhitelist.put(Material.BREAD, 2);
+        matwhitelist.put(Material.BREAD, 2);
+        matwhitelist.put(Material.MUSHROOM_SOUP, 1);
     }
     
     
     public static void initChestItems(){
-        chestitems = HungerGamesPlugin.getChestItemsFile();
+        chestitems = HungerGames.getChestItemsFile();
     }
     
     public static boolean spawnCCPChest(Block block, boolean addtochest){
@@ -70,7 +99,7 @@ public static Map<Material, Integer> matwhitelist;
         
         Random rand = new Random();
         
-        for(int c=0;c<rand.nextInt(inv.getSize());c++){
+        for(int c=0;c<rand.nextInt(3)+1;c++){
             ItemStack randitem = getRandomItem();
             inv.setItem(rand.nextInt(inv.getSize()), randitem);
         }
@@ -81,8 +110,8 @@ public static Map<Material, Integer> matwhitelist;
     public static ItemStack getRandomItem(){
         Random rand = new Random();
         Material mat = (Material) Util.getKeys(matwhitelist).get(rand.nextInt(matwhitelist.size()));
-        int max = rand.nextInt(mat.getMaxStackSize());
-        short dmg = mat.getMaxDurability()==((short) 0) ? (short) 0 : (short) rand.nextInt(mat.getMaxDurability());
+        int max = rand.nextInt(matwhitelist.get(mat))+1;
+        short dmg = mat.getMaxDurability()==((short) 0) ? (short) 0 : (short) (rand.nextInt(mat.getMaxDurability())+10);
         return new ItemStack(mat,max,dmg);
     }
     
@@ -162,9 +191,8 @@ public static Map<Material, Integer> matwhitelist;
     
     public static void setChestLocs(List<Location> loclist){
         List<String> lockeylist = new ArrayList<String>();
-        for(Location loc : loclist){
+        for(Location loc : loclist)
             lockeylist.add(Util.toLocKey(loc, false, true));
-        }
         setChestLocKeys(lockeylist);
     }
     
@@ -187,13 +215,29 @@ public static Map<Material, Integer> matwhitelist;
     
     public static void chestitemsset(String path, Object object) {
         chestitems.set(path, object);
-        HungerGamesPlugin.saveChestItems();
+        HungerGames.saveChestItems();
     }
+    
+    static int taskID;
     
     public static void resetChests(){
         checkChestLocs();
-        for(Location chest : getChestLocs()){
-            spawnCCPChest(chest.getBlock(), chestitems.getBoolean(YMLKeys.CHESTITEMS_ADDTO.key()));
-        }
+        taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(HungerGamesPlugin, new Runnable() {
+            private int count = 0;
+            
+            @Override
+            public void run() {
+                if(count<10){
+                    for(Location chest : getChestLocs()){
+                        spawnCCPChest(chest.getBlock(), chestitems.getBoolean(YMLKeys.CHESTITEMS_ADDTO.key()));
+                    }
+                    count++;
+                } else cancelChestTask();
+            }
+        }, 1, 1);
+    }
+    
+    static void cancelChestTask(){
+        Bukkit.getScheduler().cancelTask(taskID);
     }
 }

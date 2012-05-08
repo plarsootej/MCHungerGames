@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 
 import com.acuddlyheadcrab.MCHungerGames.HungerGames;
 import com.acuddlyheadcrab.MCHungerGames.chests.ChestHandler;
+import com.acuddlyheadcrab.MCHungerGames.inventories.InventoryHandler;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Util;
 
@@ -153,14 +154,6 @@ public class Arenas {
     
     public static void setTribs(String arenakey, List<Map<?, ?>> tribs){
         ArenaIO.arenasSet(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_TRIBS), tribs);
-        ArenaUtil.updateTribLocs(arenakey);
-    }
-    
-    public static void setTribs(String arenakey, List<Map<?, ?>> tribs, boolean update){
-        ArenaIO.arenasSet(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_TRIBS), tribs);
-        if(update){
-            ArenaUtil.updateTribLocs(arenakey);
-        }
     }
     
     public static void setTribLoc(String arenakey, int tribID, String lockey){
@@ -181,6 +174,7 @@ public class Arenas {
     	List<Map<?, ?>> tribs = getTribs(arenakey);
     	tribs.add(entry);
     	setTribs(arenakey, tribs);
+    	ArenaUtil.updateTribLocs(arenakey, true);
     }
     
     public static void addTrib(String arenakey, String player){
@@ -199,7 +193,7 @@ public class Arenas {
         addTrib(arenakey, player.getName());
     }
     
-    public static void removeTrib(String arenakey, String player, boolean from_game){
+    public static void removeTrib(String arenakey, String player){
         Map<?, ?> map = null;
         List<Map<?, ?>> tribs = getTribs(arenakey);
         for(Map<?, ?> maps : tribs){
@@ -207,20 +201,31 @@ public class Arenas {
         }
         tribs.remove(map);
         setTribs(arenakey, tribs);
-        if(from_game){
-            Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+player+" is no longer a tribute for "+arenakey);
-        }
+        ArenaUtil.updateTribLocs(arenakey, true);
     }
     
     public static void removeTrib(String arenakey, Player player, boolean from_game){
-        removeTrib(arenakey, player.getName(), from_game);
+        removeTrib(arenakey, player.getName());
+        if(from_game){
+            Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+player.getName()+" is no longer a tribute for "+arenakey);
+            InventoryHandler.updateInventory(player);
+            try{
+                if(config.getBoolean(YMLKeys.OPS_LOUNGETP_ONDEATH.key())) player.teleport(Arenas.getLounge(arenakey));
+            }catch(NullPointerException e){}
+        }
     }
     
     
     public static void setInGame(String arenakey, boolean ingame){
         ArenaIO.arenasSet(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_INGAME), ingame);
         List<String> currentgames = arenas.getStringList(YMLKeys.CURRENT_GAMES.key());
-        if(ingame) currentgames.add(arenakey); else currentgames.remove(arenakey);
+        if(ingame){
+            currentgames.add(arenakey);
+            for(Player trib : getOnlineTribNames(arenakey)) InventoryHandler.saveInventory(trib);
+        } else {
+            currentgames.remove(arenakey);
+            for(Player trib : getOnlineTribNames(arenakey)) InventoryHandler.updateInventory(trib);
+        }
         ArenaIO.arenasSet(YMLKeys.CURRENT_GAMES.key(), currentgames);
         ChestHandler.resetChests();
     }
@@ -291,7 +296,7 @@ public class Arenas {
     }
     
     public static boolean isGameMakersArena(CommandSender sender, String arena) {
-        FileConfiguration arenas = hungergames.getArenasFile();
+        FileConfiguration arenas = HungerGames.getArenasFile();
         if(sender instanceof Player){
             String arenakey = ArenaIO.getArenaByKey(arena);
             if(arenakey!=null){
@@ -299,5 +304,32 @@ public class Arenas {
             }
         }
         return false;
+    }
+
+    public static List<Location> getSpawnPoints(String arenakey) {
+        List<String> lockeys = getSpawnPointKeys(arenakey);
+        List<Location> loclist = new ArrayList<Location>();
+        for(String lockey : lockeys){
+            loclist.add(Util.parseLocKey(lockey));
+        }
+        return loclist;
+    }
+    
+    public static List<String> getSpawnPointKeys(String arenakey){
+        return arenas.getStringList(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_SPAWNLOCLIST));
+    }
+    
+    public static void setSpawnPoints(String arenakey, List<String> lockeylist){
+        ArenaIO.arenasSet(YMLKeys.getArenaSubkey(arenakey, YMLKeys.ARN_SPAWNLOCLIST), lockeylist);
+    }
+    
+    public static void addSpawnPoint(String arenakey, String loc){
+        List<String> lockeylist = getSpawnPointKeys(arenakey);
+        lockeylist.add(loc);
+        setSpawnPoints(arenakey, lockeylist);
+    }
+    
+    public static void addSpawnPoint(String areankey, Location loc){
+        addSpawnPoint(areankey, Util.toLocKey(loc, false, false));
     }
 }

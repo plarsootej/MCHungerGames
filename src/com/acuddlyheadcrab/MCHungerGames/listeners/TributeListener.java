@@ -1,4 +1,4 @@
-package com.acuddlyheadcrab.MCHungerGames;
+package com.acuddlyheadcrab.MCHungerGames.listeners;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -16,10 +16,14 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
+import com.acuddlyheadcrab.MCHungerGames.HungerGames;
 import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaUtil;
 import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
 import com.acuddlyheadcrab.MCHungerGames.chat.ChatHandler;
+import com.acuddlyheadcrab.MCHungerGames.chests.ChestHandler;
 import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Util;
 
@@ -34,7 +38,7 @@ public class TributeListener implements Listener {
     public static void initConfig(){config = plugin.getConfig();}
     
 
-  @EventHandler(priority = EventPriority.HIGH)
+//  @EventHandler(priority = EventPriority.HIGH)
   public void onPlayerChat(PlayerChatEvent event){
       if(config.getBoolean(YMLKeys.OPS_NEARCHAT_ENABLED.key())){
           event.setCancelled(true);
@@ -52,21 +56,20 @@ public class TributeListener implements Listener {
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onPlayerDeath(PlayerDeathEvent event){
       Player player = event.getEntity();
-      String arena = Arenas.getNearbyArena(player.getLocation());
-      if(arena!=null){
-          if(Arenas.isInGame(arena)){
-              if(Arenas.isTribute(arena, player)){
-                  Arenas.removeTrib(arena, player.getName(), false);
+      String arenakey = Arenas.getNearbyArena(player.getLocation());
+      if(arenakey!=null){
+          if(Arenas.isInGame(arenakey)){
+              if(Arenas.isTribute(arenakey, player)){
+                  Arenas.removeTrib(arenakey, player, true);
                   // replace with broadcast to non-tributes
-                  for(Player remainingtrib : Arenas.getOnlineTribNames(arena)){
+                  for(Player remainingtrib : Arenas.getOnlineTribNames(arenakey)){
                       Location loc = remainingtrib.getLocation();
                       loc.setY(loc.getY()+10);
                       remainingtrib.getWorld().createExplosion(loc, 0);
                   }
-                  Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+"Tribute "+player.getName()+" has died!");
-                  Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+"There are now "+Arenas.getTribs(arena).size()+" tributes left for "+arena+"!");
-                  int winner = 1; //this is here in case I might want to change the rules ;D (like in the story)
-                  if(Arenas.getOnlineTribNames(arena).size()==winner){
+                  Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+"There are now "+Arenas.getTribs(arenakey).size()+" tributes left for "+arenakey+"!");
+                  int win = 1; //this is here in case I might want to change the rules ;D (like in the story)
+                  if(Arenas.getOnlineTribNames(arenakey).size()==win){
                       String suffix = "";
                       int gc = Arenas.getGameCount();
                       switch (gc%10) {
@@ -76,9 +79,21 @@ public class TributeListener implements Listener {
                           default: suffix = "th"; break;
                       }
                       String gmcount = gc+""+ChatColor.ITALIC+suffix+ChatColor.RESET+ChatColor.LIGHT_PURPLE;
-                      Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+""+Arenas.getOnlineTribNames(arena).get(winner-1).getName()+" has won the "+gmcount+" Hunger Games in "+ChatColor.GOLD+player.getWorld().getName()+ChatColor.LIGHT_PURPLE+"!");
-                      ArenaUtil.tpAllOnlineTribs(arena, false); //im too lazy to use player.teleport(), okay?
-                      Arenas.setInGame(arena, false);
+//                      possible exceptions here. is there a better way to do this?
+                      Player pwinner = Arenas.getOnlineTribNames(arenakey).get(0);
+                      Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+""+pwinner.getName()+" has won the "+gmcount+" Hunger Games in "+ChatColor.GOLD+player.getWorld().getName()+ChatColor.LIGHT_PURPLE+"!");
+                      pwinner.getInventory().clear();
+                      pwinner.setHealth(20);
+                      pwinner.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 1000, 2));
+                      if(config.getBoolean(YMLKeys.OPS_LOUNGETP_ONWIN.key())){
+                          try{
+                              pwinner.teleport(Arenas.getLounge(arenakey));
+                          }catch(NullPointerException e){}
+                      }
+                      ArenaUtil.tpAllOnlineTribs(arenakey, false);
+                      Arenas.removeTrib(arenakey, pwinner, false);
+                      ChestHandler.resetChests();
+                      Arenas.setInGame(arenakey, false);
                   }
               }
           }

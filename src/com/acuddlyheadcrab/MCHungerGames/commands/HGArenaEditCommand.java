@@ -2,6 +2,7 @@ package com.acuddlyheadcrab.MCHungerGames.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -49,7 +50,8 @@ public class HGArenaEditCommand implements CommandExecutor{
                             addtrib = arg2.equalsIgnoreCase("addtrib"),
                             removegm = arg2.equalsIgnoreCase("removegm"),
                             removetrib = arg2.equalsIgnoreCase("removetrib"),
-                            settribspawn = arg2.equalsIgnoreCase("settribspawn")
+                            settribspawn = arg2.equalsIgnoreCase("settribspawn"),
+                            addspawnpoint = arg2.equalsIgnoreCase("addspawnpoint")||arg2.equalsIgnoreCase("addspp")
                         ;
                         
                         if(Arenas.isInGame(arenakey)||Arenas.isInCountdown(arenakey)){PluginInfo.sendAlreadyInGameMsg(sender, arenakey); return true;}
@@ -163,15 +165,13 @@ public class HGArenaEditCommand implements CommandExecutor{
                                                 trib.sendMessage(ChatColor.LIGHT_PURPLE+"You have been added as a tribute to the arena: "+arenakey);
                                                 
                                                 if(Arenas.isTribute(arenakey, arg3)){
-                                                    PluginInfo.wrongFormatMsg(sender, ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+arg3+" is already a tribute for "+ChatColor.GOLD+arenakey);
+                                                    PluginInfo.wrongFormatMsg(sender, arg3+" is already a tribute for "+ChatColor.GOLD+arenakey);
                                                     return true;
                                                 }
-                                                Arenas.addTrib(arenakey, arg3);
-                                                sender.sendMessage(ChatColor.GREEN+"Added "+arg3+" to "+arenakey+"'s tributes");
-                                                return true;
-                                            } else{
-                                                sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"(Warning): Could not find player online \""+arg3+"\"");
-                                            }
+                                            } else sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"(Warning): Could not find player online \""+arg3+"\"");
+                                            Arenas.addTrib(arenakey, arg3);
+                                            sender.sendMessage(ChatColor.GREEN+"Added "+arg3+" to "+arenakey+"'s tributes");
+                                            return true;
                                         } else PluginInfo.wrongFormatMsg(sender, arg3+" is already a tribute for "+arenakey+"!"); return true;
                                     }catch(NullPointerException e){
                                         PluginInfo.wrongFormatMsg(sender, "Could not find the player \""+arg3+"\""); return true;
@@ -211,7 +211,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                                     
                                     try{
                                         if(Arenas.getTribNames(arenakey).contains(arg3)){
-                                            Arenas.removeTrib(arenakey, arg3, false);
+                                            Arenas.removeTrib(arenakey, arg3);
                                             sender.sendMessage(ChatColor.GREEN+"Removed "+arg3+" from "+arenakey+"'s tributes");
                                              return true;
                                         } else PluginInfo.wrongFormatMsg(sender, arg3+" has already been removed from "+arenakey+"'s tributes!"); return true;
@@ -241,6 +241,21 @@ public class HGArenaEditCommand implements CommandExecutor{
                                 PluginInfo.wrongFormatMsg(sender, "\""+args[2]+"\" is not a valid number!"); 
                             }
                             return true;
+                        }
+                        
+                        if(addspawnpoint){
+                            if(isplayer){
+                                if(sender.hasPermission(Perms.HGAE_ADDSPP.perm())){
+                                    Location loc = player.getLocation();
+                                    if(!Arenas.isWithinArena(arenakey, loc)){
+                                        player.sendMessage(ChatColor.LIGHT_PURPLE+"Cannot have a spawnpoint outside of the arena!");
+                                        return true;
+                                    }
+                                    Arenas.addSpawnPoint(arenakey, loc);
+                                    player.sendMessage(ChatColor.GREEN+"Added this location to the spawnpoints");
+                                    return true;
+                                } else PluginInfo.sendNoPermMsg(sender);
+                            } else PluginInfo.sendOnlyPlayerMsg(sender);
                         }
                         
                     }catch(IndexOutOfBoundsException e){}

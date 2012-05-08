@@ -1,5 +1,6 @@
 package com.acuddlyheadcrab.MCHungerGames.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -30,7 +31,7 @@ public class HGArenaCommand implements CommandExecutor{
     public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args){
         
         FileConfiguration config = hungergames.getConfig();
-        FileConfiguration arenasfile = hungergames.getArenasFile();
+        FileConfiguration arenasfile = HungerGames.getArenasFile();
         
         boolean isplayer = sender instanceof Player;
         Player player = isplayer ? (Player) sender : null;
@@ -50,8 +51,30 @@ public class HGArenaCommand implements CommandExecutor{
                     hga_tpall = arg1.equalsIgnoreCase("tpall")||arg1.equalsIgnoreCase("tpa"),
                     hga_rename = arg1.equalsIgnoreCase("rename"),
                     hga_join = arg1.equalsIgnoreCase("join"),
-                    hga_chestreset = arg1.equalsIgnoreCase("chests")||arg1.equalsIgnoreCase("chestreset")
+                    hga_leave = arg1.equalsIgnoreCase("leave"),
+                    hga_chestreset = arg1.equalsIgnoreCase("chests")||arg1.equalsIgnoreCase("chestreset"),
+                    hga_tributes = arg1.equalsIgnoreCase("tributes")
                 ;
+                
+                if(hga_tributes){
+                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga join command");
+                    if(sender.hasPermission(Perms.HGA_TRIBUTES.perm())){
+                        for(String arenakey : ArenaIO.getArenasKeys()){
+                            List<String> tribs = new ArrayList<String>();
+                            for(String trib : Arenas.getTribNames(arenakey)){
+                                String tribname = Bukkit.getPlayerExact(trib)!=null ? ChatColor.DARK_GREEN+trib : ChatColor.DARK_GRAY+""+ChatColor.STRIKETHROUGH+trib;
+                                tribs.add(tribname);
+                            }
+                            
+                            String arena = Arenas.isInGame(arenakey) ? ChatColor.GREEN+arenakey : ChatColor.BLUE+arenakey;
+                            String triblist = Util.concatList(tribs, ", "+ChatColor.RESET);
+                            if(triblist.length()==0) triblist = ChatColor.DARK_GRAY+"(none)";
+                            sender.sendMessage(arena+":");
+                            sender.sendMessage("    "+triblist);
+                        }
+                        return true;
+                    } else PluginInfo.sendNoPermMsg(sender);
+                }
                 
                 if(hga_join){
                     if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga join command");
@@ -73,6 +96,31 @@ public class HGArenaCommand implements CommandExecutor{
                                 } else PluginInfo.wrongFormatMsg(sender, "Could not find \""+args[1]+"\"!"); return true; 
                             }catch(IndexOutOfBoundsException e){
                                 PluginInfo.wrongFormatMsg(sender, "/hga join <arena>"); return true;
+                            }
+                        } else PluginInfo.sendOnlyPlayerMsg(sender); return true;
+                    } else PluginInfo.sendNoPermMsg(sender); return true;
+                }
+                
+                if(hga_leave){
+                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga join command");
+                    if(sender.hasPermission(Perms.HGA_LEAVE.perm())){
+                        if(isplayer){
+                            try{
+                                String arenakey = ArenaIO.getArenaByKey(args[1]);
+                                
+                                if(arenakey!=null){
+                                    if(Arenas.isInGame(arenakey)||Arenas.isInCountdown(arenakey)) {
+                                        PluginInfo.wrongFormatMsg(sender, "Fool! You can't leave while "+arenakey+" is in game!"); return true;
+                                    }
+                                    if(!Arenas.isTribute(arenakey, player)){
+                                        PluginInfo.wrongFormatMsg(sender, "You're already not a tribute for "+arenakey+"!");
+                                        return true;
+                                    }
+                                    Arenas.removeTrib(arenakey, player, false);
+                                    player.sendMessage(ChatColor.LIGHT_PURPLE+"You have left "+arenakey); return true;
+                                } else PluginInfo.wrongFormatMsg(sender, "Could not find \""+args[1]+"\"!"); return true; 
+                            }catch(IndexOutOfBoundsException e){
+                                PluginInfo.wrongFormatMsg(sender, "/hga leave <arena>"); return true;
                             }
                         } else PluginInfo.sendOnlyPlayerMsg(sender); return true;
                     } else PluginInfo.sendNoPermMsg(sender); return true;

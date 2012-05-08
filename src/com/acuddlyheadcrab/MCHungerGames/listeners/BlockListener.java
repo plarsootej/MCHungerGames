@@ -1,7 +1,9 @@
-package com.acuddlyheadcrab.MCHungerGames;
+package com.acuddlyheadcrab.MCHungerGames.listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,6 +13,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 
+import com.acuddlyheadcrab.MCHungerGames.HungerGames;
 import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
 import com.acuddlyheadcrab.MCHungerGames.chests.ChestHandler;
 import com.acuddlyheadcrab.util.Util;
@@ -37,6 +40,26 @@ public class BlockListener implements Listener {
         }
         if(ChestHandler.getChestLocs().contains(loc)){
             ChestHandler.removeChestLoc(loc);
+        }
+        
+//        I don't really know the 'rules' for the mushroom-leaf style games. Sorry? Deal wid it.
+        if(config.getBoolean(YMLKeys.OPS_BP_MUSHLEAF.key())){
+            String arenakey = Arenas.getNearbyArena(loc);
+            if(arenakey!=null){
+                Block block = e.getBlock();
+                boolean
+                    redmush = block.getType()==Material.RED_MUSHROOM,
+                    brownmush =block.getType()==Material.BROWN_MUSHROOM,
+                    mush = redmush||brownmush,
+                    leaves = block.getType()==Material.LEAVES
+                ;
+                
+                if(!(mush||leaves)){
+                    if(config.getBoolean(YMLKeys.OPS_BP_SHOWWARN.key()))
+                        e.getPlayer().sendMessage(ChatColor.RED+"You can only break mushrooms or leaves!");
+                    e.setCancelled(true);
+                }
+            }
         }
         
         if(!config.getBoolean(YMLKeys.OPS_BP_RULES_BREAK.key())){

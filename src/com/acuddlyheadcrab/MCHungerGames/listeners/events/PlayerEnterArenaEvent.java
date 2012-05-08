@@ -1,4 +1,4 @@
-package com.acuddlyheadcrab.MCHungerGames.events;
+package com.acuddlyheadcrab.MCHungerGames.listeners.events;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -6,14 +6,14 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 @Deprecated
-public class PlayerLeaveArenaEvent extends PlayerMoveEvent{
+public class PlayerEnterArenaEvent extends PlayerMoveEvent{
     private static final HandlerList handlers = new HandlerList();
     private Location to;
     private Location from;
     private String arenakey;
     private PlayerPassArenaReason reason;
     
-    public PlayerLeaveArenaEvent(final Player player, final Location from, final Location to, final String  arenakey, final PlayerPassArenaReason reason){
+    public PlayerEnterArenaEvent(final Player player, final Location from, final Location to, final String  arenakey, final PlayerPassArenaReason reason){
         super(player, from, to);
         this.from = from;
         this.to = to;
@@ -21,21 +21,21 @@ public class PlayerLeaveArenaEvent extends PlayerMoveEvent{
         this.reason = reason;
     }
     
-    public Location getArenaFrom(){
+    @Override
+    public Location getFrom(){
         return from;
     }
     
-    public void setArenaFrom(Location from){
+    @Override
+    public void setFrom(Location from){
         this.from = from;
     }
     
-    @Override
-    public Location getTo(){
+    public Location getArenaTo(){
         return to;
     }
     
-    @Override
-    public void setTo(Location to){
+    public void setArenaTo(Location to){
         this.to = to;
     }
     
@@ -46,7 +46,7 @@ public class PlayerLeaveArenaEvent extends PlayerMoveEvent{
     public void setArenakey(String arenakey){
         this.arenakey = arenakey;
     }
-
+    
     public PlayerPassArenaReason getReason() {
         return reason;
     }
@@ -54,7 +54,6 @@ public class PlayerLeaveArenaEvent extends PlayerMoveEvent{
     public void setReason(PlayerPassArenaReason reason) {
         this.reason = reason;
     }
-    
     @Override
     public HandlerList getHandlers() {
         return handlers;
@@ -63,4 +62,6 @@ public class PlayerLeaveArenaEvent extends PlayerMoveEvent{
     public static HandlerList getHandlerList() {
         return handlers;
     }
+
+    
 }

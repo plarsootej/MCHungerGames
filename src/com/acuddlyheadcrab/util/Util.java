@@ -89,7 +89,7 @@ public class Util {
     }
 
 
-    public static String concatArray(String[] array, String param) {
+    public static String concatArray(Object[] array, String param) {
         return concatList(Arrays.asList(array), param);
     }
     
