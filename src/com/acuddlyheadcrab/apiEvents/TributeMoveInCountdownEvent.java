@@ -1,41 +1,39 @@
-package com.acuddlyheadcrab.MCHungerGames.listeners.events;
+package com.acuddlyheadcrab.apiEvents;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-@Deprecated
-public class PlayerEnterArenaEvent extends PlayerMoveEvent{
+
+public class TributeMoveInCountdownEvent extends PlayerMoveEvent{
     private static final HandlerList handlers = new HandlerList();
     private Location to;
     private Location from;
     private String arenakey;
-    private PlayerPassArenaReason reason;
     
-    public PlayerEnterArenaEvent(final Player player, final Location from, final Location to, final String  arenakey, final PlayerPassArenaReason reason){
+    public TributeMoveInCountdownEvent(final Player player, final Location from, final Location to, final String  arenakey){
         super(player, from, to);
-        this.from = from;
-        this.to = to;
-        this.arenakey = arenakey;
-        this.reason = reason;
+        setFrom(from);
+        setTo(to);
+        setArenakey(arenakey);
     }
     
-    @Override
-    public Location getFrom(){
+    public Location getArenaFrom(){
         return from;
     }
     
-    @Override
-    public void setFrom(Location from){
+    public void setArenaFrom(Location from){
         this.from = from;
     }
     
-    public Location getArenaTo(){
+    @Override
+    public Location getTo(){
         return to;
     }
     
-    public void setArenaTo(Location to){
+    @Override
+    public void setTo(Location to){
         this.to = to;
     }
     
@@ -47,13 +45,6 @@ public class PlayerEnterArenaEvent extends PlayerMoveEvent{
         this.arenakey = arenakey;
     }
     
-    public PlayerPassArenaReason getReason() {
-        return reason;
-    }
-
-    public void setReason(PlayerPassArenaReason reason) {
-        this.reason = reason;
-    }
     @Override
     public HandlerList getHandlers() {
         return handlers;
@@ -62,6 +53,4 @@ public class PlayerEnterArenaEvent extends PlayerMoveEvent{
     public static HandlerList getHandlerList() {
         return handlers;
     }
-
-    
 }

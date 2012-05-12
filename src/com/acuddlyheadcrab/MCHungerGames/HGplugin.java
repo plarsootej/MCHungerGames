@@ -1,9 +1,13 @@
 package com.acuddlyheadcrab.MCHungerGames;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.acuddlyheadcrab.MCHungerGames.FileIO.Configs;
+import com.acuddlyheadcrab.MCHungerGames.FileIO.YMLKey;
 import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaIO;
 import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaUtil;
 import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
@@ -16,17 +20,18 @@ import com.acuddlyheadcrab.MCHungerGames.commands.HGGameCommand;
 import com.acuddlyheadcrab.MCHungerGames.commands.HungerGamesCommand;
 import com.acuddlyheadcrab.MCHungerGames.inventories.InventoryHandler;
 import com.acuddlyheadcrab.MCHungerGames.listeners.BlockListener;
-import com.acuddlyheadcrab.MCHungerGames.listeners.HungerListener;
+import com.acuddlyheadcrab.MCHungerGames.listeners.HGListener;
+import com.acuddlyheadcrab.MCHungerGames.listeners.CraftListener;
 import com.acuddlyheadcrab.MCHungerGames.listeners.TributeListener;
 import com.acuddlyheadcrab.util.PluginInfo;
-import com.acuddlyheadcrab.util.Util;
+import com.acuddlyheadcrab.util.Utility;
 
-public class HungerGames extends JavaPlugin{
+public class HGplugin extends JavaPlugin{
     
-    public static HungerGames plugin;
+    public static HGplugin plugin;
     
     public PluginInfo pluginIO = new PluginInfo(this);
-    public Util util = new Util(this);
+    public Utility utility = new Utility(this);
     public ChestHandler chests = new ChestHandler(this);
     public ChatHandler chaths = new ChatHandler(this);
     public Arenas arenas = new Arenas(this);
@@ -41,11 +46,12 @@ public class HungerGames extends JavaPlugin{
         initCommands();
         
         ArenaIO.initArenas(getArenasFile());
-        getServer().getPluginManager().registerEvents(new HungerListener(this), this);
+        getServer().getPluginManager().registerEvents(new CraftListener(this), this);
         getServer().getPluginManager().registerEvents(new TributeListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockListener(this), this);
+        getServer().getPluginManager().registerEvents(new HGListener(this), this);
         
-        HungerListener.initConfig();
+        CraftListener.initConfig();
         ChestHandler.initChestItems();
         
         PluginInfo.log.info("------------ [MCHungerGames] is now enabled ------------");
@@ -92,5 +98,20 @@ public class HungerGames extends JavaPlugin{
     public static void saveChestItems(){
         Configs.saveChestItems();
     }
-
+    
+    public static void callEvent(Event e){
+        Bukkit.getPluginManager().callEvent(e);
+    }
+    
+    public static void callSubEvent(Event superev, Event subev){
+        callEvent(subev);
+        if(superev instanceof Cancellable && subev instanceof Cancellable){
+            ((Cancellable) superev).setCancelled((((Cancellable) subev).isCancelled()));
+            if(Configs.getConfig().getBoolean(YMLKey.OPS_DEBUG_ONEVENTS)){
+                System.out.println("Sub Is cancelled: "+(((Cancellable) subev).isCancelled()));
+                System.out.println("Super Is cancelled: "+(((Cancellable) superev).isCancelled()));
+            }
+        }
+        return;
+    }
 }

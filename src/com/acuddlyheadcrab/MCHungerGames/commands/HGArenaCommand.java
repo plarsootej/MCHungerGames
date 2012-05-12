@@ -11,27 +11,27 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.MCHungerGames.HGplugin;
+import com.acuddlyheadcrab.MCHungerGames.FileIO.YMLKey;
 import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaIO;
 import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaUtil;
 import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
 import com.acuddlyheadcrab.MCHungerGames.chests.ChestHandler;
 import com.acuddlyheadcrab.util.PluginInfo.MCHGCommandBranch;
-import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Perms;
 import com.acuddlyheadcrab.util.PluginInfo;
-import com.acuddlyheadcrab.util.Util;
+import com.acuddlyheadcrab.util.Utility;
 
 public class HGArenaCommand implements CommandExecutor{
     
-	private static HungerGames hungergames;
-    public HGArenaCommand(HungerGames instance){hungergames = instance;}
+	private static HGplugin hungergames;
+    public HGArenaCommand(HGplugin instance){hungergames = instance;}
     
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args){
         
         FileConfiguration config = hungergames.getConfig();
-        FileConfiguration arenasfile = HungerGames.getArenasFile();
+        FileConfiguration arenasfile = HGplugin.getArenasFile();
         
         boolean isplayer = sender instanceof Player;
         Player player = isplayer ? (Player) sender : null;
@@ -57,7 +57,7 @@ public class HGArenaCommand implements CommandExecutor{
                 ;
                 
                 if(hga_tributes){
-                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga join command");
+                    if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga join command");
                     if(sender.hasPermission(Perms.HGA_TRIBUTES.perm())){
                         for(String arenakey : ArenaIO.getArenasKeys()){
                             List<String> tribs = new ArrayList<String>();
@@ -67,7 +67,7 @@ public class HGArenaCommand implements CommandExecutor{
                             }
                             
                             String arena = Arenas.isInGame(arenakey) ? ChatColor.GREEN+arenakey : ChatColor.BLUE+arenakey;
-                            String triblist = Util.concatList(tribs, ", "+ChatColor.RESET);
+                            String triblist = Utility.concatList(tribs, ", "+ChatColor.RESET);
                             if(triblist.length()==0) triblist = ChatColor.DARK_GRAY+"(none)";
                             sender.sendMessage(arena+":");
                             sender.sendMessage("    "+triblist);
@@ -77,7 +77,7 @@ public class HGArenaCommand implements CommandExecutor{
                 }
                 
                 if(hga_join){
-                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga join command");
+                    if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga join command");
                     if(sender.hasPermission(Perms.HGA_JOIN.perm())){
                         if(isplayer){
                             try{
@@ -102,7 +102,7 @@ public class HGArenaCommand implements CommandExecutor{
                 }
                 
                 if(hga_leave){
-                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga join command");
+                    if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga join command");
                     if(sender.hasPermission(Perms.HGA_LEAVE.perm())){
                         if(isplayer){
                             try{
@@ -116,7 +116,7 @@ public class HGArenaCommand implements CommandExecutor{
                                         PluginInfo.wrongFormatMsg(sender, "You're already not a tribute for "+arenakey+"!");
                                         return true;
                                     }
-                                    Arenas.removeTrib(arenakey, player, false);
+                                    Arenas.removeTrib(arenakey, player);
                                     player.sendMessage(ChatColor.LIGHT_PURPLE+"You have left "+arenakey); return true;
                                 } else PluginInfo.wrongFormatMsg(sender, "Could not find \""+args[1]+"\"!"); return true; 
                             }catch(IndexOutOfBoundsException e){
@@ -127,14 +127,14 @@ public class HGArenaCommand implements CommandExecutor{
                 }
                 
                 if(hga_info){
-                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga info command");
+                    if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga info command");
                     if(sender.hasPermission(Perms.HGA_INFO.perm())){
                         try{
                             String arg2 = args[1];
                             
                             String 
                                 arenakey = ArenaIO.getArenaByKey(arg2),
-                                arenapath = YMLKeys.ARENAS.key()+arenakey
+                                arenapath = YMLKey.ARENAS.key()+arenakey
                             ;
                             
                             if(arenakey!=null){
@@ -152,7 +152,7 @@ public class HGArenaCommand implements CommandExecutor{
                                 }
                                 
                                 double
-                                    size = arenasfile.getDouble(arenapath+YMLKeys.ARN_RADIUS.key()),
+                                    size = arenasfile.getDouble(arenapath+YMLKey.ARN_RADIUS.key()),
                                     x = corn.getBlockX(),
                                     y = corn.getBlockY(),
                                     z = corn.getBlockZ()
@@ -213,7 +213,7 @@ public class HGArenaCommand implements CommandExecutor{
                 } 
                 
                 if(hga_new){
-                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga new command");
+                    if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga new command");
                     if(sender.hasPermission(Perms.HGA_NEW.perm())){
                         if(isplayer){
                             try{
@@ -237,7 +237,7 @@ public class HGArenaCommand implements CommandExecutor{
                 }
                 
                 if(hga_del){
-                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga del command");
+                    if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga del command");
                     if(sender.hasPermission(Perms.HGA_DEL.perm())){
                         try{
                             String name = args[1];
@@ -254,9 +254,9 @@ public class HGArenaCommand implements CommandExecutor{
                 }
                 
                 if(hga_list){
-                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga list command");
+                    if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga list command");
                     if(sender.hasPermission(Perms.HGA_LIST.perm())){
-                        String arenas = Util.concatList(ArenaIO.getArenasKeys(), ChatColor.GRAY+", "+ChatColor.GOLD);
+                        String arenas = Utility.concatList(ArenaIO.getArenasKeys(), ChatColor.GRAY+", "+ChatColor.GOLD);
                         if(arenas.length()==0){
                             arenas = ChatColor.DARK_GRAY+"(none)";
                         }
@@ -267,7 +267,7 @@ public class HGArenaCommand implements CommandExecutor{
                 }
                 
                 if(hga_lounge){
-                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga tp command");
+                    if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga tp command");
                     if(isplayer){
                         if(sender.hasPermission(Perms.HGA_LOUNGE.perm())){
                             try{
@@ -292,7 +292,7 @@ public class HGArenaCommand implements CommandExecutor{
                 }
                 
                 if(hga_tp){
-                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga tp command");
+                    if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga tp command");
                     if(isplayer){
                         if(sender.hasPermission(Perms.HGA_TP.perm())){
                             try{
@@ -320,7 +320,7 @@ public class HGArenaCommand implements CommandExecutor{
                 }
                 
                 if(hga_tpall){
-                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga tp command");
+                    if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga tp command");
                     if(sender.hasPermission(Perms.HGA_TPALL.perm())){
                         try{
                             String arenakey = ArenaIO.getArenaByKey(args[1]);
@@ -338,7 +338,7 @@ public class HGArenaCommand implements CommandExecutor{
                 }
                 
                 if(hga_rename){
-                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga tp command");
+                    if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hga tp command");
                     if(sender.hasPermission(Perms.HGA_RENAME.perm())){
                         try{
                             String 
@@ -346,7 +346,7 @@ public class HGArenaCommand implements CommandExecutor{
                                 renameto = args[2]
                             ;
                             if(arenakey!=null){
-                                List<String> cur_games = arenasfile.getStringList(YMLKeys.CURRENT_GAMES.key());
+                                List<String> cur_games = arenasfile.getStringList(YMLKey.CURRENT_GAMES.key());
                                 //renames current games
                                 for(String game : cur_games){
                                     if(game.equalsIgnoreCase(renameto)){
@@ -354,7 +354,7 @@ public class HGArenaCommand implements CommandExecutor{
                                         cur_games.add(renameto);
                                     }
                                 }
-                                ArenaIO.arenasSet(YMLKeys.CURRENT_GAMES.key(), cur_games);
+                                ArenaIO.arenasSet(YMLKey.CURRENT_GAMES.key(), cur_games);
                                 ArenaIO.renameArena(arenakey, renameto);
                                 
                                 sender.sendMessage(ChatColor.GREEN+"Renamed \""+arenakey+"\" to \""+renameto+"\"");
@@ -383,7 +383,7 @@ public class HGArenaCommand implements CommandExecutor{
                 }
                 
             }catch(IndexOutOfBoundsException e){}
-            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted to show /hga branch help");
+            if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted to show /hga branch help");
                 PluginInfo.sendCommandUsage(MCHGCommandBranch.HGA, sender);
         }
         

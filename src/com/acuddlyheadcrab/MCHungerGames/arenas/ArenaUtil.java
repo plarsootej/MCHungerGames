@@ -10,18 +10,18 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.MCHungerGames.HGplugin;
+import com.acuddlyheadcrab.MCHungerGames.FileIO.YMLKey;
 import com.acuddlyheadcrab.MCHungerGames.inventories.InventoryHandler;
 import com.acuddlyheadcrab.util.PluginInfo;
-import com.acuddlyheadcrab.util.Util;
-import com.acuddlyheadcrab.util.YMLKeys;
+import com.acuddlyheadcrab.util.Utility;
 
 
 public class ArenaUtil {
     
     public static FileConfiguration arenas;
-    public static HungerGames hungergames;
-    public ArenaUtil(HungerGames instance){
+    public static HGplugin hungergames;
+    public ArenaUtil(HGplugin instance){
         hungergames = instance;
     }
     
@@ -32,17 +32,17 @@ public class ArenaUtil {
             noncust_tribs = Arenas.getNonCustomTribs(arenakey), 
             maplist = noncust_tribs
         ;
-        List<Location> loclist = Util.getSurroundingLocs(Arenas.getCenter(arenakey), maplist.size(), 7);
+        List<Location> loclist = Utility.getSurroundingLocs(Arenas.getCenter(arenakey), maplist.size(), 7);
         for(int i=0;i<maplist.size();i++){
             @SuppressWarnings("unchecked")
             Map<String,String> map = (Map<String, String>) maplist.get(i);
-            String lockey = Util.toLocKey(loclist.get(i), false, false);
+            String lockey = Utility.toLocKey(loclist.get(i), false, false);
             try{
                 if(deafaultspawnpoints){
                     lockey = Arenas.getSpawnPointKeys(arenakey).get(i);
                 }
             }catch(IndexOutOfBoundsException e){}
-            map.put(Util.getKeys(map).get(0).toString(), lockey);
+            map.put(Utility.getKeys(map).get(0).toString(), lockey);
         }
        alltribs.removeAll(noncust_tribs);
        alltribs.addAll(maplist);
@@ -52,24 +52,27 @@ public class ArenaUtil {
     public static void tpAllOnlineTribs(String arenakey, boolean startinggame) {
         for(Player trib : Arenas.getOnlineTribNames(arenakey)){
             trib.teleport(Arenas.getTribSpawn(arenakey, trib.getName()));
-            if(startinggame){
-                InventoryHandler.saveInventory(trib);
-                trib.getInventory().clear();
-                trib.setGameMode(GameMode.SURVIVAL);
-            } trib.sendMessage(ChatColor.LIGHT_PURPLE+"You have been teleported to "+arenakey);
+            trib.sendMessage(ChatColor.LIGHT_PURPLE+"You have been teleported to "+arenakey);
         }
     }
     
     public static void startGame(final String arenakey, int countdown){
-        tpAllOnlineTribs(arenakey, true);
-        ArenaIO.arenasSet(YMLKeys.GAME_COUNT.key(), Arenas.getGameCount()+1);
+//        HGplugin.callSubEvent(Arena, null)
+        for(Player trib : Arenas.getOnlineTribNames(arenakey)){
+            PluginInfo.debug(62, ArenaUtil.class, "Saving "+trib.getName()+"'s inventory...");
+            InventoryHandler.saveInventory(trib);
+            PluginInfo.debug(64, ArenaUtil.class, "Saved "+trib.getName()+"'s inv!");
+            trib.getInventory().clear();
+            trib.setGameMode(GameMode.SURVIVAL);
+        }
+        ArenaUtil.tpAllOnlineTribs(arenakey, true);
+        ArenaIO.arenasSet(YMLKey.GAME_COUNT.key(), Arenas.getGameCount()+1);
         startCountdown(arenakey, countdown);
     }
-    
 
 
     public static void initGames() {
-        List<String> currentgames = arenas.getStringList(YMLKeys.CURRENT_GAMES.key());
+        List<String> currentgames = arenas.getStringList(YMLKey.CURRENT_GAMES.key());
 //        checks for any extra games (aka removes unecessary)
         for(int c=0;c<currentgames.size();c++){
             String game = currentgames.get(c);
@@ -86,7 +89,7 @@ public class ArenaUtil {
                 if(Arenas.isInGame(arena)) currentgames.add(arena);
             }
         }
-        ArenaIO.arenasSet(YMLKeys.CURRENT_GAMES.key(), currentgames);
+        ArenaIO.arenasSet(YMLKey.CURRENT_GAMES.key(), currentgames);
     }
     
     

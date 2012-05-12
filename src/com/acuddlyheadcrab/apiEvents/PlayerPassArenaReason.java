@@ -1,6 +1,5 @@
-package com.acuddlyheadcrab.MCHungerGames.listeners.events;
+package com.acuddlyheadcrab.apiEvents;
 
-@Deprecated
 public enum PlayerPassArenaReason {
     PLAYERTP,
     PLAYERMOVE

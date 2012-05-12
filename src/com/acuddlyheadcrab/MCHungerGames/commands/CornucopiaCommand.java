@@ -10,14 +10,14 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.MCHungerGames.HGplugin;
+import com.acuddlyheadcrab.MCHungerGames.FileIO.YMLKey;
 import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaIO;
 import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
 import com.acuddlyheadcrab.MCHungerGames.chests.ChestHandler;
 import com.acuddlyheadcrab.MCHungerGames.inventories.InventoryHandler;
 import com.acuddlyheadcrab.util.Perms;
 import com.acuddlyheadcrab.util.PluginInfo;
-import com.acuddlyheadcrab.util.YMLKeys;
 
 
 
@@ -25,8 +25,8 @@ import com.acuddlyheadcrab.util.YMLKeys;
 
 public class CornucopiaCommand implements CommandExecutor{
     
-    private static HungerGames hungergames;
-    public CornucopiaCommand(HungerGames instance){hungergames = instance;}
+    private static HGplugin hungergames;
+    public CornucopiaCommand(HGplugin instance){hungergames = instance;}
     
     private static boolean ingame = false;
     
@@ -43,6 +43,7 @@ public class CornucopiaCommand implements CommandExecutor{
                 if(sender.hasPermission(Perms.SPC.perm())){
                     HashSet<Byte> bset = new HashSet<Byte>();
                     bset.add((byte) 9); bset.add((byte) 8); bset.add((byte) 0);
+                    
                     
                     boolean addtochest = false;
                     
@@ -106,7 +107,7 @@ public class CornucopiaCommand implements CommandExecutor{
         InventoryHandler.saveInventory(trib);
         trib.getInventory().clear();
         trib.setGameMode(GameMode.SURVIVAL);
-        ArenaIO.arenasSet(YMLKeys.GAME_COUNT.key(), Arenas.getGameCount()+1);
+        ArenaIO.arenasSet(YMLKey.GAME_COUNT.key(), Arenas.getGameCount()+1);
         startSimCountdown(arenakey, trib);
     }
     

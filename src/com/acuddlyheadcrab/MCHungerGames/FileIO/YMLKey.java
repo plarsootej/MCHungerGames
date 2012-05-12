@@ -1,4 +1,4 @@
-package com.acuddlyheadcrab.util;
+package com.acuddlyheadcrab.MCHungerGames.FileIO;
 
 /** 
  * @author acuddlyheadcrab
@@ -8,7 +8,7 @@ package com.acuddlyheadcrab.util;
  * If you're modifying this plugin's config, make sure to add/remove/edit the corresponding enum here!
  */
 
-public enum YMLKeys {
+public enum YMLKey {
     
         UD_LASTLOGINTIME("LastLogin"),
         UD_INV("Inventory."),
@@ -18,12 +18,14 @@ public enum YMLKeys {
     
     CHESTITEMS_CHESTLOCS("Chest_Locs"),
     CHESTITEMS_ADDTO("Chest_reset_addto"),
+    CHESTITEMS_SLOTS("MaxSlots"),
     
     OPTIONS("Options."),
         OPS_DEBUG(OPTIONS.key().concat("Debug.")),
             OPS_DEBUG_ONCMD(OPS_DEBUG.key().concat("onCommand")),
             OPS_DEBUG_ONBLOCKCHANGE(OPS_DEBUG.key().concat("onBlockChange")),
             OPS_DEBUG_ONPLAYERJOIN(OPS_DEBUG.key().concat("onPlayerJoin")),
+            OPS_DEBUG_ONEVENTS(OPS_DEBUG.key().concat("onEvents")),
         OPS_GMCANEDIT(OPTIONS.key().concat("Gamemakers_can_edit")),
         OPS_BLOCKPROT(OPTIONS.key().concat("BlockProtection.")),
 //         hehe.. mushleaf sounds funny
@@ -65,6 +67,7 @@ public enum YMLKeys {
         AG_STARTWHEN(AUTO_GAMES.key().concat("Start_when.")),
             AG_STARTWHEN_PLAYERCOUNT(AG_STARTWHEN.key().concat("Tribute_count")),
             AG_STARTWHEN_IDLEMINUTES(AG_STARTWHEN.key().concat("Idle_minutes")),
+        AG_DELAYMINS(AUTO_GAMES.key().concat("Delay_minutes")),
         AG_COUNTDOWN(AUTO_GAMES.key().concat("Countdown")),
             
     CURRENT_GAMES("Currentgames"),
@@ -95,7 +98,7 @@ public enum YMLKeys {
     private String key;
     
     
-    private YMLKeys(String configkey) {
+    private YMLKey(String configkey) {
         key = configkey;
     }
     
@@ -107,8 +110,8 @@ public enum YMLKeys {
         key = newkey;
     }
     
-    public static String getArenaSubkey(String arenakey, YMLKeys type){
-        if(type==YMLKeys.ARN_SELF) return ARENAS.key()+arenakey;
-        return YMLKeys.ARENAS.key()+arenakey+type.key();
+    public static String getArenaSubkey(String arenakey, YMLKey type){
+        if(type==YMLKey.ARN_SELF) return ARENAS.key()+arenakey;
+        return YMLKey.ARENAS.key()+arenakey+type.key();
     }
 }

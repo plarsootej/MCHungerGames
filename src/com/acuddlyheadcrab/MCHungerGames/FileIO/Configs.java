@@ -8,18 +8,19 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.MCHungerGames.HGplugin;
 import com.acuddlyheadcrab.util.PluginInfo;
 
 
 public class Configs {
     
-    private static HungerGames plugin;
-    public Configs(HungerGames instance){plugin = instance;}
+    private static HGplugin plugin;
+    public Configs(HGplugin instance){plugin = instance;}
     
     public static FileConfiguration config;
     public static FileConfiguration ArenasFile;
     public static FileConfiguration ChestItemsFile;
+    private static File fileConfig;
     private static File fileChestItems;
     private static File fileArenas;
     
@@ -66,6 +67,11 @@ public class Configs {
         config = plugin.getConfig();
         config.options().copyDefaults(true);
         plugin.saveConfig();
+        fileConfig = new File(plugin.getDataFolder()+"\\config.yml");
+    }
+    
+    public static AcuddlyConfiguration getConfig(){
+        return new AcuddlyConfiguration(fileConfig, config);
     }
     
     public static void saveConfig(){
@@ -93,6 +99,10 @@ public class Configs {
     public static FileConfiguration getArenasFile() {
         if (ArenasFile == null) reloadArenas();
         return ArenasFile;
+    }
+    
+    public static AcuddlyConfiguration getArenas() {
+        return new AcuddlyConfiguration(fileArenas, getArenasFile());
     }
     
     public static void saveArenas() {
@@ -125,6 +135,10 @@ public class Configs {
     public static FileConfiguration getChestItemsFile() {
         if (ChestItemsFile == null) reloadChestItems();
         return ChestItemsFile;
+    }
+    
+    public static AcuddlyConfiguration getChestItems() {
+        return new AcuddlyConfiguration(fileChestItems, getChestItemsFile());
     }
     
     public static void saveChestItems() {

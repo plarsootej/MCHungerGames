@@ -1,67 +1,48 @@
 package com.acuddlyheadcrab.util;
 
+import org.bukkit.permissions.Permission;
+
 
 public enum Perms {
     
-    HG_RELOAD("HG.reload"),
+    HG_RELOAD(new Permission("HG.reload")),
     
-    HGA_LOUNGE("HG.arena.lounge"),
-    HGA_TP("HG.arena.tp"),
-    HGA_TPALL("HG.arena.tpall"),
-    HGA_INFO("HG.arena.info"),
-    HGA_NEW("HG.arena.new"),
-    HGA_DEL("HG.arena.del"),
-    HGA_LIST("HG.arena.list"),
-    HGA_RENAME("HG.arena.rename"),
-    HGA_JOIN("HG.arena.join"),
-    HGA_LEAVE("HG.arena.leave"),
-    HGA_TRIBUTES("HG.arena.tributes"),
-    HGA_CHESTRESET("HG.arena.chestreset"),
+    HGA_LOUNGE(new Permission("HG.arena.lounge")),
+    HGA_TP(new Permission("HG.arena.tp")),
+    HGA_TPALL(new Permission("HG.arena.tpall")),
+    HGA_INFO(new Permission("HG.arena.info")),
+    HGA_NEW(new Permission("HG.arena.new")),
+    HGA_DEL(new Permission("HG.arena.del")),
+    HGA_LIST(new Permission("HG.arena.list")),
+    HGA_RENAME(new Permission("HG.arena.rename")),
+    HGA_JOIN(new Permission("HG.arena.join")),
+    HGA_LEAVE(new Permission("HG.arena.leave")),
+    HGA_TRIBUTES(new Permission("HG.arena.tributes")),
+    HGA_CHESTRESET(new Permission("HG.arena.chestreset")),
     
-    HGAE_SETCCP("HG.edit.setcenter"),
-    HGAE_SETLOUNGE("HG.edit.setlounge"),
-    HGAE_LIMIT("HG.edit.radius"),
-    HGAE_ADDGM("HG.edit.addgm"),
-    HGAE_ADDTRIB("HG.edit.addtrib"),
-    HGAE_REMOVEGM("HG.edit.removegm"),
-    HGAE_REMOVETRIB("HG.edit.removetrib"),
-    HGAE_ADDSPP("HG.edit.addspp"),
+    HGAE_SETCCP(new Permission("HG.edit.setcenter")),
+    HGAE_SETLOUNGE(new Permission("HG.edit.setlounge")),
+    HGAE_LIMIT(new Permission("HG.edit.radius")),
+    HGAE_ADDGM(new Permission("HG.edit.addgm")),
+    HGAE_ADDTRIB(new Permission("HG.edit.addtrib")),
+    HGAE_REMOVEGM(new Permission("HG.edit.removegm")),
+    HGAE_REMOVETRIB(new Permission("HG.edit.removetrib")),
+    HGAE_SETTRIBSPAWN(new Permission("HG.edit.removetrib")),
+    HGAE_ADDSPP(new Permission("HG.edit.addspp")),
     
-    HGG_START("HG.game.start"),
-    HGG_STOP("HG.game.stop"),
+    HGG_START(new Permission("HG.game.start")),
+    HGG_STOP(new Permission("HG.game.stop")),
     
-    SPC("HG.spawnchest")
+    SPC(new Permission("HG.spawnchest"))
     ;
     
-    private final String permission;
+    private Permission permission;
     
-    Perms(String perm){
+    Perms(Permission perm){
         permission = perm;
     }
 
-    public String perm() {
+    public Permission perm() {
         return permission;
     }
 }
-
-/*    String
-            perm_hg_reload = "HG.reload",
-            perm_hga = "HG.arena",
-                perm_hga_tp = "HG.arena.tp",
-                perm_hga_info = "HG.arena.info",
-                perm_hga_new = "HG.arena.new",
-                perm_hga_del = "HG.arena.del",
-                perm_hga_list = "HG.arena.list",
-            perm_hgae = "HG.edit",
-                perm_hgae_setcorncp = "HG.edit.setcornucopia",
-                perm_hgae_limit = "HG.edit.limit",
-                perm_hgae_addgm = "HG.edit.addgm",
-                perm_hgae_addtrib = "HG.edit.addtrib",
-                perm_hgae_removegm = "HG.edit.removegm",
-                perm_hgae_removetrib = "HG.edit.removetrib",
-            perm_hgg = "HG.game",
-                perm_hgg_start = "HG.game.start",
-                perm_hgg_stop = "HG.game.stop",
-            perm_spc = "HG.spawncornucopia"
-        ;
-*/

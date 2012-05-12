@@ -1,5 +1,5 @@
 name: MCHungerGames
-main: com.acuddlyheadcrab.MCHungerGames.HungerGames
+main: com.acuddlyheadcrab.MCHungerGames.HGplugin
 version: 1.6.2 BETA
 description: >
              'The first Hunger Games plugin! (kinda...)'
@@ -97,6 +97,8 @@ permissions:
             HG.edit.addtrib: true
             HG.edit.removegm: true
             HG.edit.removetrib: true
+            HG.edit.settribspawn: true
+            HG.edit.addspp: true
     HG.edit.setcenter:
         description:
         default: op
@@ -116,6 +118,12 @@ permissions:
         description:
         default: op
     HG.edit.removetrib:
+        description:
+        default: op
+    HG.edit.settribspawn:
+        description:
+        default: op
+    HG.edit.addspp:
         description:
         default: op
     HG.game.*:

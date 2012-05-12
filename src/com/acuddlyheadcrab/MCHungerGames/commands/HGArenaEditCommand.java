@@ -9,18 +9,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.MCHungerGames.HGplugin;
+import com.acuddlyheadcrab.MCHungerGames.FileIO.YMLKey;
 import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaIO;
 import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
 import com.acuddlyheadcrab.util.PluginInfo.MCHGCommandBranch;
-import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Perms;
 import com.acuddlyheadcrab.util.PluginInfo;
 
 public class HGArenaEditCommand implements CommandExecutor{
     
-	private static HungerGames hungergames;
-    public HGArenaEditCommand(HungerGames instance){hungergames = instance;}
+	private static HGplugin hungergames;
+    public HGArenaEditCommand(HGplugin instance){hungergames = instance;}
     
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args) {
@@ -54,16 +54,16 @@ public class HGArenaEditCommand implements CommandExecutor{
                             addspawnpoint = arg2.equalsIgnoreCase("addspawnpoint")||arg2.equalsIgnoreCase("addspp")
                         ;
                         
-                        if(Arenas.isInGame(arenakey)||Arenas.isInCountdown(arenakey)){PluginInfo.sendAlreadyInGameMsg(sender, arenakey); return true;}
-                        
                         if(setccp){
-                            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> setccp command");
+                            if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> setccp command");
                             if(sender.hasPermission(Perms.HGAE_SETCCP.perm())||Arenas.isGameMakersArena(sender, arenakey)){
                                 if(isplayer){
                                     if(Arenas.isInGame(arenakey)){
                                         sender.sendMessage(ChatColor.GOLD+arenakey+ChatColor.RED+" is currently in game!");
                                         return true;
                                     }
+                                    
+                                    if(Arenas.isInGame(arenakey)||Arenas.isInCountdown(arenakey)){sender.sendMessage(""); return true;}
                                 	Arenas.setCenter(arenakey, player.getLocation());
                                     player.sendMessage(ChatColor.GREEN+"Set your location as the center of "+arenakey);
                                     return true;
@@ -72,7 +72,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                         }
                         
                         if(setlounge){
-                            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> setlounge command");
+                            if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> setlounge command");
                             if(sender.hasPermission(Perms.HGAE_SETLOUNGE.perm())||Arenas.isGameMakersArena(sender, arenakey)){
                                 if(isplayer){
                                     Arenas.setLounge(arenakey, player.getLocation());
@@ -86,7 +86,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                         }
                         
                         if(radius){
-                            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> radius command");
+                            if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> radius command");
                             if(sender.hasPermission(Perms.HGAE_LIMIT.perm())||Arenas.isGameMakersArena(sender, arenakey)){
                                 if(Arenas.isInGame(arenakey)){
                                     sender.sendMessage(ChatColor.GOLD+arenakey+ChatColor.RED+" is currently in game!");
@@ -107,19 +107,23 @@ public class HGArenaEditCommand implements CommandExecutor{
                         }
                         
                         if(addgm){
-                            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> addgm command");
+                            if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> addgm command");
                             if(sender.hasPermission(Perms.HGAE_ADDGM.perm())){
+                                if(Arenas.isInGame(arenakey)){
+                                    sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"(Warning): "+ChatColor.GOLD+arenakey+ChatColor.LIGHT_PURPLE+" is currently in game");
+                                }
                                 try{
                                     String arg3 = args[2];
                                     
                                     try{
                                         if(!Arenas.getGMs(arenakey).contains(arg3)){
-                                            if(Arenas.getTribNames(arenakey).contains(arg3)){
+                                            if(Arenas.isGM(arenakey, arg3)){
                                                 sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"Warning: "+arg3+" is already a tribute for "+arenakey+"!");
                                             }
                                             Player gm = Bukkit.getPlayer(arg3);
                                             if(gm!=null){
                                                 arg3 = gm.getName();
+                                                
                                                 
                                                 if(Arenas.isGM(arenakey, arg3)){
                                                     PluginInfo.wrongFormatMsg(sender, ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+arg3+" is already a gamemaker for "+ChatColor.GOLD+arenakey);
@@ -149,13 +153,16 @@ public class HGArenaEditCommand implements CommandExecutor{
                         }
                         
                         if(addtrib){
-                            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> addtrib command");
+                            if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> addtrib command");
                             if(sender.hasPermission(Perms.HGAE_ADDTRIB.perm())||Arenas.isGameMakersArena(sender, arenakey)){
+                                if(Arenas.isInGame(arenakey)){
+                                    sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"(Warning): "+ChatColor.GOLD+arenakey+ChatColor.LIGHT_PURPLE+" is currently in game");
+                                }
                                 try{
                                     String arg3 = args[2];
                                     
                                     try{
-                                        if(!Arenas.getTribNames(arenakey).contains(arg3)){
+                                        if(!Arenas.isTribute(arenakey, player)){
                                             if(Arenas.getGMs(arenakey).contains(arg3)){
                                                 sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"Warning: "+arg3+" is already a gamemaker for "+arenakey+"!");
                                             }
@@ -183,8 +190,11 @@ public class HGArenaEditCommand implements CommandExecutor{
                         }
                         
                         if(removegm){
-                            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> removegm command");
+                            if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> removegm command");
                             if(sender.hasPermission(Perms.HGAE_REMOVEGM.perm())){
+                                if(Arenas.isInGame(arenakey)){
+                                    sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"(Warning): "+ChatColor.GOLD+arenakey+ChatColor.LIGHT_PURPLE+" is currently in game");
+                                }
                                 try{
                                     String arg3 = args[2];
                                     
@@ -204,8 +214,11 @@ public class HGArenaEditCommand implements CommandExecutor{
                         }
                         
                         if(removetrib){
-                            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> removetrib command");
+                            if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgae <arena> removetrib command");
                             if(sender.hasPermission(Perms.HGAE_REMOVETRIB.perm())||Arenas.isGameMakersArena(sender, arenakey)){
+                                if(Arenas.isInGame(arenakey)){
+                                    sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"(Warning): "+ChatColor.GOLD+arenakey+ChatColor.LIGHT_PURPLE+" is currently in game");
+                                }
                                 try{
                                     String arg3 = args[2];
                                     
@@ -225,27 +238,35 @@ public class HGArenaEditCommand implements CommandExecutor{
                         }
                         
                         if(settribspawn){
-                            try{
-                                if(!isplayer){
-                                    PluginInfo.sendOnlyPlayerMsg(sender);
-                                }
-                                int index = Integer.parseInt(args[2]);
-                                
-                                Arenas.setTribLoc(arenakey, index, player.getLocation());
-//                                TODO: add check for in the same world
-                                player.sendMessage(ChatColor.GREEN+"Set tribute "+Arenas.getTribNames(arenakey).get(index)+"'s spawn point to your location");
-                                
-                            }catch(IndexOutOfBoundsException e){
-                                PluginInfo.wrongFormatMsg(sender, "/hgae <arena> settribspawn <tribID>");
-                            }catch(NumberFormatException e){
-                                PluginInfo.wrongFormatMsg(sender, "\""+args[2]+"\" is not a valid number!"); 
-                            }
-                            return true;
+                            if(isplayer){
+                                if(sender.hasPermission(Perms.HGAE_SETTRIBSPAWN.perm())){
+                                    if(Arenas.isInGame(arenakey)){
+                                        sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"(Warning): "+ChatColor.GOLD+arenakey+ChatColor.LIGHT_PURPLE+" is currently in game");
+                                    }
+                                    try{
+                                        int index = Integer.parseInt(args[2]);
+                                        
+                                        if(player.getWorld()==Arenas.getCenter(arenakey).getWorld()){
+                                            Arenas.setTribLoc(arenakey, index, player.getLocation());
+                                            player.sendMessage(ChatColor.GREEN+"Set tribute "+Arenas.getTribNames(arenakey).get(index)+"'s spawn point to your location");
+                                            return true;
+                                        } else player.sendMessage(ChatColor.RED+"You must be in the same world as "+arenakey+"! ("+ChatColor.GRAY+Arenas.getCenter(arenakey).getWorld().getName()+")");
+                                    }catch(IndexOutOfBoundsException e){
+                                        PluginInfo.wrongFormatMsg(sender, "/hgae <arena> settribspawn <tribID>");
+                                    }catch(NumberFormatException e){
+                                        PluginInfo.wrongFormatMsg(sender, "\""+args[2]+"\" is not a valid number!"); 
+                                    }
+                                    return true;
+                                } else PluginInfo.sendNoPermMsg(sender);
+                            } else PluginInfo.sendOnlyPlayerMsg(sender);
                         }
                         
                         if(addspawnpoint){
                             if(isplayer){
                                 if(sender.hasPermission(Perms.HGAE_ADDSPP.perm())){
+                                    if(Arenas.isInGame(arenakey)){
+                                        sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+"(Warning): "+ChatColor.GOLD+arenakey+ChatColor.LIGHT_PURPLE+" is currently in game");
+                                    }
                                     Location loc = player.getLocation();
                                     if(!Arenas.isWithinArena(arenakey, loc)){
                                         player.sendMessage(ChatColor.LIGHT_PURPLE+"Cannot have a spawnpoint outside of the arena!");
@@ -261,8 +282,7 @@ public class HGArenaEditCommand implements CommandExecutor{
                     }catch(IndexOutOfBoundsException e){}
                 } else PluginInfo.wrongFormatMsg(sender, "Could not find the arena \""+arg1+"\""); return true;
             }catch(IndexOutOfBoundsException e){}
-            
-            if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted to show /hgae branch help");
+            if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted to show /hgae branch help");
             PluginInfo.sendCommandUsage(MCHGCommandBranch.HGAE, sender);
         } 
         

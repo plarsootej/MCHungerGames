@@ -5,42 +5,108 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerChatEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-
-import com.acuddlyheadcrab.MCHungerGames.HungerGames;
-import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaUtil;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import com.acuddlyheadcrab.MCHungerGames.HGplugin;
+import com.acuddlyheadcrab.MCHungerGames.FileIO.YMLKey;
+import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaIO;
 import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
 import com.acuddlyheadcrab.MCHungerGames.chat.ChatHandler;
-import com.acuddlyheadcrab.MCHungerGames.chests.ChestHandler;
-import com.acuddlyheadcrab.util.YMLKeys;
-import com.acuddlyheadcrab.util.Util;
+import com.acuddlyheadcrab.MCHungerGames.inventories.InventoryHandler;
+import com.acuddlyheadcrab.util.PluginInfo;
+import com.acuddlyheadcrab.util.Utility;
 
 
 public class TributeListener implements Listener {
-    public static HungerGames plugin;
+    public static HGplugin plugin;
     public static EventPriority priority;
-    public TributeListener(HungerGames instance) {plugin = instance;}
+    public TributeListener(HGplugin instance) {plugin = instance;}
     
     public static FileConfiguration config;
     // note to self: config is instantiated ONLY once initConfig() is called.
     public static void initConfig(){config = plugin.getConfig();}
     
+    
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onCreatureSpawn(CreatureSpawnEvent event){
+        if(config.getBoolean(YMLKey.OPS_DURGM_NOMOBS.key())){
+            String arenakey = Arenas.getNearbyArena(event.getLocation());
+            if(arenakey!=null&&Arenas.isInGame(arenakey)) event.setCancelled(true);
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerJoin(PlayerJoinEvent e){
+        boolean
+            ag = config.getBoolean(YMLKey.AG_ENABLED.key()),
+            ag_autog = config.getBoolean(YMLKey.AG_AUTOJOIN_ENABLED.key())
+        ;
+        if(config.getBoolean(YMLKey.OPS_DEBUG_ONPLAYERJOIN.key())){
+            PluginInfo.sendPluginInfo("AutoGames: "+ag);
+            PluginInfo.sendPluginInfo("AutoGames_AutoJoin: "+ag_autog);
+        }
+        if(ag){
+            if(ag_autog){
+                String 
+                    configarena = config.getString(YMLKey.AG_AUTOJOIN_ARENA.key()),
+                    arenakey = ArenaIO.getArenaByKey(configarena),
+                    joinmsg = config.getString(YMLKey.AG_AUTOJOIN_JOINMSG.key())
+                ;
+                if(config.getBoolean(YMLKey.OPS_DEBUG_ONPLAYERJOIN.key())){
+                    PluginInfo.sendPluginInfo("Matching \""+configarena+"\" to "+arenakey);
+                    PluginInfo.sendPluginInfo("Player involved: "+e.getPlayer().getName());
+                }
+                if(arenakey!=null){
+                    if(!(Arenas.isInGame(arenakey)||!Arenas.isInCountdown(arenakey))){
+                        if(!Arenas.getTribNames(arenakey).contains(e.getPlayer().getName())){
+                            Arenas.addTrib(arenakey, e.getPlayer());
+                            /* Hrm... should i use arenakey which is either an existing arena or NULL, 
+                             * OR should i use configarena which is whatever is in their config? */
+                            joinmsg = joinmsg.
+                                    replaceAll("<arena>", arenakey).
+                                    replaceAll("(&([a-f0-9]))", "\u00A7$2")
+                            ;
+                            e.getPlayer().sendMessage(joinmsg);
+                        }
+                    }
+                } else {
+                    PluginInfo.sendPluginInfo("Error joining player to arena \""+configarena+"\": No such arena");
+                    PluginInfo.sendPluginInfo("Please replace \""+configarena+"\" in the config with an existing arena");
+                }
+            }
+        }
+        String arenakey = Arenas.getArenaByTrib(e.getPlayer());
+        if(arenakey!=null){
+            if(Arenas.isInGame(arenakey)||Arenas.isInCountdown(arenakey)){
+                e.getPlayer().teleport(Arenas.getCenter(arenakey));
+            }
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerDisconnect(PlayerQuitEvent e){
+        String arenakey = Arenas.getArenaByTrib(e.getPlayer());
+        if(arenakey!=null){
+            if(Arenas.isInGame(arenakey)){
+                if(config.getBoolean(YMLKey.OPS_DURGM_DISQUALONDISC.key())){
+                    Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+""+e.getPlayer().getName()+" has been disqualified from "+arenakey+"!");
+                    InventoryHandler.updateInventory(e.getPlayer());
+                    Arenas.removeTrib(arenakey, e.getPlayer());
+                }
+            }
+        }
+    }
 
 //  @EventHandler(priority = EventPriority.HIGH)
   public void onPlayerChat(PlayerChatEvent event){
-      if(config.getBoolean(YMLKeys.OPS_NEARCHAT_ENABLED.key())){
+      if(config.getBoolean(YMLKey.OPS_NEARCHAT_ENABLED.key())){
           event.setCancelled(true);
           Player talkingplayer = event.getPlayer();
           String format = event.getFormat(), msg = event.getMessage();
@@ -49,171 +115,11 @@ public class TributeListener implements Listener {
               Player recip = i.next();
               ChatHandler.sendChatProxMessage(talkingplayer, recip, format, msg);
           }
-          Util.log.info(ChatColor.stripColor(format));
+          Utility.log.info(ChatColor.stripColor(format));
       }
   }
   
-  @EventHandler(priority = EventPriority.HIGHEST)
-  public void onPlayerDeath(PlayerDeathEvent event){
-      Player player = event.getEntity();
-      String arenakey = Arenas.getNearbyArena(player.getLocation());
-      if(arenakey!=null){
-          if(Arenas.isInGame(arenakey)){
-              if(Arenas.isTribute(arenakey, player)){
-                  Arenas.removeTrib(arenakey, player, true);
-                  // replace with broadcast to non-tributes
-                  for(Player remainingtrib : Arenas.getOnlineTribNames(arenakey)){
-                      Location loc = remainingtrib.getLocation();
-                      loc.setY(loc.getY()+10);
-                      remainingtrib.getWorld().createExplosion(loc, 0);
-                  }
-                  Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+"There are now "+Arenas.getTribs(arenakey).size()+" tributes left for "+arenakey+"!");
-                  int win = 1; //this is here in case I might want to change the rules ;D (like in the story)
-                  if(Arenas.getOnlineTribNames(arenakey).size()==win){
-                      String suffix = "";
-                      int gc = Arenas.getGameCount();
-                      switch (gc%10) {
-                          case 1: suffix = "st"; break;
-                          case 2: suffix = "nd"; break;
-                          case 3: suffix = "rd"; break;
-                          default: suffix = "th"; break;
-                      }
-                      String gmcount = gc+""+ChatColor.ITALIC+suffix+ChatColor.RESET+ChatColor.LIGHT_PURPLE;
-//                      possible exceptions here. is there a better way to do this?
-                      Player pwinner = Arenas.getOnlineTribNames(arenakey).get(0);
-                      Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+""+pwinner.getName()+" has won the "+gmcount+" Hunger Games in "+ChatColor.GOLD+player.getWorld().getName()+ChatColor.LIGHT_PURPLE+"!");
-                      pwinner.getInventory().clear();
-                      pwinner.setHealth(20);
-                      pwinner.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 1000, 2));
-                      if(config.getBoolean(YMLKeys.OPS_LOUNGETP_ONWIN.key())){
-                          try{
-                              pwinner.teleport(Arenas.getLounge(arenakey));
-                          }catch(NullPointerException e){}
-                      }
-                      ArenaUtil.tpAllOnlineTribs(arenakey, false);
-                      Arenas.removeTrib(arenakey, pwinner, false);
-                      ChestHandler.resetChests();
-                      Arenas.setInGame(arenakey, false);
-                  }
-              }
-          }
-      }
-  }
+
   
-  @EventHandler(priority = EventPriority.HIGHEST)
-  public void onPlayerTP(PlayerTeleportEvent event){
-      Player player = event.getPlayer();
-      Location 
-          to = event.getTo(),
-          from = event.getFrom()
-      ;
-      String
-          to_arena = Arenas.getNearbyArena(to),
-          from_arena = Arenas.getNearbyArena(from)
-      ;
-      
-      ChatColor
-          gold = ChatColor.GOLD,
-          yellow = ChatColor.YELLOW,
-          red = ChatColor.RED
-      ;  
-      boolean
-          leaving = (from_arena!=null)&&((!from_arena.equals(to_arena))||to_arena==null),
-          entering = (to_arena!=null)&&((!to_arena.equals(from_arena))||from_arena==null)
-      ;
-      
-      if(leaving){
-          if(Arenas.isInGame(from_arena)){
-              if(!Arenas.isGM(from_arena, player)){
-                  player.sendMessage(red+"You are not allowed to leave "+from_arena+"!");
-                  event.setCancelled(true);
-                  return;
-              }
-              player.sendMessage(ChatColor.LIGHT_PURPLE+"("+from_arena+" is currently in game)");
-          }
-          player.sendMessage(yellow+"You are now leaving "+gold+from_arena);
-      }
-      
-      if(entering){
-          if(Arenas.isInGame(to_arena)){
-              if(!Arenas.isGM(to_arena, player)){
-                  if(!Arenas.isTribute(to_arena, player)){
-                      player.sendMessage(red+"You are not allowed to enter "+to_arena+"!");
-                      event.setCancelled(true);
-                      return;
-                  }
-              }
-              player.sendMessage(ChatColor.LIGHT_PURPLE+"("+to_arena+" is currently in game)");
-          }
-          player.sendMessage(yellow+"You are now entering "+gold+to_arena);
-      }
-  }
   
-  @EventHandler(priority = EventPriority.HIGHEST)
-  public void onPlayerMove(PlayerMoveEvent event){
-      Player player = event.getPlayer();
-      Location 
-          to = event.getTo(),
-          from = event.getFrom()
-      ;
-      String
-          to_arena = Arenas.getNearbyArena(to),
-          from_arena = Arenas.getNearbyArena(from),
-          arenakey = Arenas.getArenaByTrib(player)
-      ;
-      
-      ChatColor
-          gold = ChatColor.GOLD,
-          yellow = ChatColor.YELLOW,
-          red = ChatColor.RED
-      ;  
-      boolean
-          leaving = (from_arena!=null)&&((!from_arena.equals(to_arena))||to_arena==null),
-          entering = (to_arena!=null)&&((!to_arena.equals(from_arena))||from_arena==null)
-      ;
-      
-      
-      if(arenakey!=null&&Arenas.isInCountdown(arenakey)){
-          event.setCancelled(true);
-          player.setVelocity(player.getVelocity().multiply(0));
-          player.teleport(from);
-      }
-      
-      if(leaving){
-          if(Arenas.isInGame(from_arena)){
-              if(!Arenas.isGM(from_arena, player)){
-                  if(Arenas.isTribute(from_arena, player)){
-                      player.getWorld().playEffect(to, Effect.EXTINGUISH, 1);
-                      player.damage(3);
-                      player.setFireTicks(5*20);
-                      player.sendMessage(red+"You are not allowed to leave "+from_arena+"!");
-                      event.setCancelled(true);
-                      player.teleport(from);
-                      Util.repelPlayer(player, to, 5);
-                      return;
-                  }
-              }
-              player.sendMessage(ChatColor.LIGHT_PURPLE+"("+from_arena+" is currently in game)");
-          }
-          player.sendMessage(yellow+"You are now leaving "+gold+from_arena);
-      }
-      
-      if(entering){
-          if(Arenas.isInGame(to_arena)){
-              if(!Arenas.isGM(to_arena, player)){
-                  String istrib = Arenas.isTribute(to_arena, player) ? " is" : " is not";
-                  System.out.println(player.getName()+istrib+" a tribute for "+to_arena);
-                  if(Arenas.isTribute(to_arena, player)){
-                      player.sendMessage(red+"You are not allowed to enter "+to_arena+"!");
-                      event.setCancelled(true);
-                      player.teleport(from);
-                      Util.repelPlayer(player, to, 5);
-                      return;
-                  }
-              }
-              player.sendMessage(ChatColor.LIGHT_PURPLE+"("+to_arena+" is currently in game)");
-          }
-          player.sendMessage(yellow+"You are now entering "+gold+to_arena);
-      }
-  }
 }

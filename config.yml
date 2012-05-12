@@ -37,6 +37,7 @@ Options:
         onCommand: false
         onBlockChange: false
         onPlayerJoin: false
+        onEvents: true
     BlockProtection:
         Only_mushroom_leaf_mode: false
         Rules:
@@ -71,4 +72,5 @@ Options:
             Arena: ""
         Start_when:
             Tribute_count: 24
+        Delay_minutes: 5
         Countdown: 10

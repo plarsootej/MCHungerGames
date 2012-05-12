@@ -8,11 +8,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.MCHungerGames.HGplugin;
+import com.acuddlyheadcrab.MCHungerGames.FileIO.YMLKey;
 import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaIO;
 import com.acuddlyheadcrab.MCHungerGames.arenas.ArenaUtil;
 import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
-import com.acuddlyheadcrab.util.YMLKeys;
 import com.acuddlyheadcrab.util.Perms;
 import com.acuddlyheadcrab.util.PluginInfo;
 
@@ -22,14 +22,14 @@ import com.acuddlyheadcrab.util.PluginInfo;
 
 public class HGGameCommand implements CommandExecutor{
     
-    private static HungerGames hungergames;
-    public HGGameCommand(HungerGames instance){hungergames = instance;}
+    private static HGplugin hungergames;
+    public HGGameCommand(HGplugin instance){hungergames = instance;}
     
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args) {
         
         FileConfiguration config = hungergames.getConfig();
-        FileConfiguration arenasfile = HungerGames.getArenasFile();
+        FileConfiguration arenasfile = HGplugin.getArenasFile();
         
         PluginInfo.printConsoleCommandInfo(sender, label, args);
         
@@ -43,7 +43,7 @@ public class HGGameCommand implements CommandExecutor{
                 ;
                 
                 if(start){
-                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgg start command");
+                    if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgg start command");
                     try{
                         String arg2 = args[1];
                         
@@ -51,19 +51,15 @@ public class HGGameCommand implements CommandExecutor{
                         
                         if(arenakey!=null){
                             if(sender.hasPermission(Perms.HGG_START.perm())||Arenas.isGameMakersArena(sender, arenakey)){
-
-                                
                                 try{
                                     final int countdown = Integer.parseInt(args[2]);
-                                    try{
-                                        ArenaUtil.startGame(arenakey, countdown);
-                                        return true;
-//                                        the following probably wont happen (right now)
-                                    }catch(NullPointerException e){
-                                        PluginInfo.wrongFormatMsg(sender, arenakey+" does not have enough data to start a game");
-                                        e.printStackTrace();
-                                        return true;
-                                    }
+                                    ArenaUtil.startGame(arenakey, countdown);
+                                    return true;
+//                                    the following exception probably wont happen (right now)
+                                }catch(NullPointerException e){
+                                    PluginInfo.wrongFormatMsg(sender, arenakey+" does not have enough data to start a game");
+                                    e.printStackTrace();
+                                    return true;
                                 }catch(IndexOutOfBoundsException e){
                                     PluginInfo.wrongFormatMsg(sender, "/hgg start <arena> [countdown (seconds]"); return true;
                                 }
@@ -74,7 +70,7 @@ public class HGGameCommand implements CommandExecutor{
                 }
                 
                 if(stop){
-                    if(config.getBoolean(YMLKeys.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgg stop command");
+                    if(config.getBoolean(YMLKey.OPS_DEBUG_ONCMD.key())) PluginInfo.sendPluginInfo("Attempted /hgg stop command");
                     try{
                         String arg2 = args[1];
                         
@@ -82,11 +78,10 @@ public class HGGameCommand implements CommandExecutor{
                         
                         if(arenakey!=null){
                             if(sender.hasPermission(Perms.HGG_STOP.perm())||Arenas.isGameMakersArena(sender, arenakey)){
-                                
                             	Arenas.setInGame(arenakey, false);
-                                List<String> games = arenasfile.getStringList(YMLKeys.CURRENT_GAMES.key());
+                                List<String> games = arenasfile.getStringList(YMLKey.CURRENT_GAMES.key());
                                 games.remove(arenakey);
-                                ArenaIO.arenasSet(YMLKeys.CURRENT_GAMES.key(), games);
+                                ArenaIO.arenasSet(YMLKey.CURRENT_GAMES.key(), games);
                                 Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+"Force stopped game in "+arenakey);
                             } else PluginInfo.sendNoPermMsg(sender);
                         } else PluginInfo.wrongFormatMsg(sender, "Could not find the arena \""+arg2+"\"");
@@ -97,7 +92,7 @@ public class HGGameCommand implements CommandExecutor{
                 
                 
             }catch(IndexOutOfBoundsException e){
-                String cur_games = arenasfile.getString(YMLKeys.CURRENT_GAMES.key());
+                String cur_games = arenasfile.getString(YMLKey.CURRENT_GAMES.key());
                 cur_games = cur_games.trim();
                 if(cur_games==""||cur_games=="[]"){
                     cur_games = ChatColor.DARK_GRAY+"(none)";

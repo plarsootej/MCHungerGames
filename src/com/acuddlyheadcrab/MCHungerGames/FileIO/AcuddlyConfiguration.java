@@ -13,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import com.acuddlyheadcrab.util.PluginInfo;
-import com.acuddlyheadcrab.util.YMLKeys;
 
 public class AcuddlyConfiguration extends FileConfiguration{
     private File file;
@@ -46,7 +45,7 @@ public class AcuddlyConfiguration extends FileConfiguration{
         save();
     }
     
-    public void set(YMLKeys path, Object object){
+    public void set(YMLKey path, Object object){
         set(path.key(), object);
     }
     
@@ -208,107 +207,107 @@ public class AcuddlyConfiguration extends FileConfiguration{
         return fileconfig.getConfigurationSection(path);
     }
     
-    public Object get(YMLKeys path) {
+    public Object get(YMLKey path) {
         return fileconfig.get(path.key());
     }
     
-    public Object get(YMLKeys path, Object def) {
+    public Object get(YMLKey path, Object def) {
         return fileconfig.get(path.key(), def);
     }
     
-    public ConfigurationSection createSection(YMLKeys path) {
+    public ConfigurationSection createSection(YMLKey path) {
         return fileconfig.createSection(path.key());
     }
     
-    public ConfigurationSection createSection(YMLKeys path, Map<?, ?> map) {
+    public ConfigurationSection createSection(YMLKey path, Map<?, ?> map) {
         return fileconfig.createSection(path.key(), map);
     }
     
-    public String getString(YMLKeys path) {
+    public String getString(YMLKey path) {
         return fileconfig.getString(path.key());
     }
     
-    public String getString(YMLKeys path, String def){
+    public String getString(YMLKey path, String def){
         return fileconfig.getString(path.key(), def);
     }
     
-    public int getInt(YMLKeys path) {
+    public int getInt(YMLKey path) {
         return fileconfig.getInt(path.key());
     }
     
-    public boolean isInt(YMLKeys path) {
+    public boolean isInt(YMLKey path) {
         return fileconfig.isInt(path.key());
     }
     
-    public boolean getBoolean(YMLKeys path) {
+    public boolean getBoolean(YMLKey path) {
         return fileconfig.getBoolean(path.key());
     }
     
-    public double getDouble(YMLKeys path) {
+    public double getDouble(YMLKey path) {
         return fileconfig.getDouble(path.key());
     }
     
-    public long getLong(YMLKeys path) {
+    public long getLong(YMLKey path) {
         return fileconfig.getLong(path.key());
     }
     
-    public List<?> getList(YMLKeys path) {
+    public List<?> getList(YMLKey path) {
         return fileconfig.getList(path.key());
     }
     
-    public List<String> getStringList(YMLKeys path) {
+    public List<String> getStringList(YMLKey path) {
         return fileconfig.getStringList(path.key());
     }
     
-    public List<Integer> getIntegerList(YMLKeys path) {
+    public List<Integer> getIntegerList(YMLKey path) {
         return fileconfig.getIntegerList(path.key());
     }
     
-    public List<Boolean> getBooleanList(YMLKeys path) {
+    public List<Boolean> getBooleanList(YMLKey path) {
         return fileconfig.getBooleanList(path.key());
     }
     
-    public List<Double> getDoubleList(YMLKeys path) {
+    public List<Double> getDoubleList(YMLKey path) {
         return fileconfig.getDoubleList(path.key());
     }
     
-    public List<Float> getFloatList(YMLKeys path) {
+    public List<Float> getFloatList(YMLKey path) {
         return fileconfig.getFloatList(path.key());
     }
     
-    public List<Long> getLongList(YMLKeys path) {
+    public List<Long> getLongList(YMLKey path) {
         return fileconfig.getLongList(path.key());
     }
     
-    public List<Byte> getByteList(YMLKeys path) {
+    public List<Byte> getByteList(YMLKey path) {
         return fileconfig.getByteList(path.key());
     }
 
-    public List<Character> getCharacterList(YMLKeys path) {
+    public List<Character> getCharacterList(YMLKey path) {
         return fileconfig.getCharacterList(path.key());
     }
     
-    public List<Short> getShortList(YMLKeys path) {
+    public List<Short> getShortList(YMLKey path) {
         return fileconfig.getShortList(path.key());
     }
     
-    public List<Map<?, ?>> getMapList(YMLKeys path) {
+    public List<Map<?, ?>> getMapList(YMLKey path) {
         return fileconfig.getMapList(path.key());
     }
     
-    public Vector getVector(YMLKeys path) {
+    public Vector getVector(YMLKey path) {
         return fileconfig.getVector(path.key());
     }
     
-    public OfflinePlayer getOfflinePlayer(YMLKeys path) {
+    public OfflinePlayer getOfflinePlayer(YMLKey path) {
         return fileconfig.getOfflinePlayer(path.key());
     }
 
-    public ItemStack getItemStack(YMLKeys path) {
+    public ItemStack getItemStack(YMLKey path) {
         return fileconfig.getItemStack(path.key());
     }
 
-    public ConfigurationSection getConfigurationSection(YMLKeys path) {
+    public ConfigurationSection getConfigurationSection(YMLKey path) {
         return fileconfig.getConfigurationSection(path.key());
     }
 }

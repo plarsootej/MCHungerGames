@@ -18,28 +18,31 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.MCHungerGames.HGplugin;
+import com.acuddlyheadcrab.MCHungerGames.FileIO.Configs;
+import com.acuddlyheadcrab.MCHungerGames.FileIO.YMLKey;
 import com.acuddlyheadcrab.util.PluginInfo;
-import com.acuddlyheadcrab.util.Util;
-import com.acuddlyheadcrab.util.YMLKeys;
+import com.acuddlyheadcrab.util.Utility;
 
 
 public class ChestHandler {
     
 public static Map<Material, Integer> matwhitelist;
     
-    public static HungerGames HungerGamesPlugin;
+    public static HGplugin HGpluginPlugin;
     public static FileConfiguration chestitems;
     
-    public ChestHandler(HungerGames instance) {
-        HungerGamesPlugin = instance;
+    public ChestHandler(HGplugin instance) {
+        HGpluginPlugin = instance;
         matwhitelist = new HashMap<Material, Integer>();
-        matwhitelist.put(Material.ARROW, 9);
-        matwhitelist.put(Material.ARROW, 9);
-        matwhitelist.put(Material.ARROW, 9);
-        matwhitelist.put(Material.ARROW, 9);
-        matwhitelist.put(Material.ARROW, 9);
-        matwhitelist.put(Material.ARROW, 9);
+        matwhitelist.put(Material.ARROW, 12);
+        matwhitelist.put(Material.ARROW, 12);
+        matwhitelist.put(Material.ARROW, 12);
+        matwhitelist.put(Material.ARROW, 12);
+        matwhitelist.put(Material.ARROW, 12);
+        matwhitelist.put(Material.ARROW, 12);
+        matwhitelist.put(Material.ARROW, 12);
+        matwhitelist.put(Material.ARROW, 12);
         matwhitelist.put(Material.BOW, 1);
         matwhitelist.put(Material.BOW, 1);
         matwhitelist.put(Material.BOW, 1);
@@ -78,7 +81,7 @@ public static Map<Material, Integer> matwhitelist;
     
     
     public static void initChestItems(){
-        chestitems = HungerGames.getChestItemsFile();
+        chestitems = HGplugin.getChestItemsFile();
     }
     
     public static boolean spawnCCPChest(Block block, boolean addtochest){
@@ -87,19 +90,19 @@ public static Map<Material, Integer> matwhitelist;
         if(block.getType()==Material.CHEST){
             state = block.getState();
             if(!addtochest) ((Chest) state).getInventory().clear();
-        }
-        else if(checkChestBlock(above)) {
+        } else if(checkChestBlock(above)) {
             above.setType(Material.CHEST);
             state = above.getState();
-        }
-        else return false;
+        } else return false;
         
         Chest chest = (Chest) state;
         Inventory inv = chest.getInventory();
         
         Random rand = new Random();
         
-        for(int c=0;c<rand.nextInt(3)+1;c++){
+        int slots = Configs.getChestItems().getInt(YMLKey.CHESTITEMS_SLOTS);
+        if(slots<=1) slots = 2;
+        for(int c=0;c<rand.nextInt(slots-1)+1;c++){
             ItemStack randitem = getRandomItem();
             inv.setItem(rand.nextInt(inv.getSize()), randitem);
         }
@@ -109,7 +112,7 @@ public static Map<Material, Integer> matwhitelist;
     
     public static ItemStack getRandomItem(){
         Random rand = new Random();
-        Material mat = (Material) Util.getKeys(matwhitelist).get(rand.nextInt(matwhitelist.size()));
+        Material mat = (Material) Utility.getKeys(matwhitelist).get(rand.nextInt(matwhitelist.size()));
         int max = rand.nextInt(matwhitelist.get(mat))+1;
         short dmg = mat.getMaxDurability()==((short) 0) ? (short) 0 : (short) (rand.nextInt(mat.getMaxDurability())+10);
         return new ItemStack(mat,max,dmg);
@@ -152,7 +155,7 @@ public static Map<Material, Integer> matwhitelist;
 //        for(int i=0;i<loclist.size();i++){
 //            Location chestloc = loclist.get(i);
 //            if(chestloc.getBlock().getState().getType()!=Material.CHEST)
-//                System.out.println("Removing "+Util.toLocKey(chestloc, false, true)+" from the chestloc list");
+//                System.out.println("Removing "+Utility.toLocKey(chestloc, false, true)+" from the chestloc list");
 //                loclist.remove(i);
 //        }
 //        setChestLocs(loclist);
@@ -186,13 +189,13 @@ public static Map<Material, Integer> matwhitelist;
     }
     
     public static void setChestLocKeys(List<String> loclist){
-        chestitemsset(YMLKeys.CHESTITEMS_CHESTLOCS.key(), loclist);
+        chestitemsset(YMLKey.CHESTITEMS_CHESTLOCS.key(), loclist);
     }
     
     public static void setChestLocs(List<Location> loclist){
         List<String> lockeylist = new ArrayList<String>();
         for(Location loc : loclist)
-            lockeylist.add(Util.toLocKey(loc, false, true));
+            lockeylist.add(Utility.toLocKey(loc, false, true));
         setChestLocKeys(lockeylist);
     }
     
@@ -203,33 +206,33 @@ public static Map<Material, Integer> matwhitelist;
     public static List<Location> getChestLocs(){
         List<Location> loclist = new ArrayList<Location>();
         for(String lockey : getChestLocStrings()){
-            loclist.add(Util.parseLocKey(lockey));
+            loclist.add(Utility.parseLocKey(lockey));
         }
         return loclist;
     }
     
     public static List<String> getChestLocStrings(){
-        return chestitems.getStringList(YMLKeys.CHESTITEMS_CHESTLOCS.key());
+        return chestitems.getStringList(YMLKey.CHESTITEMS_CHESTLOCS.key());
     }
     
     
     public static void chestitemsset(String path, Object object) {
         chestitems.set(path, object);
-        HungerGames.saveChestItems();
+        HGplugin.saveChestItems();
     }
     
     static int taskID;
     
     public static void resetChests(){
         checkChestLocs();
-        taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(HungerGamesPlugin, new Runnable() {
+        taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(HGpluginPlugin, new Runnable() {
             private int count = 0;
             
             @Override
             public void run() {
                 if(count<10){
                     for(Location chest : getChestLocs()){
-                        spawnCCPChest(chest.getBlock(), chestitems.getBoolean(YMLKeys.CHESTITEMS_ADDTO.key()));
+                        spawnCCPChest(chest.getBlock(), chestitems.getBoolean(YMLKey.CHESTITEMS_ADDTO.key()));
                     }
                     count++;
                 } else cancelChestTask();

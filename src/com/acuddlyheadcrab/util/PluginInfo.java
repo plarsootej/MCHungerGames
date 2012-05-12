@@ -8,15 +8,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 
-import com.acuddlyheadcrab.MCHungerGames.HungerGames;
-
-
+import com.acuddlyheadcrab.MCHungerGames.HGplugin;
 
 public class PluginInfo {
     public final static Logger log = Logger.getLogger("Minecraft");
     
-    public static HungerGames plugin;
-    public PluginInfo(HungerGames instance){plugin = instance;}
+    public static HGplugin plugin;
+    public PluginInfo(HGplugin instance){plugin = instance;}
     
     public static final boolean debug = true;
     
@@ -29,6 +27,10 @@ public class PluginInfo {
         PluginDescriptionFile plugdes = plugin.getDescription();
         String pluginname = plugdes.getName();
         log.info("[" + pluginname + "] " + message);
+    }
+    
+    public static void debug(int linenum, Class<?> classfile, String msg){
+        log.info(String.format("[DEBUG: (%1$s.%2$s)] %3$s", classfile.getName(), linenum, msg));
     }
     
     public static void sendTestMsg(CommandSender sender, String msg) {
@@ -45,8 +47,12 @@ public class PluginInfo {
         sender.sendMessage(red + "You must be a player to do this!");
     }
     
-    public static void sendAlreadyInGameMsg(CommandSender sender, String arena) {
+    public static void sendInGameMsg(CommandSender sender, String arena) {
         sender.sendMessage(ChatColor.GOLD+arena+red+" is currently in game!");
+    }
+    
+    public static void sendInGameWarning(CommandSender sender, String arena){
+        sender.sendMessage(ChatColor.LIGHT_PURPLE+""+ChatColor.ITALIC+" (Warning) "+ChatColor.GOLD+arena+ChatColor.LIGHT_PURPLE+" is currently in game!");
     }
     
     public static void sendCommandInfo(CommandSender sender, String cmd, String desc){
@@ -64,7 +70,7 @@ public class PluginInfo {
             case HG:
                 String v = plugin.getDescription().getVersion();
                 sender.sendMessage(aqua + "    MC Hunger Games v" + v);
-                Map<String, String> cmd_map = Util.getCommandsAndDescs();
+                Map<String, String> cmd_map = Utility.getCommandsAndDescs();
                 for (String cmd : cmd_map.keySet()) {
                     String desc = cmd_map.get(cmd);
                     sendCommandInfo(sender, cmd, desc);
@@ -82,6 +88,9 @@ public class PluginInfo {
                 PluginInfo.sendCommandInfo(sender, "    rename", "Rename an arena");
                 PluginInfo.sendCommandInfo(sender, "    lounge", "Teleport to the arena's lounge");
                 PluginInfo.sendCommandInfo(sender, "    join", "Join an arena");
+                PluginInfo.sendCommandInfo(sender, "    leave", "Leave an arena");
+                PluginInfo.sendCommandInfo(sender, "    tributes", "View a list of all tributes");
+                PluginInfo.sendCommandInfo(sender, "    chestreset", "Reset all chests spawned with /spc");
                 break;
             case HGAE:
                 PluginInfo.sendCommandInfo(sender, "/hgae <arena>", "");
@@ -92,7 +101,8 @@ public class PluginInfo {
                 PluginInfo.sendCommandInfo(sender, "    addtrib", "Add a tribute");
                 PluginInfo.sendCommandInfo(sender, "    removegm", "Remove a gamemaker");
                 PluginInfo.sendCommandInfo(sender, "    removetrib", "Remove a tribute");
-                PluginInfo.sendCommandInfo(sender, "    settribspawn", "Set the spawn point for a tribute");
+                PluginInfo.sendCommandInfo(sender, "    addspp", "Add a tribute spawnpoint");
+                PluginInfo.sendCommandInfo(sender, "    settribspawn", "Set specific tribute's spawnpoint");
                 break;
             case HGG:
                 PluginInfo.sendCommandInfo(sender, "/hgg", "");
@@ -110,7 +120,7 @@ public class PluginInfo {
     }
 
     public static void printConsoleCommandInfo(CommandSender sender, String cmdlabel, String[] args) {
-        if(sender instanceof Player) PluginInfo.sendPluginInfo(sender.getName()+": /"+cmdlabel+" "+Util.concatArray(args, " "));
+        if(sender instanceof Player) PluginInfo.sendPluginInfo(sender.getName()+": /"+cmdlabel+" "+Utility.concatArray(args, " "));
     }
 
 }

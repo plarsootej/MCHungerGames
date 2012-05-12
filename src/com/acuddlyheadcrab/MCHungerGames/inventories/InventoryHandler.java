@@ -9,23 +9,24 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.MCHungerGames.HGplugin;
 import com.acuddlyheadcrab.MCHungerGames.FileIO.AcuddlyConfiguration;
 import com.acuddlyheadcrab.MCHungerGames.FileIO.Configs;
-import com.acuddlyheadcrab.util.YMLKeys;
+import com.acuddlyheadcrab.MCHungerGames.FileIO.YMLKey;
 
 
 public class InventoryHandler {
     
-    public static HungerGames plugin;
-    public InventoryHandler(HungerGames instance){plugin = instance;}
+    public static HGplugin plugin;
+    public InventoryHandler(HGplugin instance){plugin = instance;}
     
     private static String separator = ", ";
     
     public static void saveInventory(Player player){
         AcuddlyConfiguration ud = Configs.getUD(player);
-        ud.set(YMLKeys.UD_INV_CONTENTS, toISkeylist(player.getInventory().getContents()));
-        ud.set(YMLKeys.UD_INV_ARMOR, toISkeylist(player.getInventory().getArmorContents()));
+        ud.set(YMLKey.UD_INV_CONTENTS, toISkeylist(player.getInventory().getContents()));
+        ud.set(YMLKey.UD_INV_ARMOR, toISkeylist(player.getInventory().getArmorContents()));
+        ud.save();
     }
     
     public static List<String> toISkeylist(ItemStack[] ISarr){
@@ -58,10 +59,10 @@ public class InventoryHandler {
     public static void updateInventory(Player player){
         AcuddlyConfiguration ud = Configs.getUD(player);
         PlayerInventory pinv = player.getInventory();
-        for(String iskey : ud.getStringList(YMLKeys.UD_INV_CONTENTS)){
+        for(String iskey : ud.getStringList(YMLKey.UD_INV_CONTENTS)){
             pinv.setItem(parseISkeySlot(iskey), parseISkey(iskey));
         }
-        for(String iskey : ud.getStringList(YMLKeys.UD_INV_ARMOR.key())){
+        for(String iskey : ud.getStringList(YMLKey.UD_INV_ARMOR.key())){
             switch (parseISkeySlot(iskey)) {
                 case 0: pinv.setBoots(parseISkey(iskey)); break;
                 case 1: pinv.setLeggings(parseISkey(iskey)); break;

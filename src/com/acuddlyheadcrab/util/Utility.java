@@ -15,14 +15,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.MCHungerGames.HGplugin;
 
 
 
-public class Util {
+public class Utility {
     
-    public static HungerGames HungerGamesPlugin;
-    public Util(HungerGames instance) {HungerGamesPlugin = instance;}
+    public static HGplugin HGpluginPlugin;
+    public Utility(HGplugin instance) {HGpluginPlugin = instance;}
     
     public final static Logger log = Logger.getLogger("Minecraft");
     public static FileConfiguration config;
@@ -30,8 +30,8 @@ public class Util {
     // done
     public static Map<String, String> getCommandsAndDescs() {
         Map<String, String> map = new HashMap<String, String>();
-        List<?> cmds = getKeys(HungerGamesPlugin.getDescription().getCommands());
-        List<?> descs =  getValues(HungerGamesPlugin.getDescription().getCommands());
+        List<?> cmds = getKeys(HGpluginPlugin.getDescription().getCommands());
+        List<?> descs =  getValues(HGpluginPlugin.getDescription().getCommands());
         for (int c = 0; c < cmds.size(); c++) {
             String cmd = cmds.get(c).toString();
             String desc = " ";

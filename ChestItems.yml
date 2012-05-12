@@ -1,3 +1,4 @@
 # These are the items to randomly choose from when /spawnccp is used
 Chest_Locs: []
 Chest_reset_addto: false
+MaxSlots: 7

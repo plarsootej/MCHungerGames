@@ -8,16 +8,16 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.acuddlyheadcrab.MCHungerGames.HungerGames;
+import com.acuddlyheadcrab.MCHungerGames.HGplugin;
+import com.acuddlyheadcrab.MCHungerGames.FileIO.YMLKey;
 import com.acuddlyheadcrab.MCHungerGames.arenas.Arenas;
-import com.acuddlyheadcrab.util.Util;
-import com.acuddlyheadcrab.util.YMLKeys;
+import com.acuddlyheadcrab.util.Utility;
 
 
 public class ChatHandler {
     
-    public static HungerGames HungerGamesPlugin;
-    public ChatHandler(HungerGames instance) {HungerGamesPlugin = instance;}
+    public static HGplugin HGpluginPlugin;
+    public ChatHandler(HGplugin instance) {HGpluginPlugin = instance;}
     
     public enum ChatProximity{
         SELF(0),
@@ -48,17 +48,17 @@ public class ChatHandler {
     }
     
     public static ChatProximity getChatProximity(Player talkingplayer, Player recip){
-        FileConfiguration config = HungerGamesPlugin.getConfig();
-        config = HungerGamesPlugin.getConfig();
+        FileConfiguration config = HGpluginPlugin.getConfig();
+        config = HGpluginPlugin.getConfig();
         String arenakey = Arenas.getArenaByTrib(recip);
         if(talkingplayer==recip) return ChatProximity.SELF;
         if(arenakey!=null){
             if(Arenas.isInGame(arenakey)){
                 double 
                     distance = recip.getLocation().distance(talkingplayer.getLocation()),
-                    clear = config.getDouble(YMLKeys.OPS_NEARCHAT_DISTS_CLEAR.key()),
-                    disemboided = config.getDouble(YMLKeys.OPS_NEARCHAT_DISTS_DISEMBOIDED.key()),
-                    garbled = config.getDouble(YMLKeys.OPS_NEARCHAT_DISTS_GARBLED.key())
+                    clear = config.getDouble(YMLKey.OPS_NEARCHAT_DISTS_CLEAR.key()),
+                    disemboided = config.getDouble(YMLKey.OPS_NEARCHAT_DISTS_DISEMBOIDED.key()),
+                    garbled = config.getDouble(YMLKey.OPS_NEARCHAT_DISTS_GARBLED.key())
                 ;
                 if(distance<=clear) return ChatProximity.withDistance(ChatProximity.CLEAR, distance);
                 else if(distance<=disemboided) return ChatProximity.withDistance(ChatProximity.DISEMBODIED, distance);
@@ -95,7 +95,7 @@ public class ChatHandler {
                     letters.add(newchar);
                 }
         }
-        return Util.concatList(letters, "");
+        return Utility.concatList(letters, "");
     }
     
 }
